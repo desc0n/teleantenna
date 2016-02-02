@@ -131,3 +131,4 @@
 	</div>
 	<input type='hidden' id='writeoffId' value='<?=$writeoff_id;?>'>
 </div>
+<?=(preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? '' : View::factory('search_modal'));?>

@@ -67,3 +67,4 @@
 	</div>
 	<input type='hidden' id='cashwriteoffId' value='<?=$cashwriteoff_id;?>'>
 </div>
+<?=(preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? '' : View::factory('search_modal'));?>
