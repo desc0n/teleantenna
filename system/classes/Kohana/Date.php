@@ -600,4 +600,14 @@ class Kohana_Date {
 		return $time->format($timestamp_format);
 	}
 
+	/**
+	 * @param string $date
+	 * @param string $format
+	 *
+	 * @return bool|string
+	 */
+	public static function convertDateFromFormat($date = '0000-00-00', $format = 'Y-m-d H:i:s')
+	{
+		return date($format, strtotime($date));
+	}
 } // End date

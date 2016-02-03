@@ -1415,3 +1415,7 @@ div .navbar-brand span{
 .forms-field{
   min-height: 65px;
 }
+
+.no-padding {
+    padding: 0;
+}

@@ -13,9 +13,19 @@ class Model_Admin extends Kohana_Model {
 		else {
 			$this->user_id = Guestid::factory()->get_id();
 		}
+
 	    DB::query(Database::UPDATE,"SET time_zone = '+10:00'")->execute();
     }
-	
+
+	public function getNow() {
+		$res = DB::query(Database::SELECT, 'select now() as `now` from dual')
+					->execute()
+					->current()
+				;
+
+		return $res['now'];
+	}
+
 	public function addGroup($post)
 	{
 		$add_group = Arr::get($post,'addgroup',1);
@@ -729,42 +739,71 @@ class Model_Admin extends Kohana_Model {
 
 	public function getRealizationsList($params)
 	{
+		$now = $this->getNow();
+
+		$firstDate = empty(Arr::get($params, 'realizations_first_date')) ? $now : $params['realizations_first_date'];
+		$lastDate = empty(Arr::get($params, 'realizations_last_date')) ? $now : $params['realizations_last_date'];
+
 		$limit = $this->getLimit();
-		$sqlDate =  Arr::get($params, 'archive', '') != 'realization' ? "and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
-		$sqlCountDate =  Arr::get($params, 'archive', '') != 'realization' ? "and `r1`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
+
 		$sqlLimit = Arr::get($params, 'archive', '') != 'realization' ? '' : "limit ".((Arr::get($params, 'realizationPage', 1) - 1)*$limit).", $limit";
+
 		if(Auth::instance()->logged_in('admin'))
 			$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
 			`u`.`username` as `manager_name`,
-			(select count(`r1`.`id`) from `realizations` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where 1 $sqlCountDate) as `realizations_count`
+			(
+				select count(`r1`.`id`)
+				from `realizations` `r1`
+				inner join `documents_status` `rs1`
+				on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+				on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`date` between :firstDate and :lastDate
+			) as `realizations_count`
 			from `realizations` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
-			where 1
-			$sqlDate
+			where `r`.`date` between :firstDate and :lastDate
 			order by `id` desc
 			$sqlLimit";
 		else
 			$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
 			`u`.`username` as `manager_name`,
-			(select count(`r1`.`id`) from `realizations` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where `r1`.`user_id` = :user_id $sqlCountDate) as `realizations_count`
+			(
+				select count(`r1`.`id`)
+				from `realizations` `r1`
+				inner join `documents_status` `rs1`
+					on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+					on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`user_id` = :user_id
+				and `r1`.`date` between :firstDate and :lastDate
+			) as `realizations_count`
 			from `realizations` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
 			where `r`.`user_id` = :user_id
-			$sqlDate
+			and `r`.`date` between :firstDate and :lastDate
 			order by `id` desc
 			$sqlLimit";
-		$res = DB::query(Database::SELECT,$sql)
-			->param(':user_id', $this->user_id)
-			->execute()
-			->as_array();
+
+		$res =
+			DB::query(Database::SELECT,$sql)
+				->parameters([
+					':user_id' => $this->user_id,
+					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
+					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+				])
+				->execute()
+				->as_array()
+			;
+
 		return $res;
 	}
 		
@@ -2496,28 +2535,31 @@ class Model_Admin extends Kohana_Model {
 		$i = 1;
 		$page = Arr::get($params, 'reportPage', 1);
 
+		$now = $this->getNow();
+
+		$firstDate = empty(Arr::get($params, 'reports_first_date')) ? $now : $params['reports_first_date'];
+		$lastDate = empty(Arr::get($params, 'reports_last_date')) ? $now : $params['reports_last_date'];
+
 		$dates[0] = 0;
 		$res = DB::query(Database::SELECT,"
 			select date_format(now(), '%Y-%m-%d') as `now`,
 			date_format(`r1`.`date`, '%Y-%m-%d') as `date`
 			from `products_num_history` `r1`
+			where `r1`.`date` between :firstDate and :lastDate
 			group by date_format(`r1`.`date`, '%Y-%m-%d')
 			order by `r1`.`date` desc")
-			->execute()
-			->as_array();
+				->parameters([
+					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
+					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+				])
+				->execute()
+				->as_array()
+			;
 
 		foreach ($res as $row) {
 			$dates[$i] = ceil((strtotime($row['now']) - strtotime($row['date']))/ 86400);
 			$i++;
 		}
-
-		$sqlDate =  "
-		and `r`.`date` between
-		date_format(
-			(now() - interval " . (Arr::get($dates, $page, 0)) . " day), '%Y-%m-%d 00:00:00'
-		) and date_format(
-	 		(now() - interval " . (Arr::get($dates, $page, 0)) . " day), '%Y-%m-%d 23:59:59'
-		)";
 
 		$sql = "select `r`.*,
             if (
@@ -2564,12 +2606,17 @@ class Model_Admin extends Kohana_Model {
 			from `products_num_history` `r`
 			inner join `products` `p`
 				on `p`.`id` = `r`.`product_id`
-			where 1
-			$sqlDate
+			where `r`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc, `r`.`document_id` desc";
+
 		$res = DB::query(Database::SELECT,$sql)
-			->execute()
-			->as_array();
+				->parameters([
+					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
+					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+				])
+				->execute()
+				->as_array()
+			;
 
 		return [(count($dates) - 1), $res];
 	}

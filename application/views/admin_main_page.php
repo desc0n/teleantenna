@@ -63,16 +63,37 @@
 					<input type="hidden" name="newrealization">
 					<button class="btn btn-danger" type="submit">Новая реализация</button>
 				</form>
-				<form action="/admin" method="get" class="pull-left">
-					<?=(Arr::get($get,'archive', '') == 'realization' ? '<input type="hidden" name="action" value="realizations">' : '<input type="hidden" name="archive" value="realization"><input type="hidden" name="action" value="realizations">');?>
-					<button class="btn btn-success" type="submit"><?=(Arr::get($get,'archive', '') == 'realization' ? 'За день' : 'Архив');?></button>
+				<form action="/admin" method="get" class="pull-left col-sm-7 col-xs-7 col-md-7">
+					<?//=(Arr::get($get,'archive', '') == 'realization' ? '<input type="hidden" name="action" value="realizations">' : '<input type="hidden" name="archive" value="realization"><input type="hidden" name="action" value="realizations">');?>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control" name="realizations_first_date" value="<?=Arr::get($get,'realizations_first_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control"  name="realizations_last_date" value="<?=Arr::get($get,'realizations_last_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<input type="hidden" name="action" value="realizations">
+					<button class="btn btn-success" type="submit">Фильтровать</button>
 				</form>
 				<?
 				if(ceil($realizationsCount/$limit) > 0){
 					$realizationStartPage = (Arr::get($get,'realizationPage', 1) - 2) < 1 ? 1 : (Arr::get($get,'realizationPage', 1) - 2);
 					$realizationPageLimit = (Arr::get($get,'realizationPage', 1) + 3) > ceil($realizationsCount/$limit) ? ceil($realizationsCount/$limit) : (Arr::get($get,'realizationPage', 1) + 3);
 					?>
-				<div class="btn-toolbar pull-left" role="toolbar">
+				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group">
 						<?for ($p=$realizationStartPage;$p<$realizationPageLimit;$p++){?>
 						<a type="button" href="/admin/<?=$getString;?>&realizationPage=<?=$p;?>" class="btn btn-default<?=($p == Arr::get($get,'realizationPage', 1) ? ' active' : '');?>"><?=$p;?></a>
