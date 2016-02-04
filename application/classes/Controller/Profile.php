@@ -29,20 +29,28 @@ class Controller_Profile extends Controller {
 
 	public function action_orders()
 	{
+		/** @var Model_Order $orderModel */
+		$orderModel = Model::factory('Order');
+
+		/** @var Model_Cart $cartModel */
+		$cartModel = Model::factory('Cart');
+
 		if(isset($_POST['newOrder'])){
-			Model::factory('Order')->createOrder($_POST);
+			$orderModel->createOrder();
 			HTTP::redirect('/profile/orders/list');
 		}
-		$ordersList = Model::factory('Order')->getOrdersList($_GET);
-		$template=View::factory("template");
+
+		$ordersList = $orderModel->getOrdersList($_GET);
+		$template = View::factory("template");
 		$profile_menu = View::factory("profile_menu")
 			->set('active', 'orders');
-		$content=View::factory("orders")
+
+		$content = View::factory("orders")
 			->set('profile_menu',$profile_menu)
 			->set('action', $this->request->param('id'))
 			->set('ordersList', $ordersList)
-			->set('customerCartInfo', Model::factory('Cart')->getCartCustomer())
-			->set('cartInfo', Model::factory('Cart')->getCart());
+			->set('customerCartInfo', $cartModel->getCartCustomer())
+			->set('cartInfo', $cartModel->getCart());
 		$template->content=$content;
 		$this->response->body($template);
 	}

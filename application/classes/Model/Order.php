@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * Class Model_Order
+ */
 class Model_Order extends Kohana_Model {
 
 	private  $user_id;
@@ -32,15 +36,26 @@ class Model_Order extends Kohana_Model {
 
 	public function createOrder()
 	{
-		$cartCustomer = Model::factory('Cart')->getCartCustomer();
+		/** @var Model_Cart $cartModel */
+		$cartModel = Model::factory('Cart');
+
+		/** @var Model_Shop $shopModel */
+		$shopModel = Model::factory('Shop');
+
+		$cartCustomer = $cartModel->getCartCustomer();
 		$params = $cartCustomer;
-		if(strlen(preg_replace("/[^0-9]+/i", "", Arr::get($params, 'phone', ''))) == 11) {
+
+		if(strlen(preg_replace("/[^0-9]+/i", "", Arr::get($params, 'phone', ''))) == 10) {
+			$params['phone'] = sprintf('+7%s', $params['phone']);
+
 			$order_id = $this->addNewOrder();
-			$shops = Model::factory('Shop')->getShop();
+			$shops = $shopModel->getShop();
 			$shop_id = $shops[0]['id'];
-			$cartData = Model::factory('Cart')->getCart();
+			$cartData = $cartModel->getCart();
+
 			foreach($cartData as $data){
 				$sql="insert into `orders_goods` (`order_id`, `product_id`, `shop_id`, `price`, `num`) values (:order_id, :product_id, :manager_shop, :price, :num)";
+
 				DB::query(Database::INSERT,$sql)
 					->param(':order_id', $order_id)
 					->param(':manager_shop', $data['shop_id'])
@@ -48,18 +63,23 @@ class Model_Order extends Kohana_Model {
 					->param(':num', $data['num'])
 					->param(':price', $data['price'])
 					->execute();
+
 				$shop_id = $data['shop_id'];
 			}
+
 			$this->setOrderStatus(['order_id' => $order_id, 'status_id' => 3]);
-			$sql="insert into `orders_status_history` (`order_id`, `status_id`, `user_id`, `date`) values (:order_id, 3, :user_id, now())";
+
+			$sql = "insert into `orders_status_history` (`order_id`, `status_id`, `user_id`, `date`) values (:order_id, 3, :user_id, now())";
 			DB::query(Database::INSERT,$sql)
 				->param(':order_id', $order_id)
 				->param(':user_id', $this->user_id)
 				->execute();
+
 			$params['order_id'] = $order_id;
 			$params['shop_id'] = $shop_id;
+
 			$this->setOrderDeliveryInfo($params);
-			Model::factory("Cart")->removeAllCartPositions();
+			$cartModel->removeAllCartPositions();
 			$this->sendSms($params);
 		}
 	}

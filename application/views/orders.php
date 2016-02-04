@@ -49,7 +49,10 @@
 									<div>
 										<div class="col-sm-4 col-xs-4 col-md-4 quest-client-order-form">
 											<label>Телефон <span class="color-red">*</span> :</label>
-											<input class="form-control cart-customer-field" id="shortCustomerPhone" type="text" placeholder="Телефон" value="<?=Arr::get($customerCartInfo, 'phone', '');?>">
+											<div class="input-group">
+												<span class="input-group-addon">+7</span>
+												<input class="form-control cart-customer-field" id="shortCustomerPhone" type="text" placeholder="Телефон" value="<?=Arr::get($customerCartInfo, 'phone', '');?>">
+											</div>
 										</div>
 										<div class=" col-sm-4 col-xs-4 col-md-4 quest-client-order-form">
 											<label>Адрес эл. почты</label>

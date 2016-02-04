@@ -65,7 +65,7 @@ function createOrder(){
 	var checkPhone = $('#customerPhone').val();
 	var replacePhone = checkPhone.replace(/[^\d,]/g, '');
 
-	if(replacePhone.length < 11){
+	if(replacePhone.length != 10){
 		$('#error-message').html('Некорректно указан номер телефона!');
 		$('#errorModal').modal();
 

@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * Class Model_Cart
+ */
 class Model_Cart extends Kohana_Model {
 
 	private  $user_id;
