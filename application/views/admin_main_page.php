@@ -9,7 +9,48 @@
 	</ul>
 	<div class="tab-content">
 		<div class="tab-pane  <?=(Arr::get($get,'action', '') == 'orders' ? 'active' : '');?>" id="orders">
-			<h2 class="sub-header col-sm-12">Список заказов <?=(Arr::get($get,'archive', '') == 'orders' ? '(архив)' : '(за день)');?></h2>
+			<div class="row">
+				<form action="/admin" method="get" class="pull-left col-sm-7 col-xs-7 col-md-7 no-padding">
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control" name="orders_first_date" value="<?=Arr::get($get,'orders_first_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control"  name="orders_last_date" value="<?=Arr::get($get,'orders_last_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<input type="hidden" name="action" value="orders">
+					<button class="btn btn-success" type="submit">Фильтровать</button>
+				</form>
+				<?
+				if(ceil($ordersCount/$limit) > 0){
+					$orderStartPage = (Arr::get($get,'orderPage', 1) - 2) < 1 ? 1 : (Arr::get($get,'orderPage', 1) - 2);
+					$orderPageLimit = (Arr::get($get,'orderPage', 1) + 3) > ceil($ordersCount/$limit) ? ceil($ordersCount/$limit) : (Arr::get($get,'orderPage', 1) + 3);
+					?>
+					<div class="btn-toolbar" role="toolbar">
+						<div class="btn-group">
+							<?for ($p=$orderStartPage;$p<$orderPageLimit;$p++){?>
+								<a type="button" href="/admin/<?=$getString;?>&orderPage=<?=$p;?>" class="btn btn-default<?=($p == Arr::get($get,'orderPage', 1) ? ' active' : '');?>"><?=$p;?></a>
+							<?}?>
+						</div>
+						<?=(ceil($ordersCount/$limit) > 2 && $orderPageLimit != ceil($ordersCount/$limit) ? '<div class="btn-group"><button type="button" class="btn btn-default">...</button></div>' : '');?>
+						<?=(ceil($ordersCount/$limit) > 1 ? '<div class="btn-group"><a type="button" href="/admin/'.(!empty($getString) ? $getString.'&orderPage='.ceil($ordersCount/$limit) : '?orderPage='.ceil($ordersCount/$limit)).'" class="btn btn-default'.(ceil($ordersCount/$limit) == Arr::get($get,'orderPage', 1) ? ' active' : '').'">'.ceil($ordersCount/$limit).'</a></div>' : '');?>
+					</div>
+				<?}?>
+			</div>
+			<h2 class="sub-header col-sm-12">Список заказов</h2>
 			<div class="col-sm-11">
 				<table class="table table-hover table-bordered table-striped realization-list-table">
 					<thead>
@@ -104,7 +145,7 @@
 				</div>
 				<?}?>
 			</div>
-			<h2 class="sub-header col-sm-12">Список реализаций <?//=(Arr::get($get,'archive', '') == 'realization' ? '(архив)' : '(за день)');?></h2>
+			<h2 class="sub-header col-sm-12">Список реализаций</h2>
 			<div class="col-sm-11">
 				<table class="table table-hover table-bordered table-striped realization-list-table">
 					<thead>
@@ -207,7 +248,7 @@
 					</div>
 				<?}?>
 			</div>
-			<h2 class="sub-header col-sm-12">Список поступлений <?=(Arr::get($get,'archive', '') == 'income' ? '(архив)' : '(за день)');?></h2>
+			<h2 class="sub-header col-sm-12">Список поступлений</h2>
 			<div class="col-sm-11">
 				<table class="table table-hover table-bordered table-striped income-list-table">
 					<thead>

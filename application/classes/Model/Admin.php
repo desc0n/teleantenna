@@ -793,7 +793,7 @@ class Model_Admin extends Kohana_Model {
 			order by `id` desc
 			$sqlLimit";
 
-		$res =
+		return
 			DB::query(Database::SELECT,$sql)
 				->parameters([
 					':user_id' => $this->user_id,
@@ -803,8 +803,6 @@ class Model_Admin extends Kohana_Model {
 				->execute()
 				->as_array()
 			;
-
-		return $res;
 	}
 		
 	public function addNewIncome()
@@ -2261,24 +2259,43 @@ class Model_Admin extends Kohana_Model {
 
 	public function getOrdersList($params)
 	{
+		$now = $this->getNow();
+
+		$firstDate = empty(Arr::get($params, 'orders_first_date')) ? $now : $params['orders_first_date'];
+		$lastDate = empty(Arr::get($params, 'orders_last_date')) ? $now : $params['orders_last_date'];
+
 		$limit = $this->getLimit();
-		$sqlDate =  Arr::get($params, 'archive', '') != 'order' ? "and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
-		$sqlCountDate =  Arr::get($params, 'archive', '') != 'order' ? "and `r1`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
+
 		$sqlLimit = Arr::get($params, 'archive', '') != 'order' ? '' : "limit ".((Arr::get($params, 'orderPage', 1) - 1)*$limit).", $limit";
-			$sql = "select `r`.*,
+
+		$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
-			(select count(`r1`.`id`) from `orders` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where 1 $sqlCountDate) as `orders_count`
+			(
+				select count(`r1`.`id`)
+				from `orders` `r1`
+				inner join `documents_status` `rs1`
+				on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+				on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`date` between :firstDate and :lastDate
+			) as `orders_count`
 			from `orders` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
-			where 1
-			$sqlDate
+			where `r`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc
 			$sqlLimit";
-		$res = DB::query(Database::SELECT,$sql)
-			->execute()
-			->as_array();
-		return $res;
+
+		return
+			DB::query(Database::SELECT,$sql)
+				->parameters([
+					':user_id' => $this->user_id,
+					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
+					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+				])
+				->execute()
+				->as_array()
+			;
 	}
 
 	public function createRealizationFromOrder($params)

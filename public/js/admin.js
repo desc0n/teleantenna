@@ -436,6 +436,9 @@ function reloadRealization() {
     document.location = '/admin/realization/?realization=' + $('#realizationId').val();
 }
 
+function checkOrders() {
+
+}
 
 function checkNumSubmit(interface) {
     var rowNum = $('#rowNum').val() * 1;
