@@ -735,17 +735,22 @@ class Controller_Admin extends Controller {
 
 	public function action_order()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
+		/** @var $adminModel Model_Admin */
 		$adminModel = Model::factory('Admin');
 
 		$this->check_role(2);
 		$order_id = Arr::get($_GET, 'order', 0);
+
 		if(isset($_POST['createRealization'])){
 			$realizationId = $adminModel->createRealizationfromOrder($_POST);
 			HTTP::redirect('/admin/realization/?realization='.$realizationId);
 		}
+
+		if(!empty(Arr::get($_POST,'canceledOrder'))){
+			$adminModel->canceledOrder($_POST);
+			HTTP::redirect(sprintf('/admin/order/?order=%s', Arr::get($_GET, 'order')));
+		}
+
 		$template=View::factory("admin_template");
 		$admin_menu=View::factory("admin_menu");
 		$admin_content=View::factory("order");

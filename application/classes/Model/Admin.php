@@ -2709,5 +2709,12 @@ class Model_Admin extends Kohana_Model {
             ->param(':id', Arr::get($params, 'removeuser'))
             ->execute();
     }
+
+	public function canceledOrder($params = [])
+	{
+		DB::query(Database::UPDATE, 'update `orders` set `status_id` = 6 where `id` = :id')
+			->param(':id', Arr::get($params, 'orderId'))
+			->execute();
+	}
 }
 ?>

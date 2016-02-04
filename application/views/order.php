@@ -83,9 +83,15 @@
 				?>
 			</tbody>
 		</table>
-		<form action='/admin/order/?order=<?=$order_id;?>' method='post' class='pull-left'>
+		<?if (Arr::get(Arr::get($orderData, 0, []), 'order_status', 3) != 6) {?>
+		<form method='post' class='pull-left'>
 			<input type='hidden' name="orderId" id='orderId' value='<?=$order_id;?>'>
 			<button class='btn btn-success' name='createRealization' value='<?=$order_id;?>'>Создать реализацию</button>
 		</form>
+		<form method='post' class='col-sm-3 col-xs-3 col-md-3 pull-left'>
+			<input type='hidden' name="orderId" id='orderId' value='<?=$order_id;?>'>
+			<button class='btn btn-danger' name='canceledOrder' value='<?=$order_id;?>'>Отменить реализацию</button>
+		</form>
+		<?}?>
 	</div>
 </div>

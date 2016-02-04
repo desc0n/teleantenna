@@ -138,17 +138,19 @@ class Model_Order extends Kohana_Model {
 
 	public function getOrderDeliveryInfo($params = [])
 	{
-		$res = DB::query(Database::SELECT, "
+		return DB::query(Database::SELECT, "
             select `odi`.*,
             `s`.`name` as `shop_name`
             from `orders_delivery_info` `odi`
             inner join `shopes` `s`
                 on `s`.`id` = `odi`.`shop_id`
             where `odi`.`order_id` = :order_id
+            limit 0,1
         ")
 			->param(':order_id', Arr::get($params, 'order_id', 0))
-			->execute();
-		return count($res) > 0 ? $res[0] : [];
+			->execute()
+			->current()
+		;
 	}
 
 	public function setOrderDeliveryInfo($params = [])
