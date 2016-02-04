@@ -90,7 +90,7 @@
 		</form>
 		<form method='post' class='col-sm-3 col-xs-3 col-md-3 pull-left'>
 			<input type='hidden' name="orderId" id='orderId' value='<?=$order_id;?>'>
-			<button class='btn btn-danger' name='canceledOrder' value='<?=$order_id;?>'>Отменить реализацию</button>
+			<button class='btn btn-danger' name='canceledOrder' value='<?=$order_id;?>'>Отменить заказ</button>
 		</form>
 		<?}?>
 	</div>
