@@ -260,9 +260,30 @@
 					<input type="hidden" name="newwriteoff">
 					<button class="btn btn-danger" type="submit">Новое списание</button>
 				</form>
-				<form action="/admin" method="get" class="pull-left">
-					<?=(Arr::get($get,'archive', '') == 'writeoff' ? '<input type="hidden" name="action" value="writeoffs">' : '<input type="hidden" name="archive" value="writeoff"><input type="hidden" name="action" value="writeoffs">');?>
-					<button class="btn btn-success" type="submit"><?=(Arr::get($get,'archive', '') == 'writeoff' ? 'За день' : 'Архив');?></button>
+				<form action="/admin" method="get" class="pull-left col-sm-7 col-xs-7 col-md-7">
+					<?//=(Arr::get($get,'archive', '') == 'writeoff' ? '<input type="hidden" name="action" value="writeoffs">' : '<input type="hidden" name="archive" value="writeoff"><input type="hidden" name="action" value="writeoffs">');?>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control" name="writeoffs_first_date" value="<?=Arr::get($get,'writeoffs_first_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control"  name="writeoffs_last_date" value="<?=Arr::get($get,'writeoffs_last_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<input type="hidden" name="action" value="writeoffs">
+					<button class="btn btn-success" type="submit">Фильтровать</button>
 				</form>
 				<?
 				if(ceil($writeoffsCount/$limit) > 0){

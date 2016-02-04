@@ -1577,43 +1577,69 @@ class Model_Admin extends Kohana_Model {
 
 	public function getWriteoffsList($params)
 	{
+		$now = $this->getNow();
+
+		$firstDate = empty(Arr::get($params, 'writeoffs_first_date')) ? $now : $params['writeoffs_first_date'];
+		$lastDate = empty(Arr::get($params, 'writeoffs_last_date')) ? $now : $params['writeoffs_last_date'];
+
 		$limit = $this->getLimit();
-		$sqlDate =  Arr::get($params, 'archive', '') != 'writeoff' ? "and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
-		$sqlCountDate =  Arr::get($params, 'archive', '') != 'writeoff' ? "and `r1`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
+
 		$sqlLimit = "limit ".((Arr::get($params, 'writeoffPage', 1) - 1)*$limit).", $limit";
+
 		if(Auth::instance()->logged_in('admin'))
 			$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
 			`u`.`username` as `manager_name`,
-			(select count(`r1`.`id`) from `writeoffs` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where 1 $sqlCountDate) as `writeoffs_count`
+			(
+				select count(`r1`.`id`)
+				from `writeoffs` `r1`
+				inner join `documents_status` `rs1`
+				on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+				on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`date` between :firstDate and :lastDate
+			) as `writeoffs_count`
 			from `writeoffs` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
-			where 1
-			$sqlDate
+			where `r`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc
 			$sqlLimit";
 		else
 			$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
 			`u`.`username` as `manager_name`,
-			(select count(`r1`.`id`) from `writeoffs` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where `r1`.`user_id` = :user_id $sqlCountDate) as `writeoffs_count`
+			(
+				select count(`r1`.`id`)
+				from `writeoffs` `r1`
+				inner join `documents_status` `rs1`
+				on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+				on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`user_id` = :user_id
+				and `r1`.`date` between :firstDate and :lastDate
+			) as `writeoffs_count`
 			from `writeoffs` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
 			where `r`.`user_id` = :user_id
-			$sqlDate
+			and `r1`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc
 			$sqlLimit";
-		$res = DB::query(Database::SELECT,$sql)
-			->param(':user_id', $this->user_id)
-			->execute()
-			->as_array();
-		return $res;
+
+		return DB::query(Database::SELECT,$sql)
+				->parameters([
+					':user_id' => $this->user_id,
+					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
+					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+				])
+				->execute()
+				->as_array()
+				;
 	}
 
 	public function createWriteoffFromRealization($params)
