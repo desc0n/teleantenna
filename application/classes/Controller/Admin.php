@@ -19,9 +19,7 @@ class Controller_Admin extends Controller {
 
 	public function action_index()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
+		/** @var $adminModel Model_Admin */
 		$adminModel = Model::factory('Admin');
 
 		$this->check_role(2);

@@ -2256,7 +2256,6 @@ class Model_Admin extends Kohana_Model {
 		return $res;
 	}
 
-
 	public function getOrdersList($params)
 	{
 		$now = $this->getNow();
@@ -2283,6 +2282,7 @@ class Model_Admin extends Kohana_Model {
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			where `r`.`date` between :firstDate and :lastDate
+			or `r`.`status_id` = 3
 			order by `r`.`date` desc
 			$sqlLimit";
 
@@ -2295,6 +2295,15 @@ class Model_Admin extends Kohana_Model {
 				])
 				->execute()
 				->as_array()
+			;
+	}
+
+	public function checkOrders()
+	{
+		return
+			DB::query(Database::SELECT, 'select `r`.`id` from `orders` `r` where `r`.`status_id` = 3')
+				->execute()
+				->count()
 			;
 	}
 

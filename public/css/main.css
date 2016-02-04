@@ -1419,3 +1419,8 @@ div .navbar-brand span{
 .no-padding {
     padding: 0;
 }
+
+#orderCheck {
+    display: none;
+    color: #a94442;
+}

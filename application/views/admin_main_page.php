@@ -1,7 +1,12 @@
 <h1>Операции с товаром</h1>
 <div class="row admin-main-page">
 	<ul class="nav nav-tabs">
-		<li <?=(Arr::get($get,'action', '') == 'orders' ? 'class="active"' : '');?>><a href="#orders" data-toggle="tab">Заказы</a></li>
+		<li <?=(Arr::get($get,'action', '') == 'orders' ? 'class="active"' : '');?>>
+			<a href="#orders" data-toggle="tab">
+				Заказы
+				<span class="glyphicon glyphicon-asterisk pull-right" id="orderCheck"></span>
+			</a>
+		</li>
 		<li <?=((empty($get['action']) || Arr::get($get,'action', '') == 'realizations') ? 'class="active"' : '');?>><a href="#realizations" data-toggle="tab">Реализация</a></li>
 		<li <?=(Arr::get($get,'action', '') == 'incomes' ? 'class="active"' : '');?>><a href="#incomes" data-toggle="tab">Поступление</a></li>
 		<?/*<li <?=(Arr::get($get,'action', '') == 'returns' ? 'class="active"' : '');?>><a href="#returns" data-toggle="tab">Возврат</a></li>*/?>
@@ -64,9 +69,14 @@
 					<tbody>
 					<?
 					$i = 1;
+
+					$trClasses = [
+						3 => 'info',
+						6 => 'danger'
+					];
 					foreach ($ordersList as $data){
 						?>
-						<tr onclick="document.location='/admin/order/?order=<?=$data['id'];?>';">
+						<tr class="<?=Arr::get($trClasses, $data['status_id']);?>" onclick="document.location='/admin/order/?order=<?=$data['id'];?>';">
 							<td>
 								<div>#<?=$data['id'];?></div>
 								<?=date("d.m.Y H:i", strtotime($data['date']));?>

@@ -437,8 +437,20 @@ function reloadRealization() {
 }
 
 function checkOrders() {
+	$.ajax({type: 'POST', url: '/ajax/check_orders', async: true})
+	.done(function(data) {
+		if (data > 0) {
+			$('#orderCheck').css('display', 'block');
 
+			return true;
+		}
+
+		$('#orderCheck').css('display', 'none');
+	});
 }
+
+checkOrders();
+setInterval('checkOrders()', 30000);
 
 function checkNumSubmit(interface) {
     var rowNum = $('#rowNum').val() * 1;

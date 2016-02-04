@@ -147,4 +147,11 @@ class Controller_Ajax extends Controller {
 		$this->response->body(json_encode(Model::factory("Product")->getProductInfo(Arr::get($_POST, 'id', 0), $managerShop)));
 	}
 
+	public function action_check_orders()
+	{
+		/** @var $adminModel Model_Admin */
+		$adminModel = Model::factory('Admin');
+
+		$this->response->body($adminModel->checkOrders());
+	}
 }
