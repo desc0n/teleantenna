@@ -104,7 +104,7 @@
 				</div>
 				<?}?>
 			</div>
-			<h2 class="sub-header col-sm-12">Список реализаций <?=(Arr::get($get,'archive', '') == 'realization' ? '(архив)' : '(за день)');?></h2>
+			<h2 class="sub-header col-sm-12">Список реализаций <?//=(Arr::get($get,'archive', '') == 'realization' ? '(архив)' : '(за день)');?></h2>
 			<div class="col-sm-11">
 				<table class="table table-hover table-bordered table-striped realization-list-table">
 					<thead>
@@ -166,9 +166,30 @@
 					<input type="hidden" name="newincome">
 					<button class="btn btn-danger" type="submit">Новое поступление</button>
 				</form>
-				<form action="/admin" method="get" class="pull-left">
-					<?=(Arr::get($get,'archive', '') == 'income' ? '<input type="hidden" name="action" value="incomes">' : '<input type="hidden" name="archive" value="income"><input type="hidden" name="action" value="incomes">');?>
-					<button class="btn btn-success" type="submit"><?=(Arr::get($get,'archive', '') == 'income' ? 'За день' : 'Архив');?></button>
+				<form action="/admin" method="get" class="pull-left col-sm-7 col-xs-7 col-md-7">
+					<?//=(Arr::get($get,'archive', '') == 'income' ? '<input type="hidden" name="action" value="incomes">' : '<input type="hidden" name="archive" value="income"><input type="hidden" name="action" value="incomes">');?>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control" name="incomes_first_date" value="<?=Arr::get($get,'incomes_first_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class='col-sm-4 col-xs-4 col-md-4'>
+						<div class="form-group">
+							<div class='input-group date datetimepicker'>
+								<input type='text' class="form-control"  name="incomes_last_date" value="<?=Arr::get($get,'incomes_last_date');?>"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<input type="hidden" name="action" value="incomes">
+					<button class="btn btn-success" type="submit">Фильтровать</button>
 				</form>
 				<?
 				if(ceil($incomesCount/$limit) > 0){

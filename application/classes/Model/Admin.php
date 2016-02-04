@@ -1046,43 +1046,69 @@ class Model_Admin extends Kohana_Model {
 
 	public function getIncomesList($params)
 	{
+		$now = $this->getNow();
+
+		$firstDate = empty(Arr::get($params, 'incomes_first_date')) ? $now : $params['incomes_first_date'];
+		$lastDate = empty(Arr::get($params, 'incomes_last_date')) ? $now : $params['incomes_last_date'];
+
 		$limit = $this->getLimit();
-		$sqlDate =  Arr::get($params, 'archive', '') != 'income' ? "and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
-		$sqlCountDate =  Arr::get($params, 'archive', '') != 'income' ? "and `r1`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')" : '';
+
 		$sqlLimit = "limit ".((Arr::get($params, 'incomePage', 1) - 1)*$limit).", $limit";
+
 		if(Auth::instance()->logged_in('admin'))
 			$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
 			`u`.`username` as `manager_name`,
-			(select count(`r1`.`id`) from `incomes` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where 1 $sqlCountDate) as `incomes_count`
+			(
+				select count(`r1`.`id`)
+				from `incomes` `r1`
+				inner join `documents_status` `rs1`
+					on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+					on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`date` between :firstDate and :lastDate
+			) as `incomes_count`
 			from `incomes` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
-			where 1
-			$sqlDate
+			where `r`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc
 			$sqlLimit";
 		else
 			$sql = "select `r`.*,
 			`rs`.`name` as `status_name`,
 			`u`.`username` as `manager_name`,
-			(select count(`r1`.`id`) from `incomes` `r1` inner join `documents_status` `rs1` on `r1`.`status_id` = `rs1`.`id` inner join `users` `u1` on `r1`.`user_id` = `u1`.`id` where `r1`.`user_id` = :user_id $sqlCountDate) as `incomes_count`
+			(
+				select count(`r1`.`id`)
+				from `incomes` `r1`
+				inner join `documents_status` `rs1`
+				on `r1`.`status_id` = `rs1`.`id`
+				inner join `users` `u1`
+				on `r1`.`user_id` = `u1`.`id`
+				where `r1`.`user_id` = :user_id
+				and `r1`.`date` between :firstDate and :lastDate
+			) as `incomes_count`
 			from `incomes` `r`
 			inner join `documents_status` `rs`
 				on `r`.`status_id` = `rs`.`id`
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
 			where `r`.`user_id` = :user_id
-			$sqlDate
+			and `r`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc
 			$sqlLimit";
-		$res = DB::query(Database::SELECT,$sql)
-			->param(':user_id', $this->user_id)
-			->execute()
-			->as_array();
-		return $res;
+
+		return DB::query(Database::SELECT,$sql)
+				->parameters([
+					':user_id' => $this->user_id,
+					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
+					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+				])
+				->execute()
+				->as_array()
+			;
 	}
 					
 	public function addNewReturn()
