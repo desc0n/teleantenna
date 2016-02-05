@@ -1625,7 +1625,7 @@ class Model_Admin extends Kohana_Model {
 			inner join `users` `u`
 				on `r`.`user_id` = `u`.`id`
 			where `r`.`user_id` = :user_id
-			and `r1`.`date` between :firstDate and :lastDate
+			and `r`.`date` between :firstDate and :lastDate
 			order by `r`.`date` desc
 			$sqlLimit";
 
