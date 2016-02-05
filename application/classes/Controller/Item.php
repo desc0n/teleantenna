@@ -4,13 +4,29 @@ class Controller_Item extends Controller {
 
 	public function action_product()
 	{
+		/** @var Model_Product $productModel */
+		$productModel = Model::factory('Product');
+
 		$product_id = $this->request->param('id');
-		$template=View::factory("template");
-		$content = View::factory("item")
+
+		$product_info = ($product_id != '' ? $productModel->getProductInfo($product_id) : []);
+		$productParams = ($product_id != '' ? $productModel->getProductParams($product_id) : []);
+
+		$templateData['title'] = !empty(Arr::get($product_info, 'name')) ? sprintf('%s. ', Arr::get($product_info, 'name')) : '';
+		$templateData['description'] = !empty(Arr::get($product_info, 'description')) ? sprintf('%s. ', Arr::get($product_info, 'description')) : '';
+
+		$template =
+			View::factory('template')
+				->set('templateData', $templateData)
+		;
+
+		$content = View::factory('item')
 			->set('product_id', $product_id)
-			->set('product_info', ($product_id != '' ? Model::factory('Product')->getProductInfo($product_id) : []))
-			->set('productParams', ($product_id != '' ? Model::factory('Product')->getProductParams($product_id) : []));
-		$root_page="item";
+			->set('product_info', $product_info)
+			->set('productParams', $productParams)
+		;
+
+		$root_page = 'item';
 		$template->root_page=$root_page;
 		$template->content=$content;
 		$this->response->body($template);
