@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ТелеАНТЕННА. <?=Arr::get($templateData, 'title');?></title>
+    <title>ТелеАНТЕННА. <?=(isset($templateData) ? Arr::get($templateData, 'title') : '');?></title>
     <meta name="description" content="
     Продажа спутникового и эфирного оборудования.
     Электроинструменты.
     Услуги установки антенн.
-     <?=Arr::get($templateData, 'description');?>">
+     <?=(isset($templateData) ? Arr::get($templateData, 'description') : '');?>">
     <!-- Bootstrap -->
     <link href="/public/css/bootstrap.css" rel="stylesheet">
     <link href="/public/css/main.css" rel="stylesheet">
