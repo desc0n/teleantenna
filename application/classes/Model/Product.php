@@ -224,7 +224,7 @@ class Model_Product extends Kohana_Model {
 							on `o`.`id` = `og`.`order_id`
 						where `og`.`product_id` = :id
 						and `og`.`shop_id` = `s`.`id`
-						and `o`.`status_id` = 4
+						and `o`.`status_id` in (4,5)
 						limit 0,1
 					), 0)'
 			: ''
