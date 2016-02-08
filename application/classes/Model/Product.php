@@ -6,6 +6,9 @@
 class Model_Product extends Kohana_Model {
 
 	private  $user_id;
+
+	private $devLimit = '';
+
 	public function __construct() {
 		if(Auth::instance()->logged_in()) {
 			$this->user_id = Auth::instance()->get_user()->id;
@@ -13,6 +16,8 @@ class Model_Product extends Kohana_Model {
 		else {
 			$this->user_id = Guestid::factory()->get_id();
 		}
+
+		$this->devLimit = preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? 'limit 0, 10' : '';
         DB::query(Database::UPDATE,"SET time_zone = '+10:00'")->execute();
     }
 	
@@ -20,16 +25,18 @@ class Model_Product extends Kohana_Model {
 	public function getProductGroup($type_id, $parent_id = '', $id = 0)
 	{
 		if($id != 0)
-			$sql = "select * from `products_group_$type_id` where `id` = :id and `status_id` = 1";
+			$sql = "select * from `products_group_$type_id` where `id` = :id and `status_id` = 1 $this->devLimit";
 		else if($parent_id == '')
-			$sql = "select * from `products_group_$type_id` where `status_id` = 1";
+			$sql = "select * from `products_group_$type_id` where `status_id` = 1 $this->devLimit";
 		else
-			$sql = "select * from `products_group_$type_id` where `parent_id` = :parent_id and `status_id` = 1";
-		$query=DB::query(Database::SELECT,$sql);
-		$query->param(':parent_id', $parent_id);
-		$query->param(':id', $id);
-		$product_group=$query->execute()->as_array();
-		return $product_group;
+			$sql = "select * from `products_group_$type_id` where `parent_id` = :parent_id and `status_id` = 1 $this->devLimit";
+
+		return DB::query(Database::SELECT,$sql)
+				->param(':parent_id', $parent_id)
+				->param(':id', $id)
+				->execute()
+				->as_array()
+			;
 	}
 	
 	public function getProduct($type_id = 0, $group_arr = Array(), $id = 0, $group_id = 0)
@@ -59,7 +66,8 @@ class Model_Product extends Kohana_Model {
 				and `group_2` = :group_sql_2
 				and `group_3` = :group_sql_3
 				and `status_id` = 1
-				order by `group_1`, `group_2`, `group_3`, `brand_name`";
+				order by `group_1`, `group_2`, `group_3`, `brand_name`
+				$this->devLimit";
 			else
 				$sql = "select *,
                 REPLACE(REPLACE(`name`, '\"', ''), \"'\", '') as `name`,
@@ -69,7 +77,8 @@ class Model_Product extends Kohana_Model {
 				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`
 				from `products`
 				where `status_id` = 1
-				order by `group_1`, `group_2`, `group_3`, `brand_name`";
+				order by `group_1`, `group_2`, `group_3`, `brand_name`
+				$this->devLimit";
 		$product = DB::query(Database::SELECT,$sql)
 			->param(':id', $id)
 			->param(':group_sql_1', Arr::get($group_arr,1,0))
@@ -102,7 +111,8 @@ class Model_Product extends Kohana_Model {
 			from `products` `p`
 			where `p`.`group_1` = :group_1
 			and  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`";
+			order by `group_2_name`,`brand_name`
+			$this->devLimit";
 		else if(Arr::get($params, 'group_2', 0) != 0)
 			$sql = "select `p`.*,
 			(select `src` from `products_imgs` `pi` where `pi`.`product_id` = `p`.`id` and  `pi`.`status_id` = 1 limit 0,1) as `product_img`,
@@ -123,7 +133,8 @@ class Model_Product extends Kohana_Model {
 			from `products` `p`
 			where `p`.`group_2` = :group_2
 			and  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`";
+			order by `group_2_name`,`brand_name`
+			$this->devLimit";
 		else if(Arr::get($params, 'group_3', 0) != 0)
 			$sql = "select `p`.*,
 			(select `src` from `products_imgs` `pi` where `pi`.`product_id` = `p`.`id` and  `pi`.`status_id` = 1 limit 0,1) as `product_img`,
@@ -144,7 +155,8 @@ class Model_Product extends Kohana_Model {
 			from `products` `p`
 			where `p`.`group_3` = :group_3
 			and  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`";
+			order by `group_2_name`,`brand_name`
+			$this->devLimit";
 		else 
 			$sql = "select `p`.*,
 			(select `src` from `products_imgs` `pi` where `pi`.`product_id` = `p`.`id` and  `pi`.`status_id` = 1 limit 0,1) as `product_img`,
@@ -164,7 +176,8 @@ class Model_Product extends Kohana_Model {
 			) as `check_status`
 			from `products` `p`
 			where  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`";
+			order by `group_2_name`,`brand_name`
+			$this->devLimit";
 		$product_list = DB::query(Database::SELECT,$sql)
 			->param(':group_1', Arr::get($params,'group_1',0))
 			->param(':group_2', Arr::get($params,'group_2',0))

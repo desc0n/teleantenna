@@ -110,4 +110,4 @@
 	</div>
 	<input type='hidden' id='incomeId' value='<?=$income_id;?>'>
 </div>
-<?=(preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? '' : View::factory('search_modal'));?>
+<?=View::factory('search_modal');?>

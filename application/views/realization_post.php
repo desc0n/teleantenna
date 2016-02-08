@@ -154,4 +154,4 @@
 </div>
 <input type='hidden' id='realizationId' value='<?=$realization_id;?>'>
 <input type='hidden' id='rowNum' value='1'>
-<?=(preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? '' : View::factory('search_modal'));?>
+<?=View::factory('search_modal');?>

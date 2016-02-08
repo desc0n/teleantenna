@@ -152,4 +152,4 @@
 	<input type='hidden' id='writeoffId' value='<?=$writeoff_id;?>'>
 	<input type='hidden' id='rowNum' value='1'>
 </div>
-<?=(preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? '' : View::factory('search_modal'));?>
+<?=View::factory('search_modal');?>
