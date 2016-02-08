@@ -2716,5 +2716,22 @@ class Model_Admin extends Kohana_Model {
 			->param(':id', Arr::get($params, 'orderId'))
 			->execute();
 	}
+
+	public function collectedOrder($params = [])
+	{
+		/** @var $orderModel Model_Order */
+		$orderModel = Model::factory('Order');
+
+		DB::query(Database::UPDATE, 'update `orders` set `status_id` = 5 where `id` = :id')
+			->param(':id', Arr::get($params, 'order_id'))
+			->execute();
+
+		$orderDeliveryInfo = $orderModel->getOrderDeliveryInfo($params);
+
+		$orderModel->sendSms([
+			'phone' => Arr::get($orderDeliveryInfo, 'phone'),
+			'text'  => sprintf('Ваш заказ № %d собран. Тел. для справок +79025051272', Arr::get($params, 'order_id')),
+		]);
+	}
 }
 ?>

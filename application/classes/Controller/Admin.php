@@ -738,6 +738,9 @@ class Controller_Admin extends Controller {
 		/** @var $adminModel Model_Admin */
 		$adminModel = Model::factory('Admin');
 
+		/** @var $orderModel Model_Order */
+		$orderModel = Model::factory('Order');
+
 		$this->check_role(2);
 		$order_id = Arr::get($_GET, 'order', 0);
 
@@ -751,16 +754,25 @@ class Controller_Admin extends Controller {
 			HTTP::redirect(sprintf('/admin/order/?order=%s', Arr::get($_GET, 'order')));
 		}
 
-		$template=View::factory("admin_template");
-		$admin_menu=View::factory("admin_menu");
-		$admin_content=View::factory("order");
-		$root_page="order";
-		$admin_menu->root_page=$root_page;
-		$admin_content->order_id=$order_id;
-		$admin_content->orderData=Model::factory('Order')->getOrderData($order_id);
-		$admin_content->orderDeliveryInfo=Model::factory('Order')->getOrderDeliveryInfo(['order_id' => $order_id]);
-		$template->admin_menu=$admin_menu;
-		$template->admin_content=$admin_content;
+		if(!empty(Arr::get($_POST,'collectedOrder'))){
+			$adminModel->collectedOrder($_POST);
+			HTTP::redirect(sprintf('/admin/order/?order=%s', Arr::get($_GET, 'order')));
+		}
+
+		$template = View::factory('admin_template');
+		$admin_menu = View::factory('admin_menu');
+		$admin_content =
+			View::factory("order")
+				->set('order_id', $order_id)
+				->set('orderData', $orderModel->getOrderData($order_id))
+				->set('orderDeliveryInfo', $orderModel->getOrderDeliveryInfo(['order_id'  => $order_id]))
+			;
+
+		$root_page = 'order';
+		$admin_menu->root_page = $root_page;
+
+		$template->admin_menu = $admin_menu;
+		$template->admin_content = $admin_content;
 		$this->response->body($template);
 	}
 

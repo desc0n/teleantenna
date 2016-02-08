@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row document-interface">
 	<h2 class="sub-header col-sm-12">Заказ № <?=$order_id;?></h2>
 	<div class="col-sm-11">
 		<legend><h3 class="col-sm-12">Контактные данные</h3></legend>
@@ -84,14 +84,20 @@
 			</tbody>
 		</table>
 		<?if (Arr::get(Arr::get($orderData, 0, []), 'order_status', 3) != 6) {?>
-		<form method='post' class='pull-left'>
+		<form method='post' class='pull-left form-horizontal'>
 			<input type='hidden' name="orderId" id='orderId' value='<?=$order_id;?>'>
 			<button class='btn btn-success' name='createRealization' value='<?=$order_id;?>'>Создать реализацию</button>
 		</form>
-		<form method='post' class='col-sm-3 col-xs-3 col-md-3 pull-left'>
+		<form method='post' class='pull-left'>
 			<input type='hidden' name="orderId" id='orderId' value='<?=$order_id;?>'>
 			<button class='btn btn-danger' name='canceledOrder' value='<?=$order_id;?>'>Отменить заказ</button>
 		</form>
+		<?if (Arr::get(Arr::get($orderData, 0, []), 'order_status', 3) != 5) {?>
+		<form method='post' class='pull-left'>
+			<input type='hidden' name="order_id" id='order_id' value='<?=$order_id;?>'>
+			<button class='btn btn-warning' name='collectedOrder' value='<?=$order_id;?>'>Оповестить о сборке заказа</button>
+		</form>
+		<?}?>
 		<?}?>
 	</div>
 </div>

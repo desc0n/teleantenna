@@ -1424,3 +1424,7 @@ div .navbar-brand span{
     display: none;
     color: #a94442;
 }
+
+.document-interface form {
+    margin-left: 10px;
+}
