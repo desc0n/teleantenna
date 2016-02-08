@@ -209,13 +209,79 @@ class Model_Product extends Kohana_Model {
 		return $product_imgs;
 	}
 	
-	public function getProductNum($id, $shop_id = 0)
+	public function getProductNum($id, $shop_id = 0, $ordersNum = false)
 	{
 		$product_num = [];
-		if($shop_id != 0)
-			$sql = "select `s`.*, ifnull((select `num` from `products_num` where `product_id` = :id and `shop_id` = `s`.`id` limit 0,1),0) as `num` from `shopes` `s` where `s`.`id` = :shop_id and `s`.`status_id` = 1 limit 0,1";
-		else
-			$sql = "select `s`.*, ifnull((select `num` from `products_num` where `product_id` = :id and `shop_id` = `s`.`id` limit 0,1),0) as `num` from `shopes` `s` where `s`.`status_id` = 1";
+
+		$ordersSql =
+			$ordersNum
+			? '-
+				ifnull(
+					(
+						select `og`.`num`
+						from `orders_goods` `og`
+						inner join `orders` `o`
+							on `o`.`id` = `og`.`order_id`
+						where `og`.`product_id` = :id
+						and `og`.`shop_id` = `s`.`id`
+						and `o`.`status_id` = 4
+						limit 0,1
+					), 0)'
+			: ''
+		;
+
+		if($shop_id != 0) {
+			$sql = "select `s`.*,
+				(
+					ifnull(
+						(
+							select `num`
+							from `products_num`
+							where `product_id` = :id
+							and `shop_id` = `s`.`id`
+							limit 0,1
+						),0)
+					$ordersSql
+				) as `num`
+				from `shopes` `s`
+				where `s`.`id` = :shop_id
+				and `s`.`status_id` = 1
+				limit 0,1";
+		} else {
+			$sql = "select `s`.*,
+				(ifnull(
+					(
+						select `num`
+						from `products_num`
+						where `product_id` = :id
+						and `shop_id` = `s`.`id`
+						limit 0,1
+					),0)
+					$ordersSql
+				) as `num`
+				from `shopes` `s`
+				where `s`.`status_id` = 1";
+		}
+
+		$res = DB::query(Database::SELECT,$sql)
+			->param(':id', $id)
+			->param(':shop_id', $shop_id)
+			->execute()
+			->as_array();
+
+		foreach($res as $row){
+			$product_num[$row['id']] = $row;
+		}
+
+		return $shop_id == 0 ? $product_num : (count($res) === 0 ? [] : $res[0]);
+	}
+
+	public function getOrdersProductNum($id, $shop_id = 0)
+	{
+		$product_num = [];
+
+		$sql = "";
+
 		$res = DB::query(Database::SELECT,$sql)
 			->param(':id', $id)
 			->param(':shop_id', $shop_id)
@@ -226,7 +292,7 @@ class Model_Product extends Kohana_Model {
 		}
 		return $shop_id == 0 ? $product_num : (count($res) === 0 ? [] : $res[0]);
 	}
-	
+
 	public function getBrands($id = '')
 	{
 		if($id == '')

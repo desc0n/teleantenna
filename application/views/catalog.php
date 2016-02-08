@@ -1,5 +1,8 @@
 <?=View::factory('catalog_menu');?>
 <?
+/** @var Model_Product $productModel */
+$productModel = Model::factory('Product');
+
 if(!empty($get)){?>
 <div class="col-sm-9 main-content">
 	<div class="post-nav ">
@@ -16,7 +19,7 @@ if(!empty($get)){?>
 			: '';?>
 	</ol>
 	</div>
-	<?=View::factory('catalog_table')->set('productsArr', Model::factory('Product')->getProductList(Array('group_1' => Arr::get($get,'group_1',0), 'group_2' => Arr::get($get,'group_2',0), 'group_3' => Arr::get($get,'group_3',0))));?>
+	<?=View::factory('catalog_table')->set('productsArr', $productModel->getProductList(['group_1' => Arr::get($get,'group_1',0), 'group_2' => Arr::get($get,'group_2',0), 'group_3' => Arr::get($get,'group_3',0)]));?>
 </div>
 <?} else {?>
 <div class="col-sm-9 shop-content">

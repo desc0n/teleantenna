@@ -1,6 +1,17 @@
-<?$countShop = count(Model::factory('Shop')->getShop());?>
-<?$userProfile = Auth::instance()->logged_in() ? Model::factory('Users')->getUsersProfile(Auth::instance()->get_user()->id) : [];?>
-<?$userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $userProfile[0]['discount'] : 0) : 0;?>
+<?
+/** @var Model_Shop $shopModel */
+$shopModel = Model::factory('Shop');
+
+/** @var Model_Users $userModel */
+$userModel = Model::factory('Users');
+
+/** @var Model_Product $productModel */
+$productModel = Model::factory('Product');
+
+$countShop = count($shopModel->getShop());
+$userProfile = Auth::instance()->logged_in() ? $userModel->getUsersProfile(Auth::instance()->get_user()->id) : [];
+$userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $userProfile[0]['discount'] : 0) : 0;
+?>
 <table class="table table-hover table-bordered table-striped catalog-table">
 	<thead>
 		<tr>
@@ -17,6 +28,7 @@
 	$brand_name = '';
 	$group_1_name = '';
 	$group_2_name = '';
+
 	foreach($productsArr as $product_data){
 		if($product_data['check_status'] == 0){
 	/*if($group_1_name != $product_data['group_1_name']){
@@ -34,7 +46,7 @@
 	<tr>
 		<td class="group-name" colspan="<?=($countShop + 5);?>">
 			<?=$product_data['group_2_name'];?>
-		</tr>
+		</td>
 	</tr>
 		<?
 		$group_2_name = $product_data['group_2_name'];
@@ -44,7 +56,7 @@
 	<tr>
 		<td class="brand-name" colspan="<?=($countShop + 5);?>">
 			<?=$product_data['brand_name'];?>
-		</tr>
+		</td>
 	</tr>
 		<?
 		$brand_name = $product_data['brand_name'];
@@ -72,11 +84,15 @@
 			</div>
 		</td>
 		<td class="t-price"><?=round(($product_data['price'] * (1 - $userDiscount / 100)), 0);?>р.</td>
-		<?if(count($shop_info = Model::factory('Product')->getProductNum($product_data['id']))>0){foreach($shop_info as $shop_data){?>
+		<?
+		if(count($shop_info = $productModel->getProductNum($product_data['id'], 0, true))>0) {
+			foreach($shop_info as $shop_data){
+				$num = Arr::get($shop_data, 'num', 0);
+				?>
 		<td class="t-price t-num">
-			<a class="shop-link" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?=Arr::get($shop_data, 'address', '');?> (<?=Arr::get($shop_data, 'num', '');?> шт.)">
+			<a class="shop-link" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?=Arr::get($shop_data, 'address', '');?> (<?=$num;?> шт.)">
 				<?=Arr::get($shop_data, 'short_name', '');?>
-				<p><?=Arr::get($shop_data, 'num', 0);?></p>
+				<p><?=($num < 0 ? 0 : $num);?></p>
 			</a>
 		</td>
 		<?}}else{?>

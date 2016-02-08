@@ -257,7 +257,7 @@
 									}
 									?>
 								</td>
-								<td class="text-center"><span class="label label-success"><?=$data['status_name'];?><span></td>
+								<td class="text-center"><span class="label <?=($data['status_id'] == 6 ? 'label-danger' : 'label-success');?>"><?=$data['status_name'];?><span></td>
 								<td class="text-center"><b><?=$summ;?> руб.</b></td>
 							</tr>
 							<?}?>

@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * Class Model_Users
+ */
 class Model_Users extends Kohana_Model {
 
 	private  $user_id;

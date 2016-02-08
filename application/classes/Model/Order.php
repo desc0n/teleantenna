@@ -138,7 +138,7 @@ class Model_Order extends Kohana_Model {
 
 	public function getOrderDeliveryInfo($params = [])
 	{
-		return DB::query(Database::SELECT, "
+		$res = DB::query(Database::SELECT, "
             select `odi`.*,
             `s`.`name` as `shop_name`
             from `orders_delivery_info` `odi`
@@ -151,14 +151,17 @@ class Model_Order extends Kohana_Model {
 			->execute()
 			->current()
 		;
+
+		return $res;
 	}
 
 	public function setOrderDeliveryInfo($params = [])
 	{
-		if(count($this->getOrderDeliveryInfo($params)) > 0)
+		if(!empty($this->getOrderDeliveryInfo($params))) {
 			$this->updateOrderDeliveryInfo($params);
-		else
+		} else {
 			$this->insertOrderDeliveryInfo($params);
+		}
 	}
 
 
