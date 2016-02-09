@@ -8,7 +8,14 @@ class Controller_Catalog extends Controller {
 		/** @var Model_Product $productModel */
 		$productModel = Model::factory('Product');
 
-		$template = View::factory("template");
+		$templateData['title'] = 'Каталог.';
+		$templateData['description'] = '';
+
+		$template =
+			View::factory('template')
+				->set('templateData', $templateData)
+		;
+
 		$content = View::factory("catalog");
 		$content->get = $_GET;
 		$group_1 = Arr::get($_GET,'group_1',0);

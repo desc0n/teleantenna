@@ -17,7 +17,15 @@ class Controller_Index extends Controller {
 		}
 		if (!Auth::instance()->logged_in())
 			Guestid::factory()->get_id();
-		$template=View::factory("template");
+
+		$templateData['title'] = 'Главная.';
+		$templateData['description'] = '';
+
+		$template =
+			View::factory('template')
+				->set('templateData', $templateData)
+		;
+
 		$content = View::factory("catalog");
 		$content->get = $_GET;
 		$content->shopArr = Model::factory('Shop')->getShop();
