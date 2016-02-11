@@ -41,7 +41,15 @@ class Controller_Profile extends Controller {
 		}
 
 		$ordersList = $orderModel->getOrdersList($_GET);
-		$template = View::factory("template");
+
+		$templateData['title'] = 'Корзина и заказы.';
+		$templateData['description'] = '';
+
+		$template =
+			View::factory('template')
+				->set('templateData', $templateData)
+		;
+
 		$profile_menu = View::factory("profile_menu")
 			->set('active', 'orders');
 

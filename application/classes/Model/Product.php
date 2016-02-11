@@ -238,7 +238,7 @@ class Model_Product extends Kohana_Model {
 							select `num`
 							from `products_num`
 							where `product_id` = :id
-							and `shop_id` = `s`.`id`
+							and `shop_id` = :shop_id
 							limit 0,1
 						),0)
 					$ordersSql

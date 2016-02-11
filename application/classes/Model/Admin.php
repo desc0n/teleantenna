@@ -2733,5 +2733,29 @@ class Model_Admin extends Kohana_Model {
 			'text'  => sprintf('Ваш заказ № %d собран. Тел. для справок +79025051272', Arr::get($params, 'order_id')),
 		]);
 	}
+
+	public function checkAvailability($params = [])
+	{
+		/** @var Model_Cart $cartModel */
+		$cartModel = Model::factory('Cart');
+
+		/** @var Model_Product $productModel */
+		$productModel = Model::factory('Product');
+
+		$cartInfo = $cartModel->getCart();
+
+		$emptyParts = [];
+
+		foreach($cartInfo as $i => $cartData) {
+			$numData = $productModel->getProductNum($cartData['product_id'], Arr::get($params, 'selectedShop'));
+			if (Arr::get($numData, 'num', 0) == 0) {
+				$emptyParts[] = $cartData['product_name'];
+			}
+		}
+
+		$result = json_encode($emptyParts);
+
+		return $result;
+	}
 }
 ?>

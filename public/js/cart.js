@@ -1,24 +1,24 @@
 function getCart(){
 	if($('.catalog-table').length || $('.item-cart-add').length){
 		$.ajax({type: 'POST', url: '/ajax/get_cart', async: true, data:{}})
-		.done(function(data){
-			var cartData = JSON.parse(data);
-			for(i=0;i<cartData.length;i++){
-				hideCartAddButton(cartData[i]['product_id']);
-				showCartInButton(cartData[i]['product_id']);
-			}
-		});
+				.done(function(data){
+					var cartData = JSON.parse(data);
+					for(i=0;i<cartData.length;i++){
+						hideCartAddButton(cartData[i]['product_id']);
+						showCartInButton(cartData[i]['product_id']);
+					}
+				});
 	}
 }
 function getCartNum(){
 	$.ajax({type: 'POST', url: '/ajax/get_cart_num', async: true, data:{}})
-	.done(function(data){$('.cart-num').html(data);});
+			.done(function(data){$('.cart-num').html(data);});
 }
 getCart();
 getCartNum();
 function setInCart(id){
 	$.ajax({type: 'POST', url: '/ajax/set_in_cart', async: true, data:{product_id: id}})
-	.done(function(data){$('.cart-num').html(data);hideCartAddButton(id);showCartInButton(id);});
+			.done(function(data){$('.cart-num').html(data);hideCartAddButton(id);showCartInButton(id);});
 }
 function setCartPositionNum(action, id){
 	var checkNum = 0;
@@ -28,12 +28,12 @@ function setCartPositionNum(action, id){
 	if(checkNum == 0) {
 		var newNum = action == 'minus' ? (rootNum * 1 - 1) : (rootNum * 1 + 1);
 		$.ajax({type: 'POST', url: '/ajax/set_cart_position_num', async: true, data: {num: newNum, id: id}})
-			.done(function (data) {
-				$('#positionNum_' + id).val(newNum);
-				$('#positionSum_' + id).html(newNum * $('#positionPrice_' + id).val());
-				rewriteAllPrice();
-				getCartNum();
-			});
+				.done(function (data) {
+					$('#positionNum_' + id).val(newNum);
+					$('#positionSum_' + id).html(newNum * $('#positionPrice_' + id).val());
+					rewriteAllPrice();
+					getCartNum();
+				});
 	}
 }
 function rewriteAllPrice(){
@@ -49,11 +49,11 @@ function rewriteAllPrice(){
 }
 function removeCartPosition(id){
 	$.ajax({type: 'POST', url: '/ajax/remove_from_cart', async: true, data:{id: id}})
-		.done(function(data){$('#tableRow_'+id).remove();rewriteAllPrice();getCartNum();});
+			.done(function(data){$('#tableRow_'+id).remove();rewriteAllPrice();getCartNum();});
 }
 function removeAllCartPositions(){
 	$.ajax({type: 'POST', url: '/ajax/remove_all_cart', async: true, data:{}})
-		.done(function(data){$('.cart-table tbody').html('');rewriteAllPrice();getCartNum();});
+			.done(function(data){$('.cart-table tbody').html('');rewriteAllPrice();getCartNum();});
 }
 function hideCartAddButton(id){
 	$('#addCartButton_'+id).css('display', 'none');
@@ -64,29 +64,64 @@ function showCartInButton(id){
 function createOrder(){
 	var checkPhone = $('#customerPhone').val();
 	var replacePhone = checkPhone.replace(/[^\d,]/g, '');
+	var $selectedShop = $('.cart-shop:checked');
 
 	if(replacePhone.length != 10){
 		$('#error-message').html('Некорректно указан номер телефона!');
 		$('#errorModal').modal();
 
-        return false;
+		return false;
 	}
 
-    if ($('#allPrice').text() == 0) {
-        $('#error-message').html('В корзине отсутствуют товары!');
-        $('#errorModal').modal();
+	if ($('#allPrice').text() == 0) {
+		$('#error-message').html('В корзине отсутствуют товары!');
+		$('#errorModal').modal();
 
-        return false;
-    }
+		return false;
+	}
 
-    if (!$('.cart-shop:checked').length) {
-        $('#error-message').html('Не выбран магазин!');
-        $('#errorModal').modal();
+	if (!$selectedShop.length) {
+		$('#error-message').html('Не выбран магазин!');
+		$('#errorModal').modal();
 
-        return false;
-    }
+		return false;
+	}
 
-    newOrderForm.submit();
+	$.ajax({
+		type: 'POST',
+		url: '/ajax/check_availability',
+		async: true,
+		data:{
+			selectedShop: $selectedShop.val()
+		}
+	})
+		.done(function(data){
+			var result = JSON.parse(data);
+
+			if (result.length > 0) {
+				var text = '<strong>В выбранном магазине отсутствует товар</strong><br /><br />';
+
+				i = 1;
+
+				for (var key in result) {
+					text += '<div>' + i + '. ' + result[key] + '</div>';
+
+					i++;
+				}
+
+				text += '<br /><div><strong>Время сборки заказа увеличится. </strong></div><br />'
+				text += '<div><button class="btn btn-success" onclick=newOrderForm.submit();"">Продолжить?</button></div>'
+
+				$('#error-message').html(text);
+				$('#errorModal').modal();
+
+				return false;
+			}
+
+			newOrderForm.submit();
+		})
+	;
+
 }
 function getCustomerCartPost(){
 	var postData = {
@@ -103,15 +138,15 @@ function getCustomerCartPost(){
 }
 function setInCartCustomer(){
 	$.ajax({type: 'POST', url: '/ajax/set_cart_customer', async: true, data:{postData: getCustomerCartPost()}})
-		.done(function(data){});
+			.done(function(data){});
 }
 function setCartShop(id){
 	$.ajax({type: 'POST', url: '/ajax/set_cart_shop', async: true, data:{shop_id: id}})
-		.done(function(data){});
+			.done(function(data){});
 }
 function setDeliveryType(id){
 	$.ajax({type: 'POST', url: '/ajax/set_delivery_type', async: true, data:{type_id: id}})
-		.done(function(data){});
+			.done(function(data){});
 }
 $(document).ready(function() {
 	$('.cart-add').click(function(){
@@ -134,10 +169,13 @@ $(document).ready(function() {
 			$('#deliveryTypeForm1').show();
 			$('#deliveryTypeForm2').hide();
 		}
+
 		if($(this).val() == 1) {
 			$('#deliveryTypeForm1').hide();
 			$('#deliveryTypeForm2').show();
 		}
+
+		setInCartCustomer();
 	});
 	$('#shortCustomerPhone').keyup(function(){
 		$('#customerPhone').val($(this).val());
@@ -156,8 +194,5 @@ $(document).ready(function() {
 	});
 	$('.cart-shop').click(function(){
 		setCartShop($(this).val());
-	});
-	$('.delivery-type').click(function(){
-		setInCartCustomer();
 	});
 });

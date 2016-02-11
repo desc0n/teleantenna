@@ -4,15 +4,24 @@ class Controller_Orders extends Controller {
 
 	public function action_index()
 	{
-		$template=View::factory("template");
+		/** @var Model_Cart $cartModel */
+		$cartModel = Model::factory('Cart');
 
-		$content=View::factory("orders")
+		$templateData['title'] = 'Заказы.';
+		$templateData['description'] = '';
+
+		$template =
+			View::factory('template')
+				->set('templateData', $templateData)
+		;
+
+		$content = View::factory("orders")
 			->set('profile_menu', View::factory("profile_menu"))
-			->set('customerCartInfo', Model::factory('Cart')->getCartCustomer());
+			->set('customerCartInfo', $cartModel->getCartCustomer());
 
-		$root_page="orders";
-		$template->root_page=$root_page;
-		$template->content=$content;
+		$root_page = 'orders';
+		$template->root_page = $root_page;
+		$template->content = $content;
 		$this->response->body($template);
 	}
 }
