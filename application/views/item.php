@@ -93,7 +93,7 @@
                 <?=Arr::get($product_info,'price',0);?> руб.
               </div>
                 <button type="button" id="addCartButton_<?=Arr::get($product_info,'id',0);?>" class="btn btn-default btn-block cart-add" value="<?=Arr::get($product_info,'id',0);?>">Купить <span class="glyphicon glyphicon-shopping-cart"></span></button>
-                <a href="/profile/cart" target="_self" id="addInCartButton_<?=Arr::get($product_info,'id',0);?>" class="btn btn-success btn-block cart-in" value="<?=Arr::get($product_info,'id',0);?>">В корзину <span class="glyphicon glyphicon-log-out"></span></a>
+                <a href="/profile/orders/cart" target="_self" id="addInCartButton_<?=Arr::get($product_info,'id',0);?>" class="btn btn-success btn-block cart-in" value="<?=Arr::get($product_info,'id',0);?>">В корзину <span class="glyphicon glyphicon-log-out"></span></a>
             </div>
           </div>
           <div class="col-lg-8">
@@ -101,10 +101,11 @@
                 <b>Наличие:
                     <?if(count($shop_info = Model::factory('Product')->getProductNum($product_info['id']))>0){
                         foreach($shop_info as $shop_data){
+                            $num = Arr::get($shop_data, 'num', 0);
                             ?>
                             <a class="shop-link" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?=Arr::get($shop_data, 'address', '');?> (<?=Arr::get($shop_data, 'num', '');?> шт.)">
                                 <?=Arr::get($shop_data, 'short_name', '');?>
-                                (<?=Arr::get($shop_data, 'num', 0);?>)
+                                (<?=($num < 0 ? 0 : $num);?>)
                             </a>
                         <?
                         }
