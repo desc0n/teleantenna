@@ -117,6 +117,10 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 		}
 	}
 
+	$brand_name = '';
+	$group_1_name = '';
+	$group_2_name = '';
+
 	foreach($emptyNumProducts as $product_data){
 		if($product_data['check_status'] == 0){
 			if($group_2_name != $product_data['group_2_name']){
