@@ -117,6 +117,16 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 		}
 	}
 
+	if (0 !== count($emptyNumProducts)) {
+		?>
+	<tr>
+		<td class="empty-num-title" colspan="<?=($countShop + 5);?>">
+			Товары под заказ
+		</td>
+	</tr>
+		<?
+	}
+
 	$brand_name = '';
 	$group_1_name = '';
 	$group_2_name = '';
@@ -126,7 +136,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 			if($group_2_name != $product_data['group_2_name']){
 				?>
 				<tr>
-					<td class="group-name" colspan="<?=($countShop + 5);?>">
+					<td class="empty-group-name" colspan="<?=($countShop + 5);?>">
 						<?=$product_data['group_2_name'];?>
 					</td>
 				</tr>

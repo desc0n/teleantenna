@@ -1136,6 +1136,15 @@ div .navbar-brand span{
   cursor: default !important;
   padding: 2px 8px !important;
 }
+.empty-group-name{
+    background-color: #ffd08c;
+    height: 20px;
+    font-size: 11px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: default !important;
+    padding: 2px 8px !important;
+}
 .item-content{
   font-size: 14px;
 }
@@ -1431,4 +1440,11 @@ div .navbar-brand span{
 
 .document-interface form {
     margin-left: 10px;
+}
+
+.empty-num-title {
+    background-color: #428bca;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
 }
