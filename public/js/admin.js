@@ -21,7 +21,7 @@ function getTypeaheadName(row, arr){
 function getTypeaheadCode(row, arr){
 	var viewType = $('#incomeId').length || $('#writeoffId').length ? 'post' : null;
 	$.ajax({type: 'POST', url: '/ajax/get_admin_typeahead', async: true, data:{arr: arr, row: row, type: 'code', viewType: viewType},
-		success: function(data){
+		success: function(data){console.log(data);
 			$('#typeaheadCode'+row).html(data);
 		}
 	});
@@ -210,42 +210,44 @@ function openSearchModal(row){
 	$('#searchModal').modal();
 }
 function setSearchModalItem(id){
-	//if($('#incomeId').length || $('#writeoffId').length){
-		var row = $('#searchModalRow').val();
-		$.ajax({type: 'POST', url: '/ajax/get_product', async: true, data:{id:id, type: 'manager'}})
-			.done(function(data){
-				var productData = JSON.parse(data);
-                if ($('#goodsId_' + row).length)
-                    $('#goodsId_' + row).val(productData.id);
-                if ($('#goodsCode_' + row).length)
-				    $('#goodsCode_' + row).val(productData.code);
-                if ($('#goodsName_' + row).length)
-				    $('#goodsName_' + row).val(productData.name);
-                if ($('#goodsPrice_' + row).length) {
-                    var discount = $('#discount').val();
-                    var rootPrice = productData.price * 1;
-                    var newPrice = Math.ceil(((100 - discount) / 100) * rootPrice);
-                    $('#goodsPrice_' + row).val(newPrice);
-                }
-                if ($('#goodsRootNum_' + row).length)
-				    $('#goodsRootNum_' + row).val(productData.num.num);
-                if($('#rootNum_' + row).length)
-				    $('#rootNum_' + row).html(productData.num.num);
-				if ($('#searchModal').css('display') == 'block')
-					$('#searchModal').modal('toggle');
-			});
-	//} else {
-		//$('#goodsId_'+$('#searchModalRow').val()).val(id);
-		/*if($('#realizationId').length)
-			addRealisationPosition($('#searchModalRow').val())
-		else if($('#incomeId').length)
-			addIncomePosition($('#searchModalRow').val());
-		else if($('#returnId').length)
-			addReturnPosition($('#searchModalRow').val());
-		else if($('#writeoffId').length)
-		 addWriteoffPosition($('#searchModalRow').val());*/
-	//}
+	var row = $('#searchModalRow').val();
+
+	$.ajax({type: 'POST', url: '/ajax/get_product', async: true, data:{id:id, type: 'manager'}})
+		.done(function(data){
+			var productData = JSON.parse(data);
+			if ($('#goodsId_' + row).length) {
+				$('#goodsId_' + row).val(productData.id);
+			}
+
+			if ($('#goodsCode_' + row).length) {
+				$('#goodsCode_' + row).val(productData.code);
+			}
+
+			if ($('#goodsName_' + row).length) {
+				$('#goodsName_' + row).val(productData.name);
+			}
+
+			if ($('#goodsPrice_' + row).length) {
+				var discount = $('#discount').val();
+				var rootPrice = productData.price * 1;
+				var newPrice = Math.ceil(((100 - discount) / 100) * rootPrice);
+				$('#goodsPrice_' + row).val(newPrice);
+			}
+
+			if ($('#goodsRootNum_' + row).length) {
+				$('#goodsRootNum_' + row).val(productData.num.num);
+			}
+
+			if($('#rootNum_' + row).length) {
+				$('#rootNum_' + row).html(productData.num.num);
+			}
+
+			if ($('#searchModal').css('display') == 'block') {
+				$('#searchModal').modal('toggle');
+			}
+		});
 }
+
 function writeGroupProduct(id, groupId1, groupId2, groupId3){
 	var fieldId = id == 1 ? groupId1 : (id == 2 ? groupId2 : groupId3);
 	$('.groupProducts').html('');
@@ -457,7 +459,7 @@ function checkNumSubmit(interface) {
     var checkZero = 0;
     var checkRoot = 0;
 
-    for (i=1;i<=rowNum;i++) {
+    for (i=1; i <= rowNum; i++) {
         if ($('#goodsNum_' + i).length) {
             if ($('#goodsNum_' + i).val() == 0) {
                 checkZero++;
@@ -466,21 +468,29 @@ function checkNumSubmit(interface) {
             if ($('#goodsNum_' + i).val() * 1 > $('#goodsRootNum_' + i).val() * 1) {
                 checkRoot++;
             }
-        }
+        } else {
+			checkZero++;
+		}
     }
 
-    if (checkZero == 0 && checkRoot == 0) {
-        if (interface == 'realization') {
-            $('#carryOutRealizationForm').submit();
-            setTimeout("reloadRealization()", 100);
-        } else if (interface == 'writeoff') {
-            $('#carryOutWriteoffForm').submit();
-        }
-    } else if (checkZero != 0) {
-        alert('Не указано количество!');
-    } else if (checkRoot != 0) {
-        alert('Указанное количество больше наличия!');
-    }
+	if (checkZero != 0) {
+		alert('Не указано количество!');
+
+		return false
+	}
+
+	if (checkRoot != 0) {
+		alert('Указанное количество больше наличия!');
+
+		return false;
+	}
+
+	if (interface == 'realization') {
+		$('#carryOutRealizationForm').submit();
+		setTimeout("reloadRealization()", 1000);
+	} else if (interface == 'writeoff') {
+		$('#carryOutWriteoffForm').submit();
+	}
 }
 
 $(document).ready(function() {
@@ -578,6 +588,7 @@ $(document).ready(function() {
 	});
 
 	$('#carryOutRealizationPost').click(function(){
+		$(this).attr('disabled', 'disabled');
         checkNumSubmit('realization');
 	});
 

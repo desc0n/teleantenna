@@ -1,10 +1,13 @@
 <?
 /** @var Model_Shop $shopModel */
 $shopModel = Model::factory('Shop');
+
 /** @var Model_Users $userModel */
 $userModel = Model::factory('Users');
+
 /** @var Model_Product $productModel */
 $productModel = Model::factory('Product');
+
 $countShop = count($shopModel->getShop());
 $userProfile = Auth::instance()->logged_in() ? $userModel->getUsersProfile(Auth::instance()->get_user()->id) : [];
 $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $userProfile[0]['discount'] : 0) : 0;
@@ -26,20 +29,25 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 	$brand_name = '';
 	$group_1_name = '';
 	$group_2_name = '';
+
 	foreach($productsArr as $product_data){
 		if($product_data['check_status'] == 0){
 			$shop_info = $productModel->getProductNum($product_data['id'], 0, true);
 			$checkNum = false;
+
 			foreach($shop_info as $shop_data) {
 				$num = Arr::get($shop_data, 'num', 0);
+
 				if ($num > 0) {
 					$checkNum = true;
 				}
 			}
+
 			if (!$checkNum) {
 				$emptyNumProducts[] = $product_data;
 				continue;
 			}
+
 			if($group_2_name != $product_data['group_2_name']){
 				?>
 				<tr>
@@ -50,6 +58,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 				<?
 				$group_2_name = $product_data['group_2_name'];
 			}
+
 			if($brand_name != $product_data['brand_name'] && !empty($product_data['brand_name'])){
 				?>
 				<tr>
@@ -105,6 +114,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 			<?
 		}
 	}
+
 	if (0 !== count($emptyNumProducts)) {
 		?>
 		<tr>
@@ -114,9 +124,11 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 		</tr>
 		<?
 	}
+
 	$brand_name = '';
 	$group_1_name = '';
 	$group_2_name = '';
+
 	foreach($emptyNumProducts as $product_data){
 		if($product_data['check_status'] == 0){
 			if($group_2_name != $product_data['group_2_name']){
@@ -129,6 +141,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 				<?
 				$group_2_name = $product_data['group_2_name'];
 			}
+
 			if($brand_name != $product_data['brand_name'] && !empty($product_data['brand_name'])){
 				?>
 				<tr>
