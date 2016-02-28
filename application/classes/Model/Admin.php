@@ -2757,5 +2757,61 @@ class Model_Admin extends Kohana_Model {
 
 		return $result;
 	}
+
+	public function generatePrice($type)
+	{
+		if ($type == 'farpost') {
+			$file = 'public/prices/farpost/farpost.csv';
+
+			$tmp_file = fopen($file, 'w');
+			fwrite($tmp_file, '');
+			fclose($tmp_file);
+
+			$objPHPExcel = Model::factory('Excel_PHPExcel_IOFactory')->load($file);
+
+			$i = 1;
+			$objPHPExcel
+				->getActiveSheet()
+				->setCellValue('A'.$i, 'Наименование')
+				->setCellValue('B'.$i, 'Описание')
+				->setCellValue('C'.$i, 'Цена')
+				->setCellValue('D'.$i, 'Фото')
+			;
+
+			$sql = "select `p`.*,
+			(select `src` from `products_imgs` `pi` where `pi`.`product_id` = `p`.`id` and  `pi`.`status_id` = 1 limit 0,1) as `product_img`,
+			(select sum(`num`) from `products_num` where `product_id` = `p`.`id`) as `num`
+			from `products` `p`
+			where  `p`.`status_id` = 1";
+
+			$res = DB::query(Database::SELECT,$sql)
+				->execute()
+				->as_array()
+			;
+
+			foreach ($res as $row) {
+				$row['name'] = preg_replace("/[\t\n\r\f\v]+/i", '', $row['name']);
+				$row['description'] = preg_replace("/[\t\n\r\f\v]+/i", '', $row['description']);
+
+				if (!empty($row['num']) && !empty($row['price'])) {
+					$i++;
+
+					$objPHPExcel->getActiveSheet()
+							->setCellValue('A'.$i, $row['name'])
+							->setCellValue('B'.$i, $row['description'])
+							->setCellValue('C'.$i, $row['price'])
+							->setCellValue('D'.$i, $row['product_img'])
+					;
+				}
+			}
+
+			Model::factory('Excel_PHPExcel_IOFactory')->createWriter($objPHPExcel, 'CSV')
+					->setDelimiter(';')
+					->setEnclosure('')
+					->setSheetIndex(0)
+					->save($file)
+			;
+		}
+	}
 }
 ?>

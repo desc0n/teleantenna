@@ -1,5 +1,6 @@
 application/config/*
 public/i/*
+public/prices/farpost/*
 public/img
 vendor/*
 application/logs/*

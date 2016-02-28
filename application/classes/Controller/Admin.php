@@ -6,12 +6,15 @@ class Controller_Admin extends Controller {
 	private function check_role($role_type = 1)
 	{
 		if (Auth::instance()->logged_in('admin') || Auth::instance()->logged_in('manager')) {
-			if ($role_type == 1)
-				if (!Auth::instance()->logged_in('admin'))
+			if ($role_type == 1) {
+				if (!Auth::instance()->logged_in('admin')) {
 					HTTP::redirect('/admin');
-				else if ($role_type == 2)
-					if (!Auth::instance()->logged_in('manager'))
-						HTTP::redirect('/admin');
+				}
+			} elseif ($role_type == 2) {
+				if (!Auth::instance()->logged_in('manager')) {
+					HTTP::redirect('/admin');
+				}
+			}
 		} else {
 			HTTP::redirect('/');
 		}
@@ -1044,6 +1047,35 @@ class Controller_Admin extends Controller {
 		$admin_menu->root_page=$root_page;
 		$template->admin_menu=$admin_menu;
 		$template->admin_content=$admin_content;
+		$this->response->body($template);
+	}
+
+	public function action_farpost()
+	{
+		/**@var $adminModel Model_Admin */
+		$adminModel = Model::factory('Admin');
+
+		if (isset($_POST['generatePrice'])) {
+			$adminModel->generatePrice('farpost');
+
+			HTTP::redirect('admin/farpost');
+		}
+
+		$this->check_role(2);
+
+		$root_page="farpost";
+
+		$template = View::factory('admin_template');
+		$admin_content = View::factory('admin_farpost');
+		$admin_menu = View::factory('admin_menu')
+				->set('root_page', $root_page)
+		;
+
+		$template
+			->set('admin_menu', $admin_menu)
+			->set('admin_content', $admin_content)
+		;
+
 		$this->response->body($template);
 	}
 }
