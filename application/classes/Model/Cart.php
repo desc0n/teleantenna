@@ -6,7 +6,10 @@
 class Model_Cart extends Kohana_Model {
 
 	private  $user_id;
+
 	private  $cart_table;
+
+	private $devLimit = '';
 
 	public function __construct() {
 		if(Auth::instance()->logged_in()) {
@@ -17,6 +20,8 @@ class Model_Cart extends Kohana_Model {
 			$this->user_id = Guestid::factory()->get_id();
 			$this->cart_table = 'guest_cart';
 		}
+
+		$this->devLimit = preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? 'limit 0, 10' : '';
 		DB::query(Database::UPDATE,"SET time_zone = '+10:00'")->execute();
 	}
 
@@ -222,30 +227,35 @@ class Model_Cart extends Kohana_Model {
 			$product['name'] = str_replace(')', '', $product['name']);
 			$product['code'] = str_replace('(', '', $product['code']);
 			$product['code'] = str_replace(')', '', $product['code']);
-			if (preg_match("/" .mb_strtolower(($searchText)). "/i", mb_strtolower(($product['group_1_name']))) && !in_array($product['group_1_name'], $checkArr)) {
+
+			if (preg_match("/" . mb_strtolower(($searchText)) . "/i", mb_strtolower(($product['group_1_name']))) && !in_array($product['group_1_name'], $checkArr)) {
 				$checkArr[] = $product['group_1_name'];
 				$product['group_1_name'] = str_replace('', ')', $product['group_1_name']);
 				$assort[$i]['group_1_name'] = ($product['group_1_name']);
 				$assort[$i]['group_1'] = $product['group_1'];
 			}
-			if (preg_match("/" .mb_strtolower(($searchText)). "/i", mb_strtolower(($product['group_2_name']))) && !in_array($product['group_2_name'], $checkArr)) {
+
+			if (preg_match("/" . mb_strtolower(($searchText)) . "/i", mb_strtolower(($product['group_2_name']))) && !in_array($product['group_2_name'], $checkArr)) {
 				$checkArr[] = $product['group_2_name'];
 				$product['group_2_name'] = str_replace('', ')', $product['group_2_name']);
 				$assort[$i]['group_2_name'] = ($product['group_2_name']);
 				$assort[$i]['group_2'] = $product['group_2'];
 			}
-			if (preg_match("/" .mb_strtolower(($searchText)). "/i", mb_strtolower(($product['group_3_name']))) && !in_array($product['group_3_name'], $checkArr)) {
+
+			if (preg_match("/" . mb_strtolower(($searchText)) . "/i", mb_strtolower(($product['group_3_name']))) && !in_array($product['group_3_name'], $checkArr)) {
 				$checkArr[] = $product['group_3_name'];
 				$product['group_3_name'] = str_replace('', ')', $product['group_3_name']);
 				$assort[$i]['group_3_name'] = ($product['group_3_name']);
 				$assort[$i]['group_3'] = $product['group_3'];
 			}
-			if (preg_match("/" .mb_strtolower(($searchText)). "/i", mb_strtolower(($product['name']))) && !in_array(($product['name']), $checkArr)) {
+
+			if (preg_match("/" . mb_strtolower(($searchText)) . "/i", mb_strtolower(($product['name']))) && !in_array(($product['name']), $checkArr)) {
 				$product['name'] = str_replace('', ')', $product['name']);
 				$assort[$i]['product_name'] = ($product['name']);
 				$assort[$i]['id'] = $product['id'];
 				$checkArr[] = ($product['name']);
 			}
+
 			if (preg_match("/" .mb_strtolower(($searchText)). "/i", mb_strtolower(($product['code']))) && !in_array(($product['code']), $checkArr)) {
 				$product['name'] = str_replace('', ')', $product['name']);
 				$product['code'] = str_replace('', ')', $product['code']);
@@ -258,6 +268,30 @@ class Model_Cart extends Kohana_Model {
 		}
 		return json_encode($assort);
 	}
+
+	public function findMainAssortByCode($params = [])
+	{
+		$sql = sprintf("select *,
+			REPLACE(REPLACE(`name`, '\"', ''), \"'\", '') as `name`,
+			(select REPLACE(REPLACE(`b`.`name`, '\"', ''), \"'\", '') from `brands` `b` where `b`.`id` = `brand_id` and `b`.`status_id` = 1 limit 0,1) as `brand_name`,
+			(select REPLACE(REPLACE(`g1`.`name`, '\"', ''), \"'\", '') from `products_group_1` `g1` where `g1`.`id` = `group_1` limit 0,1) as `group_1_name`,
+			(select REPLACE(REPLACE(`g2`.`name`, '\"', ''), \"'\", '') from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_name`,
+			(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`
+			from `products`
+			where `status_id` = 1
+			and `code` like '%%%s%%'
+			order by `group_1`, `group_2`, `group_3`, `brand_name`
+			%s
+		", Arr::get($params, 'searchText', 'nocode'), $this->devLimit);
+
+		$assort = DB::query(Database::SELECT,$sql)
+			->execute()
+			->as_array()
+		;
+
+		return json_encode($assort);
+	}
+
 	public function getUniqueAssocArr($arr)
 	{
 		$checkArr = [];

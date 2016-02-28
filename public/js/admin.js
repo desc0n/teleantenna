@@ -1,6 +1,6 @@
 var mainAssort = [];
 function setMainAssort(row, searchText, type) {
-	$.ajax({type: 'POST', url: '/ajax/get_main_assort', async: true, data:{searchText: searchText},
+	$.ajax({type: 'POST', url: '/ajax/get_main_assort', async: true, data:{searchText: searchText, type:type},
 		success: function(data){
 			setVariables(data);
 			if (type == 'name')
@@ -458,6 +458,8 @@ function checkNumSubmit(interface) {
     var rowNum = $('#rowNum').val() * 1;
     var checkZero = 0;
     var checkRoot = 0;
+    var checkId = false;
+	var ids = $('.ids');
 
     for (i=1; i <= rowNum; i++) {
         if ($('#goodsNum_' + i).length) {
@@ -473,14 +475,38 @@ function checkNumSubmit(interface) {
 		}
     }
 
+	for (i = 0; i < ids.length; i++) {
+		if (ids[i].value != '') {
+			checkId = true;
+		}
+	}
+
 	if (checkZero != 0) {
 		alert('Не указано количество!');
+
+		if (interface == 'realization') {
+			$('#carryOutRealizationPost').removeAttr('disabled');
+		}
 
 		return false
 	}
 
 	if (checkRoot != 0) {
 		alert('Указанное количество больше наличия!');
+
+		if (interface == 'realization') {
+			$('#carryOutRealizationPost').removeAttr('disabled');
+		}
+
+		return false;
+	}
+
+	if (!checkId) {
+		alert('Не обнаружен код товара! Переподберите товар заново.');
+
+		if (interface == 'realization') {
+			$('#carryOutRealizationPost').removeAttr('disabled');
+		}
 
 		return false;
 	}

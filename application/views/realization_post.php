@@ -56,7 +56,7 @@
                     <tr>
                         <td>
                             <?=$data['product_code'];?>
-                            <input type='hidden' id='goodsId_<?=$i;?>' row='<?=$i;?>' name='id[]' value='<?=$data['product_id'];?>'>
+                            <input type='hidden' id='goodsId_<?=$i;?>' row='<?=$i;?>' name='id[]' class='ids' value='<?=$data['product_id'];?>'>
                         </td>
                         <td class='text-left'>
                             <?=$data['product_name'];?>
@@ -82,7 +82,7 @@
                     <tr id="row<?=$i;?>">
                         <td>
                             <input type=text class='form-control' id='goodsCode_<?=$i;?>' row='<?=$i;?>' value='' autocomplete="OFF" data-items="7"  onkeyup="javascript: initTypeahead($(this).attr('row'), $(this).val(), 'code');">
-                            <input type='hidden' id='goodsId_<?=$i;?>' row='<?=$i;?>' name='id[]' value=''>
+                            <input type='hidden' id='goodsId_<?=$i;?>' row='<?=$i;?>' name='id[]' class='ids' value=''>
                             <div class="col-xs-12 admin-typeahead" id="typeaheadCode<?=$i;?>"></div>
                         </td>
                         <td>

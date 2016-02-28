@@ -116,8 +116,16 @@ class Controller_Ajax extends Controller {
 
 	public function action_get_main_assort()
 	{
+		/** @var Model_Cart $cartModel */
+		$cartModel = Model::factory('Cart');
+
 		$params = !empty(Arr::get($_GET, 'searchText', null)) ? $_GET : $_POST;
-		$this->response->body(Model::factory("Cart")->getMainAssort($params));
+
+		$data = Arr::get($params, 'type') == 'code'
+				? $cartModel->findMainAssortByCode($params)
+				: $cartModel->getMainAssort($params);
+
+		$this->response->body($data);
 	}
 
 	public function action_get_group_products()
