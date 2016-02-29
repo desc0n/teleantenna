@@ -501,12 +501,10 @@ function checkNumSubmit(interface) {
 		return false;
 	}
 
-	if (!checkId) {
+	if (!checkId && interface == 'realization') {
 		alert('Не обнаружен код товара! Переподберите товар заново.');
 
-		if (interface == 'realization') {
-			$('#carryOutRealizationPost').removeAttr('disabled');
-		}
+		$('#carryOutRealizationPost').removeAttr('disabled');
 
 		return false;
 	}
