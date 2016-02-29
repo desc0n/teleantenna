@@ -216,19 +216,20 @@
 <script src="/public/js/main.js"></script>
 
 <script>
+    if ($(window).width() <= 800) {
+        $('.img-link').tooltip({
+            placement:'right'
+        });
+    } else {
+        $('.img-link').tooltip();
+    }
 
     if ($(window).width() <= 800) {
-
-        $('.img-link').tooltip({
-
+        $('.img-link-item').tooltip({
             placement:'right'
-
         });
-
     } else {
-
-        $('.img-link').tooltip();
-
+        $('.img-link-item').tooltip();
     }
 
     $('.shop-link').tooltip();
