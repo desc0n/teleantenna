@@ -745,6 +745,10 @@ body {
 
 }
 
+.img-link {
+    max-width: 71px;
+    margin: auto;
+}
 @media (max-width: 768px) {
 
     .table{
