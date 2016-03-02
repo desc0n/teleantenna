@@ -1061,7 +1061,7 @@ class Controller_Admin extends Controller {
 			HTTP::redirect('admin/farpost');
 		}
 
-		$this->check_role(2);
+		$this->check_role();
 
 		$root_page="farpost";
 

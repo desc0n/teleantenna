@@ -7,5 +7,5 @@
 <?if (Auth::instance()->logged_in("admin")){?>
 <a class="btn btn-warning admin-main-page-link" href="/admin/contractor"><span class="glyphicon glyphicon-briefcase"></span> Работа с контрагентами</a>
 <a class="btn btn-default admin-main-page-link" href="/admin/report"><span class="glyphicon glyphicon-list-alt"></span> Отчет по движению товара</a>
-<?}?>
 <a class="btn btn-success admin-main-page-link" href="/admin/farpost"><span class="glyphicon glyphicon-usd"></span> Создание прайса фарпост</a>
+<?}?>
