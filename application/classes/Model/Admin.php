@@ -2617,6 +2617,7 @@ class Model_Admin extends Kohana_Model {
 
 		$firstDate = empty(Arr::get($params, 'reports_first_date')) ? $now : $params['reports_first_date'];
 		$lastDate = empty(Arr::get($params, 'reports_last_date')) ? $now : $params['reports_last_date'];
+		$shopSql = empty(Arr::get($params, 'shop_id')) ? '' : ' and `s`.`id` = :shop_id';
 
 		$dates[0] = 0;
 		$res = DB::query(Database::SELECT,"
@@ -2684,13 +2685,17 @@ class Model_Admin extends Kohana_Model {
 			from `products_num_history` `r`
 			inner join `products` `p`
 				on `p`.`id` = `r`.`product_id`
+			inner join `shopes` `s`
+				on `s`.`id` = `r`.`shop_id`
 			where `r`.`date` between :firstDate and :lastDate
+			$shopSql
 			order by `r`.`date` desc, `r`.`document_id` desc";
 
 		$res = DB::query(Database::SELECT,$sql)
 				->parameters([
 					':firstDate' => Date::convertDateFromFormat($firstDate, 'Y-m-d 00:00:00'),
 					':lastDate' => Date::convertDateFromFormat($lastDate, 'Y-m-d 23:59:59'),
+					':shop_id' => Arr::get($params, 'shop_id')
 				])
 				->execute()
 				->as_array()

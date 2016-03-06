@@ -1028,25 +1028,37 @@ class Controller_Admin extends Controller {
 
 	public function action_report()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
+		/** @var $adminModel Model_Admin */
 		$adminModel = Model::factory('Admin');
 
+		/** @var Model_Shop $shopModel */
+		$shopModel = Model::factory('Shop');
+
 		$this->check_role();
-		$template=View::factory("admin_template");
-		$admin_menu=View::factory("admin_menu");
-		$admin_content = View::factory("report_list");
+		$template = View::factory('admin_template');
+		$admin_menu = View::factory('admin_menu')
+			->set('root_page', 'report')
+		;
+
+		$selectShop = [0 => 'магазин не выбран'];
+		$shopsData = $shopModel->getShop();
+
+		foreach ($shopsData as $shopData) {
+			$selectShop[$shopData['id']] = $shopData['name'];
+		}
+
 		$reportsList = $adminModel->getReportsList($_GET);
-		$admin_content->reportsList = $reportsList[1];
-		$admin_content->reportsCount = $reportsList[0];
-		$admin_content->limit = $adminModel->getLimit();
-		$admin_content->getString = $adminModel->getGetString($_GET);
-		$admin_content->get = $_GET;
-		$root_page="report";
-		$admin_menu->root_page=$root_page;
-		$template->admin_menu=$admin_menu;
-		$template->admin_content=$admin_content;
+		$admin_content = View::factory('report_list')
+			->set('reportsList', $reportsList[1])
+			->set('reportsCount', $reportsList[0])
+			->set('limit', $adminModel->getLimit())
+			->set('selectShop', $selectShop)
+			->set('getString', $adminModel->getGetString($_GET))
+			->set('get', $_GET)
+		;
+
+		$template->admin_menu = $admin_menu;
+		$template->admin_content = $admin_content;
 		$this->response->body($template);
 	}
 
