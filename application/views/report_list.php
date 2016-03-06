@@ -3,7 +3,7 @@
 	<div class="col-sm-12 no-padding">
 		<form action="/admin/report" method="get" class="pull-left col-sm-10 no-padding">
 			<?//=(Arr::get($get,'archive', '') == 'report' ? '<input type="hidden" name="action" value="reports">' : '<input type="hidden" name="archive" value="report"><input type="hidden" name="action" value="reports">');?>
-			<div class='col-sm-3 col-xs-3 col-md-3'>
+			<div class='col-sm-6 col-xs-6 col-md-3'>
 				<div class="form-group">
 					<div class='input-group date datetimepicker'>
 						<input type='text' class="form-control" name="reports_first_date" value="<?=Arr::get($get,'reports_first_date');?>"/>
@@ -13,7 +13,7 @@
 					</div>
 				</div>
 			</div>
-			<div class='col-sm-3 col-xs-3 col-md-3'>
+			<div class='col-sm-6 col-xs-6 col-md-3'>
 				<div class="form-group">
 					<div class='input-group date datetimepicker'>
 						<input type='text' class="form-control"  name="reports_last_date" value="<?=Arr::get($get,'reports_last_date');?>"/>
@@ -23,7 +23,7 @@
 					</div>
 				</div>
 			</div>
-			<div class='col-sm-4 col-xs-4 col-md-4'>
+			<div class='col-sm-7 col-xs-7 col-md-4'>
 				<?=Form::select('shop_id', $selectShop, Arr::get($get, 'shop_id'), ['class' => 'form-control']);?>
 			</div>
 			<input type="hidden" name="action" value="report">
