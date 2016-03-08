@@ -1,6 +1,6 @@
 <div class="row">
 	<h2 class="sub-header col-sm-12">Отчет по движению товара</h2>
-	<div class="col-sm-12 no-padding">
+	<div class="col-sm-12 no-padding row">
 		<form action="/admin/report" method="get" class="pull-left col-sm-10 no-padding">
 			<?//=(Arr::get($get,'archive', '') == 'report' ? '<input type="hidden" name="action" value="reports">' : '<input type="hidden" name="archive" value="report"><input type="hidden" name="action" value="reports">');?>
 			<div class='col-sm-6 col-xs-6 col-md-3'>
