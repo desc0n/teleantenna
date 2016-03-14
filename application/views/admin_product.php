@@ -1,3 +1,7 @@
+<?
+/** @var Model_Product $productModel */
+$productModel = Model::factory('Product');
+?>
 <h1>Редактирование данных</h1>
 <div class="row admin-main-page">
 	<ul class="nav nav-tabs">
@@ -22,13 +26,13 @@
 						</div>
 						<div id="collapseProducts" class="panel-collapse collapse in">
 							<div class="panel-body product-group-panel-body">
-								<?foreach(Model::factory('Product')->getProductGroup(1) as $group_1_data){?>
+								<?foreach($productModel->getProductGroup(1) as $group_1_data){?>
 								<div class="row-accordion">
 									<div class="panel-group" id="accordionProducts1<?=$group_1_data['id'];?>">
 										<div class="panel panel-default">
 											<div class="panel-heading panel-group-1">
 												<h4 class="panel-title" id="redactGroupTitle1_<?=$group_1_data['id'];?>">
-													<a data-toggle="collapse" data-parent="#accordionProducts1<?=$group_1_data['id'];?>" href="#collapseProducts1<?=$group_1_data['id'];?>" onclick="javascript: writeGroupProduct(1,<?=$group_1_data['id'];?>, 0, 0);">
+													<a data-toggle="collapse" data-parent="#accordionProducts1<?=$group_1_data['id'];?>" href="#collapseProducts1<?=$group_1_data['id'];?>" onclick="writeGroupProduct(1,<?=$group_1_data['id'];?>, 0, 0);">
 													<?=$group_1_data['name'];?>
 													</a>
 													<span class="glyphicon glyphicon-pencil redactBtn" onclick="javascript: $('#redactGroupTitle1_<?=$group_1_data['id'];?>').css('display', 'none');$('#redactGroupForm1_<?=$group_1_data['id'];?>').css('display', 'block');"></span>
@@ -46,7 +50,7 @@
 											</div>
 											<div id="collapseProducts1<?=$group_1_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_1', 0) == $group_1_data['id'] ? 'in' : '');?>">
 												<div class="panel-body product-group-panel-body">
-													<?foreach(Model::factory('Product')->getProductGroup(2, $group_1_data['id']) as $group_2_data){?>
+													<?foreach($productModel->getProductGroup(2, $group_1_data['id']) as $group_2_data){?>
 													<div class="row-accordion">
 														<div class="panel-group" id="accordionProducts2<?=$group_2_data['id'];?>">
 															<div class="panel panel-default">
@@ -71,7 +75,7 @@
 																</div>
 																<div id="collapseProducts2<?=$group_2_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_2', 0) == $group_2_data['id'] ? 'in' : '');?>">
 																	<div class="panel-body product-group-panel-body">
-																		<?foreach(Model::factory('Product')->getProductGroup(3, $group_2_data['id']) as $group_3_data){?>
+																		<?foreach($productModel->getProductGroup(3, $group_2_data['id']) as $group_3_data){?>
 																		<div class="row-accordion">
 																			<div class="panel-group" id="accordionProducts3<?=$group_3_data['id'];?>">
 																				<div class="panel panel-default">
@@ -98,12 +102,6 @@
 																					<div id="collapseProducts3<?=$group_3_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_3', 0) == $group_3_data['id'] ? 'in' : '');?>">
 																						<div class="panel-body product-group-panel-body">
 																							<div class="groupProducts" id="groupProducts3<?=$group_3_data['id'];?>"></div>
-																							<?/*foreach(Model::factory('Product')->getProduct(1, Array(1=>$group_1_data['id'],2=>$group_2_data['id'],3=>$group_3_data['id'])) as $product_3_data){?>
-																								<div class="alert alert-info">
-																									<a href="/admin/redactproducts/?id=<?=$product_3_data['id'];?>">(<?=$product_3_data['code'];?>) <?=$product_3_data['name'];?> (закуп. = <?=$product_3_data['purchase_price'];?> р.), (розн. = <?=$product_3_data['price'];?> р.) <span class="glyphicon glyphicon-pencil"></span></a>
-																									<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: $('#removeproduct').val(<?=$product_3_data['id'];?>);$('#remove_product > #group_1').val(<?=$group_1_data['id'];?>);$('#remove_product > #group_2').val(<?=$group_2_data['id'];?>);$('#remove_product > #group_3').val(<?=$group_3_data['id'];?>);$('#remove_product').submit();"></span>
-																								</div>
-																							<?}*/?>
 																							<form action="/admin/product" method="post">
 																								<div class="input-group">
 																									<input type="text" class="form-control" name="product_name" placeholder="Добавить товар в группу '<?=$group_3_data['name'];?>'">
@@ -122,12 +120,6 @@
 																		</div>
 																		<?}?>
 																		<div class="groupProducts" id="groupProducts2<?=$group_2_data['id'];?>"></div>
-																		<?/*foreach(Model::factory('Product')->getProduct(1, Array(1=>$group_1_data['id'],2=>$group_2_data['id'],3=>0)) as $product_2_data){?>
-																			<div class="alert alert-info">
-																				<a href="/admin/redactproducts/?id=<?=$product_2_data['id'];?>">(<?=$product_2_data['code'];?>) <?=$product_2_data['name'];?> (закуп. = <?=$product_2_data['purchase_price'];?> р.), (розн. = <?=$product_2_data['price'];?> р.)<span class="glyphicon glyphicon-pencil"></span></a>
-																				<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: $('#removeproduct').val(<?=$product_2_data['id'];?>);$('#remove_product > #group_1').val(<?=$group_1_data['id'];?>);$('#remove_product > #group_2').val(<?=$group_2_data['id'];?>);$('#remove_product > #group_3').val(0);$('#remove_product').submit();"></span>
-																			</div>
-																		<?}*/?>
 																		<form action="/admin/product" method="post">
 																			<div class="input-group">
 																				<input type="text" class="form-control" name="product_name" placeholder="Добавить товар в группу '<?=$group_2_data['name'];?>'">
@@ -146,12 +138,6 @@
 													</div>
 													<?}?>
 													<div class="groupProducts" id="groupProducts1<?=$group_1_data['id'];?>"></div>
-													<?/*foreach(Model::factory('Product')->getProduct(1, Array(1=>$group_1_data['id'],2=>0,3=>0)) as $product_1_data){?>
-														<div class="alert alert-info">
-															<a href="/admin/redactproducts/?id=<?=$product_1_data['id'];?>">(<?=$product_1_data['code'];?>) <?=$product_1_data['name'];?> (закуп. = <?=$product_1_data['purchase_price'];?> р.), (розн. = <?=$product_1_data['price'];?> р.) <span class="glyphicon glyphicon-pencil"></span></a>
-															<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: $('#removeproduct').val(<?=$product_1_data['id'];?>);$('#remove_product > #group_1').val(<?=$group_1_data['id'];?>);$('#remove_product > #group_2').val(0);$('#remove_product > #group_3').val(0);$('#remove_product').submit();"></span>
-														</div>
-													<?}*/?>
 													<form action="/admin/product" method="post">
 														<div class="input-group">
 															<input type="text" class="form-control" name="product_name" placeholder="Добавить товар в группу '<?=$group_1_data['name'];?>'">
@@ -170,7 +156,7 @@
 								</div>
 								<?}?>
 								<div class="groupProducts" id="groupProducts"></div>
-								<?foreach(Model::factory('Product')->getProduct(1) as $product_data){?>
+								<?foreach($productModel->getProduct(1) as $product_data){?>
 									<div class="alert alert-info">
 										<strong><?=$product_data['id'];?></strong> <?=$product_data['name'];?>
 										<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: $('#removeproduct').val(<?=$product_data['id'];?>);$('#remove_product > #group_1').val(0);$('#remove_product > #group_2').val(0);$('#remove_product > #group_3').val(0);$('#remove_product').submit();"></span>
@@ -215,7 +201,7 @@
 							<div class="panel-body product-group-panel-body">
 								<?
 								$i1 = 0;
-								foreach(Model::factory('Product')->getProductGroup(1) as $group_1_data){
+								foreach($productModel->getProductGroup(1) as $group_1_data){
 									$i1++;
 									?>
 									<div class="row-accordion">
@@ -237,7 +223,7 @@
 													<div class="panel-body product-group-panel-body">
 														<?
 														$i2 = 0;
-														foreach(Model::factory('Product')->getProductGroup(2, $group_1_data['id']) as $group_2_data){
+														foreach($productModel->getProductGroup(2, $group_1_data['id']) as $group_2_data){
 															$i2++;
 															?>
 															<div class="row-accordion">
@@ -259,7 +245,7 @@
 																			<div class="panel-body product-group-panel-body">
 																				<?
 																				$i3 = 0;
-																				foreach(Model::factory('Product')->getProductGroup(3, $group_2_data['id']) as $group_3_data){
+																				foreach($productModel->getProductGroup(3, $group_2_data['id']) as $group_3_data){
 																					$i3++;
 																					?>
 																					<div class="row-accordion">
@@ -352,7 +338,7 @@
 						</div>
 						<div id="collapseBrands" class="panel-collapse collapse in">
 							<div class="panel-body product-group-panel-body">
-								<?foreach(Model::factory('Product')->getBrands() as $brand_data){?>
+								<?foreach($productModel->getBrands() as $brand_data){?>
 									<div class="row-accordion">
 										<div class="panel-group" id="accordionBrands1<?=$brand_data['id'];?>">
 											<div class="panel panel-default">
