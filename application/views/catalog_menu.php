@@ -16,7 +16,7 @@ $productModel = Model::factory('Product');
 					</div>
 				</a>
 				<?
-				$limit = 2;
+				$limit = 10;
 				$groupData2 = $productModel->getProductGroup(2, $group_1_data['id']);
 				$subListCount = ceil(count($groupData2) / $limit);
 
