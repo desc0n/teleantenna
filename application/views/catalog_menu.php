@@ -16,7 +16,7 @@ $productModel = Model::factory('Product');
 					</div>
 				</a>
 				<?
-				$limit = 10;
+				$limit = 2;
 				$groupData2 = $productModel->getProductGroup(2, $group_1_data['id']);
 				$subListCount = ceil(count($groupData2) / $limit);
 
@@ -25,7 +25,7 @@ $productModel = Model::factory('Product');
 				<div class="panel-collapse collapse slidepnl" style="margin-left: <?=($i + 1);?>00%;">
 					<ul class="list-group">
 						<?foreach($groupData2 as $key => $group_2_data){
-							if ($key > ($i * $limit) && $key <= (($i + 1) * $limit)) {?>
+							if ($key >= ($i * $limit) && $key < (($i + 1) * $limit)) {?>
 						<li class="list-group-item"><a class="catalog-link" href="/catalog/?group_2=<?=$group_2_data['id'];?>"><?=$group_2_data['name'];?></a></li>
 							<?}
 						}?>
