@@ -1,9 +1,11 @@
+<?
+/** @var Model_Product $productModel */
+$productModel = Model::factory('Product');
+?>
 <div class="col-sm-3 left-nav">
-
 <!--полноразмерное меню-->
-
 	<div class="hidden-xs">
-		<?foreach(Model::factory('Product')->getProductGroup(1) as $group_1_data){?>
+		<?foreach($productModel->getProductGroup(1) as $group_1_data){?>
 			<div class="slide-trigger">
 				<div class="panel-heading collapsed">
 					<h4 class="panel-title">    
@@ -12,12 +14,12 @@
 				</div>
 				<div class="panel-collapse collapse slidepnl">
 					<ul class="list-group">
-						<?foreach(Model::factory('Product')->getProductGroup(2, $group_1_data['id']) as $group_2_data){?>
+						<?foreach($productModel->getProductGroup(2, $group_1_data['id']) as $group_2_data){?>
 						<div class="sub-trigger">
 							<li class="list-group-item"><a href="#"><?=$group_2_data['name'];?></a></li>
 								<div class="panel-collapse collapse subslidepnl">
 									<ul class="list-group">
-										<?foreach(Model::factory('Product')->getProductGroup(3, $group_2_data['id']) as $group_3_data){?>
+										<?foreach($productModel->getProductGroup(3, $group_2_data['id']) as $group_3_data){?>
 										<li class="list-group-item"><a href="#"><?=$group_3_data['name'];?></a></li>
 										<?}?>
 									</ul>
@@ -43,7 +45,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<?foreach(Model::factory('Product')->getProductList(Array('group_1' => Arr::get($get,'group_1',0), 'group_2' => Arr::get($get,'group_2',0), 'group_3' => Arr::get($get,'group_3',0))) as $product_data){?><a href="catalog/katalog/sputnikovoe-oborudovanie/antennyi/svec-0,6.html">
+		<?foreach($productModel->getProductList(['group_1' => Arr::get($get,'group_1',0), 'group_2' => Arr::get($get,'group_2',0), 'group_3' => Arr::get($get,'group_3',0)]) as $product_data){?><a href="catalog/katalog/sputnikovoe-oborudovanie/antennyi/svec-0,6.html">
 		<tr>
 			<td><?=$product_data['id'];?></td>
 			<td>
@@ -66,7 +68,7 @@
 				</div>
 			</td>
 			<td class="t-price"><?=$product_data['price'];?>р.</td>
-			<?if(count($shop_info = Model::factory('Product')->getProductNum($product_data['id']))>0){foreach($shop_info as $shop_data){?>
+			<?if(count($shop_info = $productModel->getProductNum($product_data['id']))>0){foreach($shop_info as $shop_data){?>
 			<td class="t-price t-num">
 				<a class="shop-link" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?=Arr::get($shop_data, 'address', '');?> (<?=Arr::get($shop_data, 'num', '');?> шт.)">
 					<?=Arr::get($shop_data, 'short_name', '');?>

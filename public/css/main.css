@@ -454,114 +454,43 @@ div >.collapsed{
 
 }
 
-@media (min-width: 768px) {
-
-    .slidepnl{
-
-        position: absolute;
-
-        position: absolute;
-
-        margin-left: 165px;
-
-        margin-top: -35px;
-
-        width: 300px;
-
-    }
-
+.slidepnl{
+    position: absolute;
+    margin-top: -35px;
+    width: calc(100% + 5px);
 }
 
-
-
-@media (min-width: 922px) {
-
-    .slidepnl{
-
-        position: absolute;
-
-        position: absolute;
-
-        margin-left: 246px;
-
-        margin-top: -35px;
-
-        width: 300px;
-
-    }
-
+.slide-trigger:hover .slidepnl {
+    visibility: visible;
+    display: block;
+    background-color: #eee;
+    z-index: 100;
 }
-
-
-
-@media (min-width: 1200px) {
-
-    .slidepnl{
-
-        position: absolute;
-
-        position: absolute;
-
-        /*margin-left: 296px;*/
-
-        margin-left: 100%;
-
-        margin-top: -35px;
-
-        width: 300px;
-
-    }
-
-}
-
-
 
 .slide-trigger{
-
     font-weight: normal;
-
     border: 1px solid #aaa;
-
     border-right: none;
-
     border-left: none;
-
     border-top:none;
-
-    border-radius: 0px;
-
+    border-radius: 0;
 }
 
 .slide-trigger:last-child{
-
     border-bottom:none;
-
 }
 
 .slide-trigger:hover{
-
     color: #fff;
-
-    border-color: #fff;
-
-    border: 1px solid #aaa;
-
+    border: 1px solid #fff;
     border-top:none;
-
     border-right: none;
-
     border-left: none;
-
     border-right:1px solid #eee;
-
     background-color: #e1f1dd;
-
     background: -webkit-linear-gradient(#7dcb6a 0%, #3bb21e 100%);
-
     background: -o-linear-gradient(#7dcb6a 0%, #3bb21e 100%);
-
     background: linear-gradient(#7dcb6a 0%, #3bb21e 100%);
-
 }
 
 .slide-trigger:hover span{
@@ -576,17 +505,6 @@ div >.collapsed{
 
 }
 
-.slide-trigger:hover .slidepnl {
-
-    visibility: visible;
-
-    display: block;
-
-    background-color: #eee;
-
-    z-index: 100;
-
-}
 
 .main-content{
 

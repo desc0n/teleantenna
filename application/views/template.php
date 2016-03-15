@@ -20,6 +20,10 @@
     <![endif]-->
     <link rel="icon" href="/public/i/favicon.png" sizes="64x64" type="image/png">
 </head>
+<?
+/** @var Model_Product $productModel */
+$productModel = Model::factory('Product');
+?>
 <body>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
@@ -48,14 +52,14 @@
                         <a href="/"><span class="glyphicon glyphicon-home"></span></a>
                     </li>
                     <li class="dropdown visible-xs">
-                        <?foreach(Model::factory('Product')->getProductGroup(1) as $group_1_data){?>
+                        <?foreach($productModel->getProductGroup(1) as $group_1_data){?>
                             <a href="/catalog/?group_1=<?=$group_1_data['id'];?>"><?=$group_1_data['name'];?></a>
                         <?}?>
                     </li>
                     <li class="dropdown hidden-xs">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Каталог <span class="glyphicon glyphicon-chevron-down"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <?foreach(Model::factory('Product')->getProductGroup(1) as $group_1_data){?>
+                            <?foreach($productModel->getProductGroup(1) as $group_1_data){?>
                                 <li><a href="/catalog/?group_1=<?=$group_1_data['id'];?>"><?=$group_1_data['name'];?></a></li>
                             <?}?>
                         </ul>
