@@ -16,13 +16,13 @@ $productModel = Model::factory('Product');
 					</div>
 				</a>
 				<?
-				$limit = 10;
+				$limit = 15;
 				$groupData2 = $productModel->getProductGroup(2, $group_1_data['id']);
 				$subListCount = ceil(count($groupData2) / $limit);
 
 				for($i = 0; $i < $subListCount; $i++) {
 				?>
-				<div class="panel-collapse collapse slidepnl" style="margin-left: <?=($i + 1);?>00%;">
+				<div class="panel-collapse collapse slide-menu" style="margin-left: <?=($i + 1);?>00%;">
 					<ul class="list-group">
 						<?foreach($groupData2 as $key => $group_2_data){
 							if ($key >= ($i * $limit) && $key < (($i + 1) * $limit)) {?>

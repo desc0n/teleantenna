@@ -445,19 +445,29 @@ div >.collapsed{
 }
 
 .search-block{
-
-    padding-right: 0px;
-
-    padding-left: 0px;
-
+    padding-right: 0;
+    padding-left: 0;
     margin-bottom: 15px;
+}
 
+.slide-menu{
+    position: absolute;
+    margin-top: -35px;
+    width: calc(100% + 5px);
+}
+
+.slide-trigger:hover .slide-menu {
+    visibility: visible;
+    display: block;
+    background-color: #eee;
+    z-index: 100;
 }
 
 .slidepnl{
     position: absolute;
     margin-top: -35px;
-    width: calc(100% + 5px);
+    margin-left: 246px;
+    width: 300px;
 }
 
 .slide-trigger:hover .slidepnl {
