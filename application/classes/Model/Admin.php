@@ -2805,7 +2805,7 @@ class Model_Admin extends Kohana_Model {
 							->setCellValue('A'.$i, $row['name'])
 							->setCellValue('B'.$i, $row['description'])
 							->setCellValue('C'.$i, $row['price'])
-							->setCellValue('D'.$i, $row['product_img'])
+							->setCellValue('D'.$i, sprintf('http://teleantenna25.ru/public/img/original/%s', $row['product_img']))
 					;
 				}
 			}
