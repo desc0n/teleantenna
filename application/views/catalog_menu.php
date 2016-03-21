@@ -26,7 +26,7 @@ $productModel = Model::factory('Product');
 
 				for($i = 0; $i < count($groupData2); $i++) {
 				?>
-				<div class="panel-collapse collapse slide-menu" style="margin-left: <?=($i + 1);?>00%; <?=($rowsCount> $r ? 'top: 70px' : 'bottom: 0');?>;">
+				<div class="panel-collapse collapse slide-menu" style="margin-left: <?=($i + 1);?>00%; <?=($rowsCount >= $r ? 'top: 70px' : 'bottom: 0');?>;">
 					<ul class="list-group">
 						<?foreach($groupData2 as $key => $group_2_data){
 							if ($key >= ($i * $limit) && $key < (($i + 1) * $limit)) {?>
