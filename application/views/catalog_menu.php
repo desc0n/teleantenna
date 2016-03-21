@@ -6,7 +6,10 @@ $productModel = Model::factory('Product');
 <div class="b-name hidden-xs">ТелеАНТЕННА</div>
 <!--полноразмерное меню-->
 	<div class="hidden-xs">
-		<?foreach($productModel->getProductGroup(1) as $group_1_data){?>
+		<?
+		$r = 1;
+
+		foreach($productModel->getProductGroup(1) as $group_1_data){?>
 			<div class="slide-trigger">
 				<a class="catalog-link" href="/catalog/?group_1=<?=$group_1_data['id'];?>">
 					<div class="panel-heading collapsed">
@@ -19,10 +22,11 @@ $productModel = Model::factory('Product');
 				$limit = 15;
 				$groupData2 = $productModel->getProductGroup(2, $group_1_data['id']);
 				$subListCount = ceil(count($groupData2) / $limit);
+				$rowsCount = ceil(count($groupData2) / $subListCount);
 
-				for($i = 0; $i < $subListCount; $i++) {
+				for($i = 0; $i < count($groupData2); $i++) {
 				?>
-				<div class="panel-collapse collapse slide-menu" style="margin-left: <?=($i + 1);?>00%;">
+				<div class="panel-collapse collapse slide-menu" style="margin-left: <?=($i + 1);?>00%; <?=($rowsCount> $r ? 'top: 70px' : 'bottom: 0');?>;">
 					<ul class="list-group">
 						<?foreach($groupData2 as $key => $group_2_data){
 							if ($key >= ($i * $limit) && $key < (($i + 1) * $limit)) {?>
@@ -33,6 +37,7 @@ $productModel = Model::factory('Product');
 				</div>
 				<?}?>
 			</div>
-		<?}?>
+			<?$r++;
+		}?>
 	</div>
 </div>

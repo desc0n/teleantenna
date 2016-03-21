@@ -17,7 +17,7 @@ class Model_Product extends Kohana_Model {
 			$this->user_id = Guestid::factory()->get_id();
 		}
 
-		$this->devLimit = preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? 'limit 0, 5' : '';
+		$this->devLimit = preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? 'limit 0, 6' : '';
         DB::query(Database::UPDATE,"SET time_zone = '+10:00'")->execute();
     }
 	
