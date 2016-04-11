@@ -51,7 +51,9 @@ class Model_Product extends Kohana_Model {
 				(select REPLACE(REPLACE(`b`.`name`, '\"', ''), \"'\", '') from `brands` `b` where `b`.`id` = `brand_id` and `b`.`status_id` = 1 limit 0,1) as `brand_name`,
 				(select REPLACE(REPLACE(`g1`.`name`, '\"', ''), \"'\", '') from `products_group_1` `g1` where `g1`.`id` = `group_1` limit 0,1) as `group_1_name`,
 				(select REPLACE(REPLACE(`g2`.`name`, '\"', ''), \"'\", '') from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_name`,
-				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`
+				(select `g2`.`parent_id` from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_parent_id`,
+				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`,
+				(select `g3`.`parent_id` from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_parent_id`
 				from `products`
 				where `id` = :id
 				and `status_id` = 1
@@ -64,7 +66,9 @@ class Model_Product extends Kohana_Model {
 				(select REPLACE(REPLACE(`b`.`name`, '\"', ''), \"'\", '') from `brands` `b` where `b`.`id` = `brand_id` and `b`.`status_id` = 1 limit 0,1) as `brand_name`,
 				(select REPLACE(REPLACE(`g1`.`name`, '\"', ''), \"'\", '') from `products_group_1` `g1` where `g1`.`id` = `group_1` limit 0,1) as `group_1_name`,
 				(select REPLACE(REPLACE(`g2`.`name`, '\"', ''), \"'\", '') from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_name`,
-				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`
+				(select `g2`.`parent_id` from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_parent_id`,
+				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`,
+				(select `g3`.`parent_id` from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_parent_id`
 				from `products`
 				where `group_1` = :group_sql_1
 				and `group_2` = :group_sql_2
@@ -78,7 +82,9 @@ class Model_Product extends Kohana_Model {
 				(select REPLACE(REPLACE(`b`.`name`, '\"', ''), \"'\", '') from `brands` `b` where `b`.`id` = `brand_id` and `b`.`status_id` = 1 limit 0,1) as `brand_name`,
 				(select REPLACE(REPLACE(`g1`.`name`, '\"', ''), \"'\", '') from `products_group_1` `g1` where `g1`.`id` = `group_1` limit 0,1) as `group_1_name`,
 				(select REPLACE(REPLACE(`g2`.`name`, '\"', ''), \"'\", '') from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_name`,
-				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`
+				(select `g2`.`parent_id` from `products_group_2` `g2` where `g2`.`id` = `group_2` limit 0,1) as `group_2_parent_id`,
+				(select REPLACE(REPLACE(`g3`.`name`, '\"', ''), \"'\", '') from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_name`,
+				(select `g3`.`parent_id` from `products_group_3` `g3` where `g3`.`id` = `group_3` limit 0,1) as `group_3_parent_id`
 				from `products`
 				where `status_id` = 1
 				%s
