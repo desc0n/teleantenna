@@ -525,7 +525,8 @@ class Model_Admin extends Kohana_Model {
 		`r`.`status_id` as `realization_status`,
 		`r`.`contractor_id` as `contractor_id`,
 		`rg`.*,
-		ifnull((select `pn`.`num` from `products_num` `pn` where `pn`.`product_id` = `p`.`id` and `pn`.`shop_id` = :manager_shop limit 0,1),0) as `root_num`
+		ifnull((select `pn`.`num` from `products_num` `pn` where `pn`.`product_id` = `p`.`id` and `pn`.`shop_id` = :manager_shop limit 0,1),0) as `root_num`,
+		ifnull((select `pnh`.`root_num` from `products_num_history` `pnh` where `pnh`.`product_id` = `p`.`id` and `pnh`.`document` = 'realization' and `pnh`.`document_id` = `r`.`id` limit 0,1),0) as `history_num`
 		from `realizations` `r`
 		inner join `realizations_goods` `rg`
 			on `r`.`id` = `rg`.`realization_id`

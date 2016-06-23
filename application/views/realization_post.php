@@ -43,7 +43,8 @@
                         <th>Наименование</th>
                         <th class="col-sm-1 text-center col-price">Цена</th>
                         <th class="col-sm-1 text-center col-num" colspan="">Кол-во (шт.)</th>
-                        <th class="col-sm-1 text-center col-num" colspan="">Наличие (шт.)</th>
+                        <th class="col-sm-1 text-center col-num" colspan="">Текущее наличие (шт.)</th>
+                        <th class="col-sm-1 text-center col-num" colspan="">Наличие на момент реализации (шт.)</th>
                         <th class="col-sm-1 text-center col-num" colspan="">Действия</th>
                     </tr>
                 </thead>
@@ -68,6 +69,9 @@
                         <td>
                             <?=$data['num'];?>
                             <input type=hidden id='goodsNum_<?=$i;?>' row='<?=$i;?>' name='num[]' value='1'>
+                        </td>
+                        <td>
+                            <?=$data['root_num'];?>
                         </td>
                         <td>
                             <?=$data['root_num'];?>
@@ -106,6 +110,8 @@
                         </td>
                         <td class='text-center'>
                         </td>
+                        <td class='text-center'>
+                        </td>
                     </tr>
                         <?
                         } else if($document_status == 2){
@@ -126,6 +132,9 @@
                         </td>
                         <td>
                             <?=$data['root_num'];?>
+                        </td>
+                        <td>
+                            <?=$data['history_num'];?>
                         </td>
                         <td>
                         </td>
