@@ -2279,7 +2279,7 @@ class Model_Admin extends Kohana_Model {
 		$limit = $this->getLimit();
 
 		$sql = "select `c`.*,
-		(select count(`cc`.`id`) from `cash_close` `cc`) as `cashclose_count`,
+		(select count(`c`.`id`) from `cash_close` `c` $shopSql) as `cashclose_count`,
 		(select `name` from `shopes` where `id` = `c`.`shop_id` limit 0,1) as `shop_name`
 		from `cash_close` `c`
 		$shopSql
