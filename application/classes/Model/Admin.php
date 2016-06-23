@@ -2145,6 +2145,9 @@ class Model_Admin extends Kohana_Model {
 
 	public function getRootCash($params)
 	{
+		/** @var Model_Shop $shopModel */
+		$shopModel = Model::factory('Shop');
+		
 		$summ = 0;
 		$realizationSum = 0;
 
@@ -2237,14 +2240,17 @@ class Model_Admin extends Kohana_Model {
 				->execute()
 				->as_array()
 			;
-
-		return [$summ, $isset, $realizationSum];
+		
+		$shopId = $shopModel->getManagerShop();
+		
+		return [$summ, $isset, $realizationSum, Arr::get($shopModel->getShop(0, $shopId), 0, [])];
 	}
 
 	public  function closeCash($params)
 	{
 		/** @var Model_Shop $shopModel */
 		$shopModel = Model::factory('Shop');
+		
 		$shopId = $shopModel->getManagerShop();
 
 		DB::update('cashincomes')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
@@ -2264,10 +2270,11 @@ class Model_Admin extends Kohana_Model {
 	public  function getCashCloseList($params)
 	{
 		$limit = $this->getLimit();
-		$sql = "select *,
-		(select count(`cc`.`id`) from `cash_close` `cc`) as `cashclose_count`
-		from `cash_close`
-		order by `date` desc
+		$sql = "select `c`.*,
+		(select count(`cc`.`id`) from `cash_close` `cc`) as `cashclose_count`,
+		(select `name` from `shopes` where `id` = `c`.`shop_id` limit 0,1) as `shop_name`
+		from `cash_close` `c`
+		order by `c`.`date` desc
 		limit ".((Arr::get($params, 'cashclosePage', 1) - 1)*$limit).", $limit";
 		$res = DB::query(Database::SELECT,$sql)
 			->execute()

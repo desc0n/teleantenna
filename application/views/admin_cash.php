@@ -269,6 +269,9 @@
 				<table class="table table-hover table-bordered table-striped closecash-table">
 					<tr>
 						<th>
+							Магазин
+						</th>
+						<th>
 							Значение по документам
 						</th>
 						<th>
@@ -286,6 +289,9 @@
 						foreach($cashCloseList as $data){
 							?>
 					<tr>
+						<td>
+							<?=$data['shop_name'];?>
+						</td>
 						<td>
 							<?=$data['doc_cash'];?>
 						</td>
@@ -306,6 +312,9 @@
 							?>
 					<tr>
 						<td>
+							<?=Arr::get($rootCash[3], 'name');?>
+						</td>
+						<td>
 							<?=$rootCash[0];?>
 							<input type=hidden name='docCash' value="<?=$rootCash[0];?>">
 						</td>
@@ -323,6 +332,9 @@
 					</tr>
 					<?} else {?>
 					<tr>
+						<td>
+							<?=Arr::get($rootCash[3], 'name');?>
+						</td>
 						<td>
 							<?=$rootCash[0];?>
 						</td>
