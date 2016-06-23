@@ -2147,6 +2147,9 @@ class Model_Admin extends Kohana_Model {
 	{
 		$summ = 0;
 		$realizationSum = 0;
+
+		$userSql = !Auth::instance()->logged_in('admin') ?  'and `sm`.`user_id` = :user_id' : null;
+
 		$sql = "select `rg`.`price`, `rg`.`num`
 			from `realizations_goods` `rg`
 			inner join `realizations` `r`
@@ -2156,7 +2159,7 @@ class Model_Admin extends Kohana_Model {
 			inner join `shopes_managers` `sm`
 				on `sm`.`shop_id` = `rg`.`shop_id`
 			where `r`.`status_id` = 2
-			and `sm`.`user_id` = :user_id
+			$userSql
 			and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')";
 		$res = DB::query(Database::SELECT,$sql)
 			->param(':user_id', $this->user_id)
@@ -2175,7 +2178,7 @@ class Model_Admin extends Kohana_Model {
 			inner join `shopes_managers` `sm`
 				on `sm`.`shop_id` = `rg`.`shop_id`
 			where `r`.`status_id` = 2
-			and `sm`.`user_id` = :user_id
+			$userSql
 			and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')";
 		$res = DB::query(Database::SELECT,$sql)
 			->param(':user_id', $this->user_id)
@@ -2193,7 +2196,7 @@ class Model_Admin extends Kohana_Model {
 			inner join `shopes_managers` `sm`
 				on `sm`.`shop_id` = `rg`.`shop_id`
 			where `r`.`status_id` = 2
-			and `sm`.`user_id` = :user_id
+			$userSql
 			and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')";
 		$res = DB::query(Database::SELECT,$sql)
 			->param(':user_id', $this->user_id)
@@ -2211,7 +2214,7 @@ class Model_Admin extends Kohana_Model {
 			inner join `shopes_managers` `sm`
 				on `sm`.`shop_id` = `rg`.`shop_id`
 			where `r`.`status_id` = 2
-			and `sm`.`user_id` = :user_id
+			$userSql
 			and `r`.`date` between date_format(now(), '%Y-%m-%d 00:00:00') and date_format(now(), '%Y-%m-%d 23:59:59')";
 		$res = DB::query(Database::SELECT,$sql)
 			->param(':user_id', $this->user_id)
@@ -2220,27 +2223,42 @@ class Model_Admin extends Kohana_Model {
 		foreach($res as $data){
 			$summ += $data['price'];
 		}
-		$res = DB::query(Database::SELECT, "select `fact_cash` from `cash_close` where `date` = date_format(now(), '%Y-%m-%d')")->execute()->as_array();
-		$isset = count($res) > 0 ? $res[0]['fact_cash'] : 0;
+
+		$isset = DB::select('cc.*')
+			->from(['cash_close', 'cc'])
+			->join(['shopes_managers', 'sm'])
+			->on('sm.shop_id', '=', 'cc.shop_id')
+			->where('cc.date', '=', DB::expr("date_format(now(), '%Y-%m-%d')"))
+		;
+
+		$isset = !Auth::instance()->logged_in('admin') ? $isset->and_where('sm.user_id', '=', $this->user_id) : $isset;
+
+		$isset = $isset
+				->execute()
+				->as_array()
+			;
+
 		return [$summ, $isset, $realizationSum];
 	}
 
 	public  function closeCash($params)
 	{
-		DB::query(Database::UPDATE, "update `cashincomes` set `status_id` = 2")->execute();
-		DB::query(Database::UPDATE, "update `cashreturns` set `status_id` = 2")->execute();
-		DB::query(Database::UPDATE, "update `cashwriteoffs` set `status_id` = 2")->execute();
-		DB::query(Database::UPDATE, "update `incomes` set `status_id` = 2")->execute();
-		DB::query(Database::UPDATE, "update `returns` set `status_id` = 2")->execute();
-		DB::query(Database::UPDATE, "update `writeoffs` set `status_id` = 2")->execute();
-		DB::query(Database::UPDATE, "update `realizations` set `status_id` = 2")->execute();
+		/** @var Model_Shop $shopModel */
+		$shopModel = Model::factory('Shop');
+		$shopId = $shopModel->getManagerShop();
 
-		$sql="insert into `cash_close` (`doc_cash`, `fact_cash`, `real_cash`, `date`) values (:doc_cash, :fact_cash, :real_cash, now())";
-		DB::query(Database::INSERT,$sql)
-			->param(':doc_cash', Arr::get($params, 'docCash', 0))
-			->param(':fact_cash', Arr::get($params, 'factCash', 0))
-			->param(':real_cash', Arr::get($params, 'realCash', 0))
-			->execute();
+		DB::update('cashincomes')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+		DB::update('cashreturns')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+		DB::update('cashwriteoffs')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+		DB::update('incomes')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+		DB::update('returns')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+		DB::update('writeoffs')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+		DB::update('realizations')->set(['status_id' => 2])->where('user_id', '=', $this->user_id)->execute();
+
+		DB::insert('cash_close', ['doc_cash', 'fact_cash', 'real_cash', 'shop_id', 'date'])
+			->values([Arr::get($params, 'docCash', 0), Arr::get($params, 'factCash', 0), Arr::get($params, 'realCash', 0), $shopId, DB::expr('now()')])
+			->execute()
+		;
 	}
 
 	public  function getCashCloseList($params)

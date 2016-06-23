@@ -302,7 +302,7 @@
 							<?
 						}
 					} else {
-						if($rootCash[1] == 0){
+						if(empty(Arr::get($rootCash, 1))) {
 							?>
 					<tr>
 						<td>
@@ -330,7 +330,7 @@
 							<?=$rootCash[2];?>
 						</td>
 						<td>
-							<?=$rootCash[1];?>
+							<?=Arr::get($rootCash[1], 'fact_cash', 0);?>
 						</td>
 						<td class='text-center'>
 						</td>
