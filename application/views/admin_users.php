@@ -1,3 +1,7 @@
+<?
+/** @var Model_Shop $shopModel */
+$shopModel = Model::factory('Shop');
+?>
 <h1>Работа с персоналом</h1>
 <div class="row admin-main-page">
 	<ul class="nav nav-tabs">
@@ -63,8 +67,8 @@
 								<select class="form-control changeUserShop" id="userShop_<?=$userData['id'];?>" user-id="<?=$userData['id'];?>">
 									<option value="0">Не задан</option>
 									<?
-									foreach(Model::factory('Shop')->getShop() as $shopData){
-										$selected = $shopData['id'] == Model::factory('Shop')->getManagerShop(['user_id' => $userData['id']]) ? 'selected' : '';
+									foreach($shopModel->getShop() as $shopData){
+										$selected = $shopData['id'] == $shopModel->getManagerShop(['user_id' => $userData['id'], 'empty' => true]) ? 'selected' : '';
 										?>
 									<option value="<?=$shopData['id'];?>" <?=$selected;?> ><?=$shopData['name'];?></option>
 									<?}?>
