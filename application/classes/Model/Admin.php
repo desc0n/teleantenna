@@ -2269,14 +2269,26 @@ class Model_Admin extends Kohana_Model {
 
 	public  function getCashCloseList($params)
 	{
+		/** @var Model_Shop $shopModel */
+		$shopModel = Model::factory('Shop');
+
+		$shopId = $shopModel->getManagerShop();
+
+		$shopSql = !Auth::instance()->logged_in('admin') ? 'where `c`.`shop_id` = :shop_id' : null;
+
 		$limit = $this->getLimit();
+
 		$sql = "select `c`.*,
 		(select count(`cc`.`id`) from `cash_close` `cc`) as `cashclose_count`,
 		(select `name` from `shopes` where `id` = `c`.`shop_id` limit 0,1) as `shop_name`
 		from `cash_close` `c`
+		$shopSql
 		order by `c`.`date` desc
 		limit ".((Arr::get($params, 'cashclosePage', 1) - 1)*$limit).", $limit";
 		$res = DB::query(Database::SELECT,$sql)
+			->parameters([
+				':shop_id' => $shopId
+			])
 			->execute()
 			->as_array();
 		return $res;
