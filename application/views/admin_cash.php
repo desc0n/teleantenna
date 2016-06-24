@@ -308,7 +308,7 @@
 							<?
 						}
 					} else {
-						if(empty(Arr::get($rootCash, 1))) {
+						if(empty(Arr::get($rootCash[1], 'fact_cash'))) {
 							?>
 					<tr>
 						<td>

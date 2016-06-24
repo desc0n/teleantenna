@@ -2227,14 +2227,15 @@ class Model_Admin extends Kohana_Model {
 			$summ += $data['price'];
 		}
 
-		$isset = DB::select('cc.*')
+		$isset = DB::select('cc.*', [DB::expr('sum(cc.fact_cash)'), 'fact_cash'])
 			->from(['cash_close', 'cc'])
-			->join(['shopes_managers', 'sm'])
-			->on('sm.shop_id', '=', 'cc.shop_id')
 			->where('cc.date', '=', DB::expr("date_format(now(), '%Y-%m-%d')"))
 		;
 
-		$isset = !Auth::instance()->logged_in('admin') ? $isset->and_where('sm.user_id', '=', $this->user_id) : $isset;
+		$isset = !Auth::instance()->logged_in('admin')
+			? $isset->and_where('cc.shop_id', '=', DB::select('sm.shop_id')->from(['shopes_managers', 'sm'])->where('sm.user_id', '=', $this->user_id)->limit(1))
+			: $isset
+		;
 
 		$isset = $isset
 				->execute()
@@ -2243,7 +2244,7 @@ class Model_Admin extends Kohana_Model {
 		
 		$shopId = $shopModel->getManagerShop();
 		
-		return [$summ, $isset, $realizationSum, Arr::get($shopModel->getShop(0, $shopId), 0, [])];
+		return [$summ, Arr::get($isset, 0, []), $realizationSum, Arr::get($shopModel->getShop(0, $shopId), 0, [])];
 	}
 
 	public  function closeCash($params)
