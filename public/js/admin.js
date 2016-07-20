@@ -486,6 +486,8 @@ function checkNumSubmit(interface) {
 
 		if (interface == 'realization') {
 			$('#carryOutRealizationPost').removeAttr('disabled');
+		} else if (interface == 'writeoff') {
+			$('#carryOutWriteoffPost').removeAttr('disabled');
 		}
 
 		return false
@@ -496,6 +498,8 @@ function checkNumSubmit(interface) {
 
 		if (interface == 'realization') {
 			$('#carryOutRealizationPost').removeAttr('disabled');
+		} else if (interface == 'writeoff') {
+			$('#carryOutWriteoffPost').removeAttr('disabled');
 		}
 
 		return false;
@@ -617,6 +621,7 @@ $(document).ready(function() {
 	});
 
 	$('#carryOutWriteoffPost').click(function(){
+		$(this).attr('disabled', 'disabled');
         checkNumSubmit('writeoff');
 	});
 });
