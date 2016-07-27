@@ -57,7 +57,8 @@
 			<?}?>
 		</table>
 		<?if($document_status == 1){?>
-		<button class='btn btn-success' name='carryOutCashwriteoffPost' value='<?=$cashwriteoff_id;?>'>Провести</button>
+			<button class='btn btn-success' type="button" onclick="$(this).attr('disabled', 'disabled');$(this).parent('form').submit();">Провести</button>
+			<input type='hidden' name="carryOutCashwriteoffPost" value="<?=$cashwriteoff_id;?>">
 		</form>
 		<?}?>
 	</div>

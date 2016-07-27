@@ -144,7 +144,8 @@
                 </table>
             </div>
 		<?if($document_status == 1){?>
-			<button class='btn btn-success' name='carryOutIncomePost' value='<?=$income_id;?>'>Провести</button>
+			<button class='btn btn-success' type="button" onclick="$(this).attr('disabled', 'disabled');$(this).parent('form').submit();">Провести</button>
+            <input type='hidden' name='carryOutIncomePost' value="<?=$income_id;?>">
 		</form>
 		<?}?>
 	</div>
