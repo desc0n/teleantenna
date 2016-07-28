@@ -265,7 +265,7 @@
 				</div>
 				<h2></h2>
 			<?}?>
-			<form action='/admin/cash' method='post'>
+			<form action='/admin/cash' method='post' id="cashCloseForm">
 				<table class="table table-hover table-bordered table-striped closecash-table">
 					<tr>
 						<th>
@@ -327,7 +327,7 @@
 						</td>
 						<td class='text-center'>
 							<input type='hidden' name='closeCash' value='true'>
-							<button type='submit' class="btn btn-danger"><span class="glyphicon glyphicon-ok"></span> Закрыть кассу</button>
+							<button type='submit' class="btn btn-danger" type="button" onclick="$(this).attr('disabled', 'disabled');$('#cashCloseForm').submit();"><span class="glyphicon glyphicon-ok"></span> Закрыть кассу</button>
 						</td>
 					</tr>
 					<?} else {?>
