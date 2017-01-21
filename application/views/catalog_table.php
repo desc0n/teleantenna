@@ -32,7 +32,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 
 	foreach($productsArr as $product_data){
 		if($product_data['check_status'] == 0){
-			$shop_info = $productModel->getProductNum($product_data['id'], 0, true);
+			$shop_info = $productModel->getProductNum($product_data['id'], 0, false);
 			$checkNum = false;
 
 			foreach($shop_info as $shop_data) {
