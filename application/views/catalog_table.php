@@ -51,7 +51,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 			if($group_2_name != $product_data['group_2_name']){
 				?>
 				<tr>
-					<td class="group-name" colspan="<?=($countShop + 5);?>">
+					<td class="group-name" colspan="<?=($countShop + 5);?>" data-group-id="<?=$product_data['group_2'];?>" onclick="changGroupVisibility(<?=$product_data['group_2'];?>);">
 						<?=$product_data['group_2_name'];?>
 					</td>
 				</tr>
@@ -70,7 +70,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 				$brand_name = $product_data['brand_name'];
 			}
 			?>
-			<tr>
+			<tr class="group-row" data-group="<?=$product_data['group_2'];?>">
 				<td onclick="document.location='/item/product/<?=$product_data['id'];?>';"><?=$product_data['code'];?></td>
 				<td class="img-cell">
 					<?$product_data['product_img'] = $product_data['product_img'] != '' ? $product_data['product_img'] : 'nopic.jpg';?>
@@ -134,7 +134,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 			if($group_2_name != $product_data['group_2_name']){
 				?>
 				<tr>
-					<td class="empty-group-name" colspan="<?=($countShop + 5);?>">
+					<td class="empty-group-name" colspan="<?=($countShop + 5);?>" onclick="changEmptyGroupVisibility(<?=$product_data['group_2'];?>);">
 						<?=$product_data['group_2_name'];?>
 					</td>
 				</tr>
@@ -153,7 +153,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 				$brand_name = $product_data['brand_name'];
 			}
 			?>
-			<tr>
+			<tr class="empty-group-row" data-group="<?=$product_data['group_2'];?>">
 				<td onclick="document.location='/item/product/<?=$product_data['id'];?>';"><?=$product_data['code'];?></td>
 				<td class="img-cell">
 					<?$product_data['product_img'] = $product_data['product_img'] != '' ? $product_data['product_img'] : 'nopic.jpg';?>

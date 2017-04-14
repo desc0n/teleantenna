@@ -107,7 +107,22 @@ function changeLocation(keysData){
 		document.location = '/item/product/'+nameArrKey;
 	}
 }
-
+function changGroupVisibility(groupId) {
+	var $rows = $('.group-row[data-group=' + groupId +']');
+	if ($rows.css('display') == 'none') {
+		$rows.show('slow');
+	} else {
+        $rows.hide('slow');
+	}
+}
+function changEmptyGroupVisibility(groupId) {
+	var $rows = $('.empty-group-row[data-group=' + groupId +']');
+	if ($rows.css('display') == 'none') {
+		$rows.show('slow');
+	} else {
+        $rows.hide('slow');
+	}
+}
 $(document).ready(function(){
 	$('#mainSearchName').keyup(function(){
 		setMainAssort();
