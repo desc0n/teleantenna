@@ -1,6 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Ajax extends Controller {
+class Controller_Ajax extends Controller
+{
+    private function render($body)
+    {
+        $this->auto_render = false;
+        $this->is_ajax = true;
+        $this->response->body($body);
+    }
 
 	public function action_add_realisation_position()
 	{
@@ -169,5 +176,13 @@ class Controller_Ajax extends Controller {
 		$adminModel = Model::factory('Admin');
 
 		$this->response->body($adminModel->checkAvailability($_POST));
+	}
+
+	public function action_find_products()
+	{
+        /** @var Model_Cart $cartModel */
+        $cartModel = Model::factory('Cart');
+
+		$this->render(json_encode($cartModel->findProducts($this->request->query('query'))));
 	}
 }

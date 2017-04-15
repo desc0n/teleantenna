@@ -305,5 +305,55 @@ class Model_Cart extends Kohana_Model {
 
 		return $arr;
 	}
+
+    /**
+     * @param string $query
+     *
+     * @return array
+     */
+    public function findProducts($query)
+    {
+        if (empty($query) || mb_strlen($query) < 3) {
+            return [];
+        }
+
+        $result = [];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $searchRes = DB::select('id', 'name')
+                ->from('products_group_' . $i)
+                ->where('name', 'LIKE', "%$query%")
+                ->and_where('status_id', '=', 1)
+                ->execute()
+                ->as_array();
+
+            foreach ($searchRes as $res) {
+                $result[] = [
+                    'target' => 'group' . $i,
+                    'id' => $res['id'],
+                    'name' => str_replace('"', '', $res['name'])
+                ];
+            }
+        }
+
+        $searchRes = DB::select('id', 'name')
+            ->from('products')
+            ->where('name', 'LIKE', "%$query%")
+            ->and_where('status_id', '=', 1)
+            ->execute()
+            ->as_array()
+        ;
+
+        foreach ($searchRes as $res) {
+            $result[] = [
+                'target' => 'name',
+                'id' => $res['id'],
+                'name' => str_replace('"', '', $res['name'])
+            ];
+        }
+
+        return $result;
+    }
+
 }
 ?>

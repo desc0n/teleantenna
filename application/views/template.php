@@ -173,16 +173,16 @@ $productModel = Model::factory('Product');
             <div class="col-sm-3 hidden-xs logo">
                 <a href="/"><div></div></a>
             </div>
-            <!--<div class="col-sm-1 locat-block">
-            <div class="tel-main dashed">Владивосток</div>
-            </div>-->
             <div class="col-sm-5">
                 <div class="col-sm-12 search-block">
-                    <div class="form-inline" role="form" action="/search" method="post">
+                    <div class="form-inline" role="form">
                         <div class="col-sm-9 input-group">
-                            <input type="text" id="mainSearchName" name="mainSearchName" class="form-control search" placeholder="Поиск" style="border: 1px solid #ddd;" autocomplete="off" autofocus>
-                            <div class="col-xs-12" id="typeahead"></div>
-                            <span class="input-group-btn"><button type="button" class="btn btn-default search" id="mainSearchBtn" style="border: 1px solid #ddd;"><span class="glyphicon glyphicon-search"></span></button></span>
+                            <input type="text" id="mainSearchName" name="mainSearchName" class="form-control search" placeholder="Поиск" style="border: 1px solid #ddd;" autocomplete="off" autofocus  data-provide="typeahead">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default search" id="mainSearchBtn" style="border: 1px solid #ddd;">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -217,7 +217,7 @@ $productModel = Model::factory('Product');
 <script src="/public/js/bootstrap.js"></script>
 <script src="/public/js/bootstrap3-typeahead.min.js"></script>
 <script src="/public/js/cart.js?v=2"></script>
-<script src="/public/js/main.js?v=2"></script>
+<script src="/public/js/main.js?v=3"></script>
 
 <script>
     if ($(window).width() <= 800) {
