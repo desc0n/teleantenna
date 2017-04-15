@@ -422,6 +422,10 @@ body {
     .navbar-default .navbar-nav > li > a {
         color: #33a418;
     }
+    .group-name,
+    .empty-group-name {
+        font-size: 16px!important;
+    }
     .group-row,
     .empty-group-row {
         display: none;
