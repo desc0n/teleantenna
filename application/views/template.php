@@ -118,8 +118,9 @@ $productModel = Model::factory('Product');
         </div><!-- /.container-fluid -->
     </div>
 </nav>
-<div class="post-nav visible-xs"><div class="container">
-        <div class="col-sm-3 b-name">
+<div class="post-nav visible-xs">
+    <div class="container">
+        <div class="col-xs-3 b-name">
             <span class="hidden-xs">ТелеАНТЕННА</span>
             <div class="m-cart">
                 <ul class="nav pull-left">
@@ -170,13 +171,13 @@ $productModel = Model::factory('Product');
 <div class="header-container">
     <div class="container">
         <div class="row">
-            <div class="col-sm-3 hidden-xs logo">
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs logo">
                 <a href="/"><div></div></a>
             </div>
-            <div class="col-sm-5">
-                <div class="col-sm-12 search-block">
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 search-block">
                     <div class="form-inline" role="form">
-                        <div class="col-sm-9 input-group">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 input-group">
                             <input type="text" id="mainSearchName" name="mainSearchName" class="form-control search" placeholder="Поиск" style="border: 1px solid #ddd;" autocomplete="off" autofocus  data-provide="typeahead">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default search" id="mainSearchBtn" style="border: 1px solid #ddd;">
@@ -187,7 +188,7 @@ $productModel = Model::factory('Product');
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 locat-block hidden-xs">
+            <div class="col-lg-4 col-md-4 col-sm-4 locat-block hidden-xs">
                 <div class="tel-main">+7 (423) 290 12 72</div>
             </div>
         </div>

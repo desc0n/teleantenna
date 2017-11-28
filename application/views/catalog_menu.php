@@ -2,7 +2,7 @@
 /** @var Model_Product $productModel */
 $productModel = Model::factory('Product');
 ?>
-<div class="col-sm-3 left-nav">
+<div class="col-lg-3 col-md-3 col-sm-3 left-nav">
 <div class="b-name hidden-xs">ТелеАНТЕННА</div>
 <!--полноразмерное меню-->
 	<div class="hidden-xs">
