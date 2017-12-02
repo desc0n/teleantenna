@@ -981,25 +981,15 @@ div .navbar-brand span{
 .mobile-item-img{
     min-height: 180px;
 }
-.mobile-item-img table{
-    min-height: 180px;
-}
-.mobile-item-img table td{
-    min-height: 180px;
-    padding: 5px!important;
-    vertical-align: middle;
-    display: table-cell;
-}
 .mobile-item-img table img{
     width: 100%;
-    max-height: 170px;
 }
 .mobile-img-thumbnail{
     width: 100%;
 }
 .mobile-item-name {
     padding: 8px;
-    min-height: 100px;
+    min-height: 80px;
 }
 .mobile-item-name a{
     font-size: 14px;

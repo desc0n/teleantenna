@@ -226,8 +226,8 @@ $productsMobileArr = [];
                 <div class="mobile-item-img">
                     <table class="table">
                         <tr>
-                            <td class="mobile-img-link thumbnail">
-                                <img class="mobile-img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
+                            <td class="mobile-img-link img-link thumbnail">
+                                <img class="mobile-img-thumbnail img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
                             </td>
                         </tr>
                     </table>
