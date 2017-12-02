@@ -981,6 +981,9 @@ div .navbar-brand span{
 .mobile-item-img{
     min-height: 180px;
 }
+.mobile-item-img table img{
+    width: 100%;
+}
 .mobile-img-thumbnail{
     width: 100%;
 }
