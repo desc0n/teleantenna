@@ -999,7 +999,7 @@ div .navbar-brand span{
 }
 .mobile-item-name {
     padding: 8px;
-    min-height: 108px;
+    min-height: 100px;
 }
 .mobile-item-name a{
     font-size: 14px;
