@@ -210,10 +210,8 @@ $productsMobileArr = [];
                     <div class="col-xs-12 group-name" data-group-id="<?=$productData['group_2'];?>" onclick="changeMobileGroupVisibility(<?=$productData['group_2'];?>);">
                         <?=$productData['group_2_name'];?>
                     </div>
-                </div>
                 <?
                 $group2Name = $productData['group_2_name'];
-                continue;
             }
 
             if($brandName != $productData['brand_name'] && !empty($productData['brand_name'])){?>
