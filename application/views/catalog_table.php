@@ -223,8 +223,10 @@ $productsMobileArr = [];
             }
             ?>
             <div class="col-xs-6 mobile-item mobile-item-<?=$key;?>-child" data-group="<?=$productData['group_2'];?>">
-                <div class="mobile-img-link img-link thumbnail" data-toggle="tooltip" data-placement="left" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$productData['product_img'];?>' style='width:200px;'>">
-                    <img class="mobile-img-thumbnail img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
+                <div class="mobile-item-img">
+                    <div class="mobile-img-link img-link thumbnail" data-toggle="tooltip" data-placement="left" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$productData['product_img'];?>' style='width:200px;'>">
+                        <img class="mobile-img-thumbnail img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
+                    </div>
                 </div>
                 <div class="mobile-item-name">
                     <a href="/item/product/<?=$productData['id'];?>"><?=$productData['name'];?></a>
