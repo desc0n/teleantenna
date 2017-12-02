@@ -47,14 +47,14 @@
 								<legend>Контактная информация</legend>
 								<div>
 									<div>
-										<div class="col-lg-4 col-sm-4 col-xs-12 col-md-4 quest-client-order-form">
+										<div class="col-sm-4 col-xs-4 col-md-4 quest-client-order-form">
 											<label>Телефон <span class="color-red">*</span> :</label>
 											<div class="input-group">
 												<span class="input-group-addon">+7</span>
 												<input class="form-control cart-customer-field" id="shortCustomerPhone" type="text" placeholder="Телефон" value="<?=Arr::get($customerCartInfo, 'phone', '');?>">
 											</div>
 										</div>
-										<div class="col-lg-4 col-sm-4 col-xs-12 col-md-4 quest-client-order-form">
+										<div class=" col-sm-4 col-xs-4 col-md-4 quest-client-order-form">
 											<label>Адрес эл. почты</label>
 											<input class="form-control cart-customer-field" id="shortCustomerMail" placeholder="Адрес эл. почты" type="text" value="<?=Arr::get($customerCartInfo, 'email', '');?>">
 										</div>
