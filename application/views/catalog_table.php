@@ -11,9 +11,8 @@ $productModel = Model::factory('Product');
 $countShop = count($shopModel->getShop());
 $userProfile = Auth::instance()->logged_in() ? $userModel->getUsersProfile(Auth::instance()->get_user()->id) : [];
 $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $userProfile[0]['discount'] : 0) : 0;
-$productsMobileArr = [];
 ?>
-<table class="table table-hover table-bordered table-striped catalog-table hidden-xs">
+<table class="table table-hover table-bordered table-striped catalog-table">
 	<thead>
 	<tr>
 		<th class="col-sm-1 col-xs-1 col-md-1 col-lg-1 col-code">Код</th>
@@ -49,7 +48,8 @@ $productsMobileArr = [];
 				continue;
 			}
 
-			if($group_2_name != $product_data['group_2_name']){?>
+			if($group_2_name != $product_data['group_2_name']){
+				?>
 				<tr>
 					<td class="group-name" colspan="<?=($countShop + 5);?>" data-group-id="<?=$product_data['group_2'];?>" onclick="changGroupVisibility(<?=$product_data['group_2'];?>);">
 						<?=$product_data['group_2_name'];?>
@@ -59,7 +59,8 @@ $productsMobileArr = [];
 				$group_2_name = $product_data['group_2_name'];
 			}
 
-			if($brand_name != $product_data['brand_name'] && !empty($product_data['brand_name'])){?>
+			if($brand_name != $product_data['brand_name'] && !empty($product_data['brand_name'])){
+				?>
 				<tr>
 					<td class="brand-name" colspan="<?=($countShop + 5);?>">
 						<?=$product_data['brand_name'];?>
@@ -83,17 +84,19 @@ $productsMobileArr = [];
 					</div>
 					<div><?=$product_data['short_description'];?></div>
 					<div class="t-rating">
-<!--						<span class="glyphicon glyphicon-star"></span>-->
-<!--						<span class="glyphicon glyphicon-star"></span>-->
-<!--						<span class="glyphicon glyphicon-star"></span>-->
-<!--						<span class="glyphicon glyphicon-star-empty"></span>-->
-<!--						<span class="glyphicon glyphicon-star-empty"></span>-->
+						<span class="glyphicon glyphicon-star"></span>
+						<span class="glyphicon glyphicon-star"></span>
+						<span class="glyphicon glyphicon-star"></span>
+						<span class="glyphicon glyphicon-star-empty"></span>
+						<span class="glyphicon glyphicon-star-empty"></span>
 					</div>
 				</td>
 				<td class="t-price"><?=round(($product_data['price'] * (1 - $userDiscount / 100)), 0);?>р.</td>
-				<?if(count($shop_info)>0) {
+				<?
+				if(count($shop_info)>0) {
 					foreach($shop_info as $shop_data){
-						$num = Arr::get($shop_data, 'num', 0);?>
+						$num = Arr::get($shop_data, 'num', 0);
+						?>
 						<td class="t-price t-num">
 							<a class="shop-link" data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?=Arr::get($shop_data, 'address', '');?> (<?=$num;?> шт.)">
 								<?=Arr::get($shop_data, 'short_name', '');?>
@@ -109,11 +112,11 @@ $productsMobileArr = [];
 				</td>
 			</tr>
 			<?
-            $productsMobileArr[] = $product_data;
 		}
 	}
 
-	if (0 !== count($emptyNumProducts)) {?>
+	if (0 !== count($emptyNumProducts)) {
+		?>
 		<tr>
 			<td class="empty-num-title" colspan="<?=($countShop + 5);?>">
 				Товары под заказ
@@ -139,14 +142,15 @@ $productsMobileArr = [];
 				$group_2_name = $product_data['group_2_name'];
 			}
 
-			if($brand_name != $product_data['brand_name'] && !empty($product_data['brand_name'])){?>
+			if($brand_name != $product_data['brand_name'] && !empty($product_data['brand_name'])){
+				?>
 				<tr>
 					<td class="brand-name" colspan="<?=($countShop + 5);?>">
 						<?=$product_data['brand_name'];?>
 					</td>
 				</tr>
 				<?
-                $brand_name = $product_data['brand_name'];
+				$brand_name = $product_data['brand_name'];
 			}
 			?>
 			<tr class="empty-group-row" data-group="<?=$product_data['group_2'];?>">
@@ -163,11 +167,11 @@ $productsMobileArr = [];
 					</div>
 					<div><?=$product_data['short_description'];?></div>
 					<div class="t-rating">
-<!--						<span class="glyphicon glyphicon-star"></span>-->
-<!--						<span class="glyphicon glyphicon-star"></span>-->
-<!--						<span class="glyphicon glyphicon-star"></span>-->
-<!--						<span class="glyphicon glyphicon-star-empty"></span>-->
-<!--						<span class="glyphicon glyphicon-star-empty"></span>-->
+						<span class="glyphicon glyphicon-star"></span>
+						<span class="glyphicon glyphicon-star"></span>
+						<span class="glyphicon glyphicon-star"></span>
+						<span class="glyphicon glyphicon-star-empty"></span>
+						<span class="glyphicon glyphicon-star-empty"></span>
 					</div>
 				</td>
 				<td class="t-price"><?=round(($product_data['price'] * (1 - $userDiscount / 100)), 0);?>р.</td>
@@ -184,64 +188,3 @@ $productsMobileArr = [];
 	}?>
 	</tbody>
 </table>
-<div class="visible-xs">
-    <?
-    $productsChunkArr = array_chunk($productsMobileArr, 2);
-    $emptyNumProducts = [];
-    $brandName = '';
-    $group1Name = '';
-    $group2Name = '';
-
-    foreach($productsChunkArr as $productChunkArr){?>
-        <div class="row mobile-items">
-        <?foreach($productChunkArr as $key => $productData){
-            $shopInfo = $productModel->getProductNum($productData['id'], 0, false);
-            $checkNum = false;
-
-            foreach($shopInfo as $shopData) {
-                $num = Arr::get($shopData, 'num', 0);
-
-                if ($num > 0) {
-                    $checkNum = true;
-                }
-            }
-
-            if($group2Name !== $productData['group_2_name']){?>
-                    <div class="col-xs-12 group-name" data-group-id="<?=$productData['group_2'];?>" onclick="changeMobileGroupVisibility(<?=$productData['group_2'];?>);">
-                        <?=$productData['group_2_name'];?>
-                    </div>
-                <?
-                $group2Name = $productData['group_2_name'];
-            }
-
-            if($brandName != $productData['brand_name'] && !empty($productData['brand_name'])){?>
-                <div class="col-xs-12">
-                    <?=$productData['brand_name'];?>
-                </div>
-                <?
-                $brandName = $productData['brand_name'];
-            }
-            ?>
-            <div class="col-xs-6 mobile-item mobile-item-<?=$key;?>-child" data-group="<?=$productData['group_2'];?>">
-                <div class="mobile-img-link img-link thumbnail" data-toggle="tooltip" data-placement="left" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$productData['product_img'];?>' style='width:200px;'>">
-                    <img class="mobile-img-thumbnail img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
-                </div>
-                <div class="mobile-item-name">
-                    <a href="/item/product/<?=$productData['id'];?>"><?=$productData['name'];?></a>
-                </div>
-                <div class="mobile-item-quantity">
-                    <?=($checkNum ? 'В наличии' : 'Под заказ');?>
-                </div>
-                <div class="mobile-item-price">
-                    Цена: <?=round(($product_data['price'] * (1 - $userDiscount / 100)), 0);?> р.
-                </div>
-                <div class="mobile-item-cart-action">
-                    <button type="button" id="mobileAddCartButton_<?=$product_data['id'];?>" class="btn btn-default btn-lg mobile-cart-add" value="<?=$product_data['id'];?>">Купить <span class="glyphicon glyphicon-shopping-cart"></span></button>
-                </div>
-            </div>
-            <?
-        }?>
-        </div>
-    <?}
-?>
-</div>

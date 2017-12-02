@@ -57,7 +57,6 @@ function removeAllCartPositions(){
 }
 function hideCartAddButton(id){
 	$('#addCartButton_'+id).css('display', 'none');
-	$('#mobileAddCartButton_'+id).css('display', 'none');
 }
 function showCartInButton(id){
 	$('#addInCartButton_'+id).css('display', 'block');
@@ -151,9 +150,6 @@ function setDeliveryType(id){
 }
 $(document).ready(function() {
 	$('.cart-add').click(function(){
-		setInCart($(this).val());
-	});
-	$('.mobile-cart-add').click(function(){
 		setInCart($(this).val());
 	});
 	$('.position-num-plus').click(function(){

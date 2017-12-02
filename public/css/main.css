@@ -356,10 +356,6 @@ body {
     max-width: 71px;
     margin: auto;
 }
-.mobile-img-link {
-    width: 100%!important;
-    max-width: 100%!important;
-}
 @media (max-width: 768px) {
     .table{
         font-size:5pt;
@@ -659,7 +655,7 @@ div .navbar-brand span{
     cursor: default !important;
 }
 .group-name{
-    height: 30px;
+    height: 20px;
     background-color: #FF6600;
     font-size: 13px;
     color: #fff;
@@ -977,34 +973,4 @@ div .navbar-brand span{
     color: #fff;
     text-align: center;
     font-size: 16px;
-}
-.mobile-img-thumbnail{
-    width: 100%;
-}
-.mobile-item-name {
-    padding: 8px;
-    min-height: 100px;
-}
-.mobile-item-name a{
-    font-size: 14px;
-}
-.mobile-item-0-child{
-    padding: 20px 10px 20px 30px;
-}
-.mobile-item-1-child{
-    padding: 20px 30px 20px 10px;
-}
-.mobile-item-quantity{
-    color: #33a418;
-    font-size: 18px;
-    padding: 8px;
-}
-.mobile-item-price{
-    font-weight: bold;
-    font-size: 16px;
-    padding: 8px;
-}
-.mobile-cart-add{
-    color: #FF6600;
-    background-color: #eee;
 }
