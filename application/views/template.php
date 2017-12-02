@@ -12,7 +12,7 @@
      <?=(isset($templateData) ? Arr::get($templateData, 'description') : '');?>">
     <!-- Bootstrap -->
     <link href="/public/css/bootstrap.css" rel="stylesheet">
-    <link href="/public/css/main.css?v=3" rel="stylesheet">
+    <link href="/public/css/main.css?v=<?=time();?>" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -217,8 +217,8 @@ $productModel = Model::factory('Product');
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/public/js/bootstrap.js"></script>
 <script src="/public/js/bootstrap3-typeahead.min.js"></script>
-<script src="/public/js/cart.js?v=2"></script>
-<script src="/public/js/main.js?v=3"></script>
+<script src="/public/js/cart.js?v=<?=time();?>"></script>
+<script src="/public/js/main.js?v=<?=time();?>"></script>
 
 <script>
     if ($(window).width() <= 800) {
