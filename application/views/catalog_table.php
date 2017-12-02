@@ -212,6 +212,7 @@ $productsMobileArr = [];
                     </div>
                 <?
                 $group2Name = $productData['group_2_name'];
+                $key = 0;
             }
 
             if($brandName != $productData['brand_name'] && !empty($productData['brand_name'])){?>
