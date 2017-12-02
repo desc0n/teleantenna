@@ -224,13 +224,9 @@ $productsMobileArr = [];
             ?>
             <div class="col-xs-6 mobile-item mobile-item-<?=$key;?>-child" data-group="<?=$productData['group_2'];?>">
                 <div class="mobile-item-img">
-                    <table class="table">
-                        <tr>
-                            <td class="mobile-img-link img-link thumbnail">
-                                <img class="mobile-img-thumbnail img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="mobile-img-link img-link thumbnail">
+                        <img class="mobile-img-thumbnail img-thumbnail" src="/public/img/thumb/<?=$productData['product_img'];?>">
+                    </div>
                 </div>
                 <div class="mobile-item-name">
                     <a href="/item/product/<?=$productData['id'];?>"><?=$productData['name'];?></a>
