@@ -43,7 +43,7 @@ class Model_Product extends Kohana_Model {
 	
 	public function getProduct($type_id = 0, $group_arr = [], $id = 0, $params = [])
 	{
-		$sortSql = Arr::get($params, 'sortSql', 'order by `group_1`, `group_2`, `group_3`, `brand_name`');
+		$sortSql = Arr::get($params, 'sortSql', 'order by `group_1`, `group_2`, `group_3`, `brand_name`, `code`');
 
 		if($id != 0) {
 			$sql = sprintf("select *,
@@ -125,7 +125,7 @@ class Model_Product extends Kohana_Model {
 			from `products` `p`
 			where `p`.`group_1` = :group_1
 			and  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`
+			order by `group_2_name`,`brand_name`, `p`.`code`
 			$this->devLimit";
 		else if(Arr::get($params, 'group_2', 0) != 0)
 			$sql = "select `p`.*,
@@ -147,7 +147,7 @@ class Model_Product extends Kohana_Model {
 			from `products` `p`
 			where `p`.`group_2` = :group_2
 			and  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`
+			order by `group_2_name`,`brand_name`, `p`.`code`
 			$this->devLimit";
 		else if(Arr::get($params, 'group_3', 0) != 0)
 			$sql = "select `p`.*,
@@ -169,7 +169,7 @@ class Model_Product extends Kohana_Model {
 			from `products` `p`
 			where `p`.`group_3` = :group_3
 			and  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`
+			order by `group_2_name`,`brand_name`, `p`.`code`
 			$this->devLimit";
 		else 
 			$sql = "select `p`.*,
@@ -190,7 +190,7 @@ class Model_Product extends Kohana_Model {
 			) as `check_status`
 			from `products` `p`
 			where  `p`.`status_id` = 1
-			order by `group_2_name`,`brand_name`
+			order by `group_2_name`,`brand_name`, `p`.`code`
 			$this->devLimit";
 		$product_list = DB::query(Database::SELECT,$sql)
 			->param(':group_1', Arr::get($params,'group_1',0))
@@ -341,7 +341,7 @@ class Model_Product extends Kohana_Model {
 			(select `src` from `products_imgs` `pi` where `pi`.`product_id` = `p`.`id` and  `pi`.`status_id` = 1 limit 0,1) as `product_img`,
 			(select `b`.`name` from `brands` `b` where `b`.`id` = `brand_id` and `b`.`status_id` = 1) as `brand_name`
 			from `products` `p`
-			where `p`.`name` like :searchName and `p`.`status_id` = 1 order by `brand_name`";
+			where `p`.`name` like :searchName and `p`.`status_id` = 1 order by `brand_name`, `p`.`code`";
 		return DB::query(Database::SELECT,$sql)
 			->param(':searchName', '%'.Arr::get($params,'mainSearchName','').'%')
 			->execute()
