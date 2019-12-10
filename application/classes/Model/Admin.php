@@ -28,47 +28,56 @@ class Model_Admin extends Kohana_Model {
 
 	public function addGroup($post)
 	{
-		$add_group = Arr::get($post,'addgroup',1);
-		if($add_group == 1) {
-			$sql="insert into `products_group_1` (`name`) values (:name)";
-			$query=DB::query(Database::INSERT,$sql);
-			$query->param(':name', str_replace('"',"'",Arr::get($post,'group_name','')));
-			$query->execute();
-			$sql="select last_insert_id() as `new_id` from `products_group_1` limit 0,1";
-			$query=DB::query(Database::SELECT,$sql);
-			$res = $query->execute()->as_array();
-			$new_id = $res[0]['new_id'];
-			$sql="update `products_group_1` set `parent_id` = :new_id, `status_id` = 1 where `id` = :new_id";
-			$query=DB::query(Database::UPDATE,$sql);
-			$query->param(':new_id', $new_id);
-			$query->execute();
-		} else if($add_group == 2) {
-			$sql="insert into `products_group_2` (`parent_id`, `name`) values (:parent_id, :name)";
-			$query=DB::query(Database::INSERT,$sql);
-			$query->param(':name', str_replace('"',"'",Arr::get($post,'group_name','')));
-			$query->param(':parent_id', Arr::get($post,'parent_id',''));
-			$query->execute();
-		} else if($add_group == 3) {
-			$sql="insert into `products_group_3` (`parent_id`, `name`) values (:parent_id, :name)";
-			$query=DB::query(Database::INSERT,$sql);
-			$query->param(':name', str_replace('"',"'",Arr::get($post,'group_name','')));
-			$query->param(':parent_id', Arr::get($post,'parent_id',''));
-			$query->execute();
-		}
+
 	}
 
-	public function redactGroup($post)
-	{
-		$redactGroup = Arr::get($post,'redactGroup',0);
-		$id = Arr::get($post,'redactGroupId',0);
-		if($redactGroup != 0) {
-			$sql="update `products_group_$redactGroup` set `name` = :name where `id` = :id";
-			DB::query(Database::UPDATE,$sql)
-				->param(':id', $id)
-				->param(':name', addslashes(Arr::get($post,'groupName','')))
-				->execute();
-		}
-	}
+    /**
+     * @param int $productCategoryId
+     * @param array $changeValues
+     */
+	public function patchProductCategory($productCategoryId, $changeValues = [])
+    {
+        foreach ($changeValues as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    DB::update('products__categories')
+                        ->set(['name' => $value])
+                        ->where('id', '=', $productCategoryId)
+                        ->execute();
+                    break;
+                case 'show':
+                    DB::update('products__categories')
+                        ->set(['show' => $value])
+                        ->where('id', '=', $productCategoryId)
+                        ->execute();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * @param int $productCategoryId
+     */
+	public function removeProductCategory($productCategoryId)
+    {
+        DB::delete('products__categories')
+            ->where('id', '=', $productCategoryId)
+            ->execute();
+    }
+
+    /**
+     * @param int $parentProductCategoryId
+     * @param string $newProductCategoryName
+     * @return int
+     */
+	public function addProductCategory($newProductCategoryName, $parentProductCategoryId)
+    {
+        $res = DB::insert('products__categories', ['name', 'parent_id', 'show'])
+            ->values([$newProductCategoryName, $parentProductCategoryId, 1])
+            ->execute();
+
+        return $res[0];
+    }
 
 	public function removeGroup($post)
 	{

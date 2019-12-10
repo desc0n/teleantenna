@@ -51,6 +51,9 @@ $productModel = Model::factory('Product');
                     <li class="dropdown hidden-xs">
                         <a href="/"><span class="glyphicon glyphicon-home"></span></a>
                     </li>
+                    <li>
+                        <a href="/shop_list">Адреса магазинов</a>
+                    </li>
                     <li class="dropdown visible-xs">
                         <?foreach($productModel->getProductGroup(1) as $group_1_data){?>
                             <a href="/catalog/?group_1=<?=$group_1_data['id'];?>"><?=$group_1_data['name'];?></a>
@@ -174,7 +177,7 @@ $productModel = Model::factory('Product');
             <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs logo">
                 <a href="/"><div></div></a>
             </div>
-            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 search-block">
                     <div class="form-inline" role="form">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 input-group">
@@ -188,7 +191,7 @@ $productModel = Model::factory('Product');
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-4 locat-block hidden-xs">
+            <div class="col-lg-3 col-md-3 col-sm-3 locat-block hidden-xs text-right">
                 <div class="tel-main">+7 (423) 290 12 72</div>
             </div>
         </div>

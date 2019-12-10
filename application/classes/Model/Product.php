@@ -20,8 +20,35 @@ class Model_Product extends Kohana_Model {
 		$this->devLimit = preg_match('/\.lan/i', $_SERVER['SERVER_NAME']) ? 'limit 0, 6' : '';
         DB::query(Database::UPDATE,"SET time_zone = '+10:00'")->execute();
     }
-	
-	
+
+    /**
+     * @param null|int $parentId
+     * @return array
+     */
+	public function getProductCategoriesList($parentId = null)
+	{
+		$list = [];
+
+		$categoryProducts = DB::select()
+            ->from('products__categories')
+            ->where('show', '=', 1)
+            ->and_where('parent_id', $parentId ? '=' : 'IS', $parentId)
+            ->execute()
+            ->as_array()
+        ;
+
+		foreach ($categoryProducts as $categoryProduct) {
+		    $list[] = [
+		        'id' => (int)$categoryProduct['id'],
+                'name' => str_replace(['"', "'"], '', $categoryProduct['name']),
+                'parentId' => $categoryProduct['parent_id'] ? (int)$categoryProduct['parent_id'] : null,
+                'subCategories' => $this->getProductCategoriesList((int)$categoryProduct['id']),
+            ];
+        }
+
+        return $list;
+	}
+
 	public function getProductGroup($type_id, $parent_id = '', $id = 0, $params = [])
 	{
 		$sortSql = Arr::get($params, 'sortSql');
@@ -212,11 +239,15 @@ class Model_Product extends Kohana_Model {
 
 	public function getProductImgs($id)
 	{
-		$product_imgs = Array();
-		$sql = "select * from `products_imgs` where `product_id` = :id  and  `status_id` = 1";
-		$query = DB::query(Database::SELECT,$sql);
-		$query->param(':id', $id);
-		$res = $query->execute()->as_array();
+		$product_imgs = [];
+		$res = DB::select()
+            ->from('products_imgs')
+            ->where('product_id', '=', $id)
+            ->and_where('status_id', '=', 1)
+		    ->execute()
+            ->as_array()
+        ;
+
 		foreach($res as $row){
 			$product_imgs[$row['id']] = $row;
 		}

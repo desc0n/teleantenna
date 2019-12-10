@@ -1,18 +1,81 @@
 <?
 /** @var Model_Product $productModel */
 $productModel = Model::factory('Product');
+
+function render($productCategory, $categoryId) {
+    $html = '<div class="row-accordion">
+    <div class="panel-group" id="accordionProducts' . $productCategory['id'] . '">
+        <div class="panel panel-default">
+            <div class="panel-heading panel-group-1">
+                <h4 class="panel-title" id="redactGroupTitle' . $productCategory['id'] . '">
+                    <a data-toggle="collapse" data-parent="#accordionProducts' . $productCategory['id'] . '" href="#collapseProducts' . $productCategory['id'] . '" onclick="writeGroupProduct(1,' . $productCategory['id'] . ', 0, 0);">
+                        ' . $productCategory['name'] . '
+                    </a>
+                    <span class="glyphicon glyphicon-pencil redactBtn" onclick="$(\'#redactGroupTitle' . $productCategory['id'] . '\').css(\'display\', \'none\');$(\'#redactGroupForm' . $productCategory['id'] . '\').css(\'display\', \'block\');"></span>
+                    <form method="post" class="pull-right" style="width: auto!important;">
+                        <span class="glyphicon glyphicon-remove" style="cursor: pointer;" onclick="if(confirm(\'Подтвердить удаление группы?\')) {$(this).parents(\'form:first\').submit();}"></span>
+                        <input type="hidden" name="productCategoryId" value="' . $productCategory['id'] . '">
+                        <input type="hidden" name="action" value="removeProductCategory">
+                    </form>
+                </h4>
+                <form method="post" id="redactGroupForm' . $productCategory['id'] . '" style="display: none;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="productCategoryName" value="' . $productCategory['name'] . '">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit" name="action" value="patchProductCategory" >
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                            <input type="hidden" name="productCategoryId" value="' . $productCategory['id'] . '">
+                        </span>
+                    </div>
+                </form>
+            </div>'
+    ;
+
+    if($productCategory['subCategories']) {
+        $html .=
+        '<div id="collapseProducts' . $productCategory['id'] . '" class="panel-collapse collapse '. ($categoryId === $productCategory['id'] ? 'in' : '') . '">
+            <div class="panel-body product-group-panel-body">';
+
+        foreach ($productCategory['subCategories'] as $subCategory) {
+            $html .= render($subCategory, $categoryId);
+        }
+
+        $html .= '<form method="post">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="newProductCategory">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <input type="hidden" name="parentCategoryId" value="' . $productCategory['parentId'] . '">
+                        </span>
+                    </div>
+                </form>';
+
+        $html .=
+            '</div>
+        </div>';
+    }
+
+    $html .= '</div>
+        </div>
+    </div>';
+
+    return $html;
+}
 ?>
 <h1>Редактирование данных</h1>
 <div class="row admin-main-page">
 	<ul class="nav nav-tabs">
-		<li <?=((empty($get['action']) || Arr::get($get,'action', '') == 'products') ? 'class="active"' : '');?>><a href="#products" data-toggle="tab">Товары</a></li>
-		<li <?=(Arr::get($get,'action', '') == 'groups' ? 'class="active"' : '');?>><a href="#groups" data-toggle="tab">Группы</a></li>
-		<li <?=(Arr::get($get,'action', '') == 'brands' ? 'class="active"' : '');?>><a href="#brands" data-toggle="tab">Производители</a></li>
-		<li <?=(Arr::get($get,'action', '') == 'shops' ? 'class="active"' : '');?>><a href="#shops" data-toggle="tab">Магазины</a></li>
-		<li <?=(Arr::get($get,'action', '') == 'services' ? 'class="active"' : '');?>><a href="#services" data-toggle="tab">Услуги</a></li>
+		<li <?=((!$action || $action === 'products') ? 'class="active"' : '');?>><a href="#products" data-toggle="tab">Товары</a></li>
+		<li <?=($action === 'categories' ? 'class="active"' : '');?>><a href="#categories" data-toggle="tab">Группы</a></li>
+		<li <?=($action === 'brands' ? 'class="active"' : '');?>><a href="#brands" data-toggle="tab">Производители</a></li>
+		<li <?=($action === 'shops' ? 'class="active"' : '');?>><a href="#shops" data-toggle="tab">Магазины</a></li>
+		<li <?=($action === 'services' ? 'class="active"' : '');?>><a href="#services" data-toggle="tab">Услуги</a></li>
 	</ul>
 	<div class="tab-content">
-		<div class="tab-pane <?=((empty($get['action']) || Arr::get($get,'action', '') == 'products') ? 'active' : '');?>" id="products">
+		<div class="tab-pane <?=((!$action || $action === 'products') ? 'active' : '');?>" id="products">
 			<h2 class="sub-header col-sm-12">Добавление товаров:</h2>
 			<div class="col-sm-11">
 				<div class="panel-group" id="accordionProducts">
@@ -48,7 +111,7 @@ $productModel = Model::factory('Product');
 													<input type="hidden" name="groupId1" value="<?=$group_1_data['id'];?>">
 												</form>
 											</div>
-											<div id="collapseProducts1<?=$group_1_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_1', 0) == $group_1_data['id'] ? 'in' : '');?>">
+											<div id="collapseProducts1<?=$group_1_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_1', 0) == $group_1_data['id'] ? 'in' : '');*/?>">
 												<div class="panel-body product-group-panel-body">
 													<?foreach($productModel->getProductGroup(2, $group_1_data['id']) as $group_2_data){?>
 													<div class="row-accordion">
@@ -73,7 +136,7 @@ $productModel = Model::factory('Product');
 																		<input type="hidden" name="groupId2" value="<?=$group_2_data['id'];?>">
 																	</form>
 																</div>
-																<div id="collapseProducts2<?=$group_2_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_2', 0) == $group_2_data['id'] ? 'in' : '');?>">
+																<div id="collapseProducts2<?=$group_2_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_2', 0) == $group_2_data['id'] ? 'in' : '');*/?>">
 																	<div class="panel-body product-group-panel-body">
 																		<?foreach($productModel->getProductGroup(3, $group_2_data['id']) as $group_3_data){?>
 																		<div class="row-accordion">
@@ -99,7 +162,7 @@ $productModel = Model::factory('Product');
 																							<input type="hidden" name="groupId3" value="<?=$group_3_data['id'];?>">
 																						</form>
 																					</div>
-																					<div id="collapseProducts3<?=$group_3_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_3', 0) == $group_3_data['id'] ? 'in' : '');?>">
+																					<div id="collapseProducts3<?=$group_3_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_3', 0) == $group_3_data['id'] ? 'in' : '');*/?>">
 																						<div class="panel-body product-group-panel-body">
 																							<div class="groupProducts" id="groupProducts3<?=$group_3_data['id'];?>"></div>
 																							<form action="/admin/product" method="post">
@@ -185,7 +248,7 @@ $productModel = Model::factory('Product');
 				<input type="hidden" id="group_3" name="group_3" value="0">
 			</form>
 		</div>
-		<div class="tab-pane <?=(Arr::get($get,'action', '') == 'groups' ? 'active' : '');?>" id="groups">
+		<div class="tab-pane <?=($action === 'categories' ? 'active' : '');?>" id="categories">
 			<h2 class="sub-header col-sm-12">Группа товаров:</h2>
 			<div class="col-sm-11">
 				<div class="panel-group" id="accordionGroups">
@@ -197,134 +260,28 @@ $productModel = Model::factory('Product');
 								</a>
 							</h4>
 						</div>
-						<div id="collapseGroups" class="panel-collapse collapse in">
-							<div class="panel-body product-group-panel-body">
-								<?
-								$i1 = 0;
-								foreach($productModel->getProductGroup(1) as $group_1_data){
-									$i1++;
-									?>
-									<div class="row-accordion">
-										<div class="panel-group" id="accordionGroups1<?=$group_1_data['id'];?>">
-											<div class="panel panel-default">
-												<div class="panel-heading panel-group-1">
-													<h4 class="panel-title">
-														<a data-toggle="collapse" data-parent="#accordionGroups1<?=$group_1_data['id'];?>" href="#collapseGroups1<?=$group_1_data['id'];?>">
-															<?=$i1;?>. <?=$group_1_data['name'];?>
-														</a>
-														<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: var den=confirm('Точно подтверждаете удаление?');if(den)$('#remove_group_form_1_<?=$group_1_data['id'];?>').submit();"></span>
-													</h4>
-													<form id="remove_group_form_1_<?=$group_1_data['id'];?>" class="display-none" action="/admin/product" method="post">
-														<input type="hidden" name="type_id" value="1">
-														<input type="hidden" name="removegroup" value="<?=$group_1_data['id'];?>">
-													</form>
-												</div>
-												<div id="collapseGroups1<?=$group_1_data['id'];?>" class="panel-collapse collapse">
-													<div class="panel-body product-group-panel-body">
-														<?
-														$i2 = 0;
-														foreach($productModel->getProductGroup(2, $group_1_data['id']) as $group_2_data){
-															$i2++;
-															?>
-															<div class="row-accordion">
-																<div class="panel-group" id="accordionGroups2<?=$group_2_data['id'];?>">
-																	<div class="panel panel-default">
-																		<div class="panel-heading panel-group-2">
-																			<h4 class="panel-title">
-																				<a data-toggle="collapse" data-parent="#accordionGroups2<?=$group_2_data['id'];?>" href="#collapseGroups2<?=$group_2_data['id'];?>">
-																					<?=$i1;?>.<?=$i2;?>. <?=$group_2_data['name'];?>
-																				</a>
-																				<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: var den=confirm('Точно подтверждаете удаление?');if(den)$('#remove_group_form_2_<?=$group_2_data['id'];?>').submit();"></span>
-																			</h4>
-																			<form id="remove_group_form_2_<?=$group_2_data['id'];?>" class="display-none" action="/admin/product" method="post">
-																				<input type="hidden" name="type_id" value="2">
-																				<input type="hidden" name="removegroup" value="<?=$group_2_data['id'];?>">
-																			</form>
-																		</div>
-																		<div id="collapseGroups2<?=$group_2_data['id'];?>" class="panel-collapse collapse">
-																			<div class="panel-body product-group-panel-body">
-																				<?
-																				$i3 = 0;
-																				foreach($productModel->getProductGroup(3, $group_2_data['id']) as $group_3_data){
-																					$i3++;
-																					?>
-																					<div class="row-accordion">
-																						<div class="panel-group" id="accordionGroups3<?=$group_3_data['id'];?>">
-																							<div class="panel panel-default">
-																								<div class="panel-heading panel-group-3">
-																									<h4 class="panel-title">
-																										<a data-toggle="collapse" data-parent="#accordionGroups3<?=$group_3_data['id'];?>" href="#collapseGroups3<?=$group_3_data['id'];?>">
-																											<?=$i1;?>.<?=$i2;?>.<?=$i3;?>. <?=$group_3_data['name'];?>
-																										</a>
-																										<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: var den=confirm('Точно подтверждаете удаление?');if(den)$('#remove_group_form_3_<?=$group_3_data['id'];?>').submit();"></span>
-																									</h4>
-																									<form id="remove_group_form_3_<?=$group_3_data['id'];?>" class="display-none" action="/admin/product" method="post">
-																										<input type="hidden" name="type_id" value="3">
-																										<input type="hidden" name="removegroup" value="<?=$group_3_data['id'];?>">
-																									</form>
-																								</div>
-																								<div id="collapseGroups3<?=$group_3_data['id'];?>" class="panel-collapse collapse">
-																									<div class="panel-body product-group-panel-body">
-																										<form action="/admin/product" method="post">
-																											<div class="input-group">
-																												<input type="text" class="form-control" name="group_name">
-																												<span class="input-group-btn">
-																													<button class="btn btn-default" type="submit" name="addgroup" value="3"><span class="glyphicon glyphicon-plus"></span></button>
-																												</span>
-																											</div>
-																											<input type="hidden" name="parent_id" value="<?=$group_3_data['id'];?>">
-																										</form>
-																									</div>
-																								</div>
-																							</div>
-																						</div>
-																					</div>
-																				<?}?>
-																				<form action="/admin/product" method="post">
-																					<div class="input-group">
-																						<input type="text" class="form-control" name="group_name">
-																						<span class="input-group-btn">
-																							<button class="btn btn-default" type="submit" name="addgroup" value="3"><span class="glyphicon glyphicon-plus"></span></button>
-																						</span>
-																					</div>
-																					<input type="hidden" name="parent_id" value="<?=$group_2_data['id'];?>">
-																				</form>
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														<?}?>
-														<form action="/admin/product" method="post">
-															<div class="input-group">
-																<input type="text" class="form-control" name="group_name">
-													<span class="input-group-btn">
-														<button class="btn btn-default" type="submit" name="addgroup" value="2"><span class="glyphicon glyphicon-plus"></span></button>
-													</span>
-															</div>
-															<input type="hidden" name="parent_id" value="<?=$group_1_data['id'];?>">
-														</form>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								<?}?>
-								<form action="/admin/product" method="post">
-									<div class="input-group">
-										<input type="text" class="form-control" name="group_name">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="submit" name="addgroup" value="1"><span class="glyphicon glyphicon-plus"></span></button>
-								</span>
-									</div>
-								</form>
-							</div>
-						</div>
+                        <div id="collapseGroups" class="panel-collapse collapse in">
+                            <div class="panel-body product-group-panel-body">
+                                <?foreach ($productsCategories as $productCategory) {?>
+                                    <?=render($productCategory, $categoryId);?>
+                                <?}?>
+                                <form method="post">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="newProductCategory">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="tab-pane <?=(Arr::get($get,'action', '') == 'brands' ? 'active' : '');?>" id="brands">
+		<div class="tab-pane <?=($action === 'brands' ? 'active' : '');?>" id="brands">
 			<h2 class="sub-header col-sm-12">Производители:</h2>
 			<div class="col-sm-11">
 				<div class="panel-group" id="accordionBrands">
@@ -371,7 +328,7 @@ $productModel = Model::factory('Product');
 				</div>
 			</div>
 		</div>
-		<div class="tab-pane <?=(Arr::get($get,'action', '') == 'shops' ? 'active' : '');?>" id="shops">
+		<div class="tab-pane <?=($action === 'shops' ? 'active' : '');?>" id="shops">
 			<h2 class="sub-header col-sm-12">Магазины:</h2>
 			<div class="col-sm-11">
 				<div class="panel-group" id="accordionShops">
@@ -473,7 +430,7 @@ $productModel = Model::factory('Product');
 				</div>
 			</div>
 		</div>
-		<div class="tab-pane <?=(Arr::get($get,'action', '') == 'services' ? 'active' : '');?>" id="services">
+		<div class="tab-pane <?=($action === 'services' ? 'active' : '');?>" id="services">
 			<h2 class="sub-header col-sm-12">Добавление услуг:</h2>
 			<div class="col-sm-11">
 				<div class="panel-group" id="accordionServices">
@@ -509,7 +466,7 @@ $productModel = Model::factory('Product');
 													<input type="hidden" name="groupId1" value="<?=$group_1_data['id'];?>">
 												</form>
 											</div>
-											<div id="collapseServices1<?=$group_1_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_1', 0) == $group_1_data['id'] ? 'in' : 'in');?>">
+											<div id="collapseServices1<?=$group_1_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_1', 0) == $group_1_data['id'] ? 'in' : 'in');*/?>">
 												<div class="panel-body service-group-panel-body">
 													<?foreach(Model::factory('Service')->getServiceGroup(2, $group_1_data['id']) as $group_2_data){?>
 													<div class="row-accordion">
@@ -534,7 +491,7 @@ $productModel = Model::factory('Product');
 																		<input type="hidden" name="groupId2" value="<?=$group_2_data['id'];?>">
 																	</form>
 																</div>
-																<div id="collapseServices2<?=$group_2_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_2', 0) == $group_2_data['id'] ? 'in' : '');?>">
+																<div id="collapseServices2<?=$group_2_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_2', 0) == $group_2_data['id'] ? 'in' : '');*/?>">
 																	<div class="panel-body service-group-panel-body">
 																		<?foreach(Model::factory('Service')->getServiceGroup(3, $group_2_data['id']) as $group_3_data){?>
 																		<div class="row-accordion">
@@ -560,7 +517,7 @@ $productModel = Model::factory('Product');
 																							<input type="hidden" name="groupId3" value="<?=$group_3_data['id'];?>">
 																						</form>
 																					</div>
-																					<div id="collapseServices3<?=$group_3_data['id'];?>" class="panel-collapse collapse <?=(Arr::get($get, 'group_3', 0) == $group_3_data['id'] ? 'in' : '');?>">
+																					<div id="collapseServices3<?=$group_3_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_3', 0) == $group_3_data['id'] ? 'in' : '');*/?>">
 																						<div class="panel-body service-group-panel-body">
 																							<?foreach(Model::factory('Service')->getService(1, Array(1=>$group_1_data['id'],2=>$group_2_data['id'],3=>$group_3_data['id'])) as $service_3_data){?>
 																								<div class="alert alert-info">

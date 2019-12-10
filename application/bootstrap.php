@@ -122,6 +122,13 @@ Kohana::modules(array(
 	'guestid'    => MODPATH.'guestid',
 	));
 
+
+
+Route::set('shop_list', 'shop_list')
+	->defaults(array(
+		'controller' => 'index',
+		'action'     => 'shop_list',
+	));
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.

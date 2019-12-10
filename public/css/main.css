@@ -171,6 +171,9 @@ button.search{
 .panel-heading span{
     color: #aaa;
 }
+#collapseGroups .panel-heading span{
+    color: #000;
+}
 .left-nav .list-group-item{
     border:none;
 }

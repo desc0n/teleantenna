@@ -1,8 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Index extends Controller {
-
-	
+class Controller_Index extends Controller
+{
 	public function action_index()
 	{
 		if (!Auth::instance()->logged_in() && isset($_POST['login'])) {
@@ -26,12 +25,27 @@ class Controller_Index extends Controller {
 				->set('templateData', $templateData)
 		;
 
-		$content = View::factory("catalog");
-		$content->get = $_GET;
+		$content = View::factory('index');
+		$template->root_page = 'index';
+		$template->content = $content;
+		$this->response->body($template);
+	}
+
+
+	public function action_shop_list()
+	{
+		$templateData['title'] = 'Список магазинов.';
+		$templateData['description'] = '';
+
+		$template =
+			View::factory('template')
+				->set('templateData', $templateData)
+		;
+
+		$content = View::factory("shop_list");
 		$content->shopArr = Model::factory('Shop')->getShop();
-		$root_page="index";
-		$template->root_page=$root_page;
-		$template->content=$content;
+		$template->root_page = 'shop_list';
+		$template->content = $content;
 		$this->response->body($template);
 	}
 

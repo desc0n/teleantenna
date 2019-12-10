@@ -1,9 +1,22 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Admin extends Controller {
+class Controller_Admin extends Controller
+{
+    /**@var Model_Admin */
+    private $adminModel;
 
+    /**@var Model_Product */
+    private $productModel;
 
-	private function check_role($role_type = 1)
+    public function __construct(Request $request, Response $response)
+    {
+        parent::__construct($request, $response);
+
+        $this->adminModel = Model::factory('Admin');
+        $this->productModel = Model::factory('Product');
+    }
+
+    private function check_role($role_type = 1)
 	{
 		if (Auth::instance()->logged_in('admin') || Auth::instance()->logged_in('manager')) {
 			if ($role_type == 1) {
@@ -22,18 +35,15 @@ class Controller_Admin extends Controller {
 
 	public function action_index()
 	{
-		/** @var $adminModel Model_Admin */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		$template = View::factory("admin_template");
 		$admin_menu = View::factory("admin_menu");
 		$admin_content = View::factory("admin_main_page");
-		$ordersList = $adminModel->getOrdersList($_GET);
-		$realizationsList = $adminModel->getRealizationsList($_GET);
-		$incomesList = $adminModel->getIncomesList($_GET);
-		$returnsList = $adminModel->getReturnsList($_GET);
-		$writeoffsList = $adminModel->getWriteoffsList($_GET);
+		$ordersList = $this->adminModel->getOrdersList($_GET);
+		$realizationsList = $this->adminModel->getRealizationsList($_GET);
+		$incomesList = $this->adminModel->getIncomesList($_GET);
+		$returnsList = $this->adminModel->getReturnsList($_GET);
+		$writeoffsList = $this->adminModel->getWriteoffsList($_GET);
 		$admin_content->ordersList = $ordersList;
 		$admin_content->ordersCount = !empty($ordersList) ? $ordersList[0]['orders_count'] : 0;
 		$admin_content->realizationsList = $realizationsList;
@@ -44,8 +54,8 @@ class Controller_Admin extends Controller {
 		$admin_content->returnsCount = !empty($returnsList) ? $returnsList[0]['returns_count'] : 0;
 		$admin_content->writeoffsList = $writeoffsList;
 		$admin_content->writeoffsCount = !empty($writeoffsList) ? $writeoffsList[0]['writeoffs_count'] : 0;
-		$admin_content->limit = $adminModel->getLimit();
-		$admin_content->getString = $adminModel->getGetString($_GET);
+		$admin_content->limit = $this->adminModel->getLimit();
+		$admin_content->getString = $this->adminModel->getGetString($_GET);
 		$admin_content->get = $_GET;
 		$root_page="index";
 		$admin_menu->root_page=$root_page;
@@ -54,111 +64,15 @@ class Controller_Admin extends Controller {
 		$this->response->body($template);
 	}
 	
-	public function action_product()
-	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
-		$this->check_role();
-		if(Arr::get($_POST,'addproduct','') != ''){
-			$adminModel->addProduct($_POST);
-			HTTP::redirect('/admin/product/?action=products');
-		}
-		if(Arr::get($_POST,'removeproduct','') != ''){
-			$adminModel->removeProduct($_POST);
-			HTTP::redirect('/admin/product/?action=products');
-		}
-		if(Arr::get($_POST,'addgroup','') != ''){
-			$adminModel->addGroup($_POST);
-			HTTP::redirect('/admin/product/?action=groups');
-		}
-		if(Arr::get($_POST,'removegroup','') != ''){
-			$adminModel->removeGroup($_POST);
-			HTTP::redirect('/admin/product/?action=groups');
-		}
-		if(Arr::get($_POST,'addbrand','') != ''){
-			$adminModel->addBrand($_POST);
-			HTTP::redirect('/admin/product/?action=brands');
-		}
-		if(Arr::get($_POST,'removebrand','') != ''){
-			$adminModel->removeBrand($_POST);
-			HTTP::redirect('/admin/product/?action=brands');
-		}
-		if(Arr::get($_POST,'addshop','') != ''){
-			$adminModel->addShop($_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'removeshop','') != ''){
-			$adminModel->removeShop($_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'redactshop','') != ''){
-			$adminModel->redactShop($_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'loadshopimg','') != ''){
-			$adminModel->loadImgShop($_FILES, $_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'addcity','') != ''){
-			$adminModel->addCity($_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'redactcity','') != ''){
-			$adminModel->redactCity($_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'removecity','') != ''){
-			$adminModel->removeCity($_POST);
-			HTTP::redirect('/admin/product/?action=shops');
-		}
-		if(Arr::get($_POST,'redactnum','') != ''){
-			$adminModel->setProductNum($_POST);
-			HTTP::redirect('/admin/redactproducts/?id='.Arr::get($_POST,'redactproduct',0));
-		}
-		if(Arr::get($_POST,'addservice','') != ''){
-			$adminModel->addService($_POST);
-			HTTP::redirect('/admin/product/?action=services');
-		}
-		if(Arr::get($_POST,'removeservice','') != ''){
-			$adminModel->removeService($_POST);
-			HTTP::redirect('/admin/product/?action=services');
-		}
-		if(Arr::get($_POST,'addgroup','') != ''){
-			$adminModel->addServicesGroup($_POST);
-			HTTP::redirect('/admin/product/?action=groups');
-		}
-		if(Arr::get($_POST,'removegroup','') != ''){
-			$adminModel->removeServicesGroup($_POST);
-			HTTP::redirect('/admin/product/?action=groups');
-		}
-		$template=View::factory("admin_template");
-		$admin_menu=View::factory("admin_menu");
-		$admin_content=View::factory("admin_product");
-		$root_page="product";
-		$admin_menu->root_page=$root_page;
-		$admin_content->get=$_GET;
-		$template->admin_menu=$admin_menu;
-		$template->admin_content=$admin_content;
-		$this->response->body($template);
-	}
-	
 	public function action_addproducts()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'addproduct','') != ''){
-			$adminModel->addProduct($_POST);
+			$this->adminModel->addProduct($_POST);
 			HTTP::redirect('/admin/addproducts/?group_1='.Arr::get($_POST,'group_1','').'&group_2='.Arr::get($_POST,'group_2','').'&group_3='.Arr::get($_POST,'group_3',''));
 		}
 		if(Arr::get($_POST,'removeproduct','') != ''){
-			$adminModel->removeProduct($_POST);
+			$this->adminModel->removeProduct($_POST);
 			HTTP::redirect('/admin/addproducts/?group_1='.Arr::get($_POST,'group_1','').'&group_2='.Arr::get($_POST,'group_2','').'&group_3='.Arr::get($_POST,'group_3',''));
 		}
 		$template=View::factory("admin_template");
@@ -171,58 +85,9 @@ class Controller_Admin extends Controller {
 		$template->admin_content=$admin_content;
 		$this->response->body($template);
 	}
-	
-	public function action_addproductsgroup()
-	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
-		$this->check_role();
-		if(Arr::get($_POST,'addgroup','') != ''){
-			$adminModel->addGroup($_POST);
-			HTTP::redirect('/admin/addproductsgroup');
-		}
-		if(Arr::get($_POST,'removegroup','') != ''){
-			$adminModel->removeGroup($_POST);
-			HTTP::redirect('/admin/addproductsgroup');
-		}
-		$template=View::factory("admin_template");
-		$admin_menu=View::factory("admin_menu");
-		$admin_content=View::factory("admin_add_products_group");
-		$root_page="addproductsgroup";
-		$admin_menu->root_page=$root_page;
-		$template->admin_menu=$admin_menu;
-		$template->admin_content=$admin_content;
-		$this->response->body($template);
-	}
-
-	public function action_redactproductsgroup()
-	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
-		$this->check_role();
-		if(Arr::get($_POST,'redactGroup','') != ''){
-			$adminModel->redactGroup($_POST);
-		}
-		$getString = '?group=true';
-		$getString .= Arr::get($_POST, 'groupId1', 0) != 0 ? '&group_1='.Arr::get($_POST, 'groupId1', 0) : '';
-		$getString .= Arr::get($_POST, 'groupId2', 0) != 0 ? '&group_2='.Arr::get($_POST, 'groupId2', 0) : '';
-		$getString .= Arr::get($_POST, 'groupId3', 0) != 0 ? '&group_3='.Arr::get($_POST, 'groupId3', 0) : '';
-		HTTP::redirect('/admin/product/' . $getString);
-	}
 
 	public function action_redactproducts()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		$product_id = Arr::get($_GET,'id','');
 		$filename=Arr::get($_FILES, 'imgname', '');
@@ -230,26 +95,26 @@ class Controller_Admin extends Controller {
 		$removeimg = isset($_POST['removeimg']) ? $_POST['removeimg'] : 0;
 		$search_arr = Array();
 		if($redact_search){
-			$search_arr = $adminModel->searchRedactProduct($_POST);
+			$search_arr = $this->adminModel->searchRedactProduct($_POST);
 		}
 		if($product_id != '' && isset($_POST['redactproduct'])){
-			$adminModel->setProductInfo($_POST);
+			$this->adminModel->setProductInfo($_POST);
 			HTTP::redirect('/admin/redactproducts/?id='.$product_id);
 		}
 		if($product_id != '' && isset($_POST['newProductParam'])){
-			$adminModel->setNewParam($_POST);
+			$this->adminModel->setNewParam($_POST);
 			HTTP::redirect('/admin/redactproducts/?id='.$product_id);
 		}
 		if($product_id != '' && isset($_POST['removeProductParam'])){
-			$adminModel->removeProductParam($_POST);
+			$this->adminModel->removeProductParam($_POST);
 			HTTP::redirect('/admin/redactproducts/?id='.$product_id);
 		}
 		if ($product_id != '' && $filename!='') {
-			$result=$adminModel->loadProductImg($_FILES, $product_id);
+			$result=$this->adminModel->loadProductImg($_FILES, $product_id);
 			HTTP::redirect('/admin/redactproducts/?id='.$product_id);
 		}
 		if ($removeimg != 0) {
-			$result=$adminModel->removeProductImg($_POST);
+			$result=$this->adminModel->removeProductImg($_POST);
 			HTTP::redirect('/admin/redactproducts/?id='.$product_id);
 		}
 		$product_info = $product_id != '' ? Model::factory('Product')->getProductInfo($product_id) : [];
@@ -272,18 +137,13 @@ class Controller_Admin extends Controller {
 	
 	public function action_addcities()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'addcity','') != ''){
-			$adminModel->addCity($_POST);
+			$this->adminModel->addCity($_POST);
 			HTTP::redirect('/admin/addcities');
 		}
 		if(Arr::get($_POST,'removecity','') != ''){
-			$adminModel->removeCity($_POST);
+			$this->adminModel->removeCity($_POST);
 			HTTP::redirect('/admin/addcities');
 		}
 		$template=View::factory("admin_template");
@@ -298,22 +158,17 @@ class Controller_Admin extends Controller {
 	
 	public function action_addshopes()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'addshop','') != ''){
-			$adminModel->addShop($_POST);
+			$this->adminModel->addShop($_POST);
 			HTTP::redirect('/admin/addshopes');
 		}
 		if(Arr::get($_POST,'removeshop','') != ''){
-			$adminModel->removeShop($_POST);
+			$this->adminModel->removeShop($_POST);
 			HTTP::redirect('/admin/addshopes');
 		}
 		if(Arr::get($_POST,'redactshop','') != ''){
-			$adminModel->redactShop($_POST);
+			$this->adminModel->redactShop($_POST);
 			HTTP::redirect('/admin/addshopes');
 		}
 		$template=View::factory("admin_template");
@@ -329,20 +184,15 @@ class Controller_Admin extends Controller {
 	
 	public function action_redactproductsnum()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		$product_id = Arr::get($_GET,'id','');
 		$redact_search = isset($_POST['redact_search']) ? $_POST['redact_search'] : false;
 		$search_arr = Array();
 		if($redact_search){
-			$search_arr = $adminModel->searchRedactProduct($_POST);
+			$search_arr = $this->adminModel->searchRedactProduct($_POST);
 		}
 		if($product_id != '' && isset($_POST['redactnum'])){
-			$adminModel->setProductNum($_POST);
+			$this->adminModel->setProductNum($_POST);
 			HTTP::redirect('/admin/redactproductsnum/?id='.$product_id);
 		}
 		$product_info = $product_id != '' ? Model::factory('Product')->getProductInfo($product_id) : Array();
@@ -362,18 +212,13 @@ class Controller_Admin extends Controller {
 	
 	public function action_brands()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'addbrand','') != ''){
-			$adminModel->addBrand($_POST);
+			$this->adminModel->addBrand($_POST);
 			HTTP::redirect('/admin/brands');
 		}
 		if(Arr::get($_POST,'removebrand','') != ''){
-			$adminModel->removeBrand($_POST);
+			$this->adminModel->removeBrand($_POST);
 			HTTP::redirect('/admin/brands');
 		}
 		$template=View::factory("admin_template");
@@ -388,47 +233,42 @@ class Controller_Admin extends Controller {
 	
 	public function action_realization()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 
 		if(isset($_POST['newrealization'])){
-			$realization_id = $adminModel->addNewRealization();
+			$realization_id = $this->adminModel->addNewRealization();
 			HTTP::redirect('/admin/realization/?realization='.$realization_id);
 		}
 
 		$realization_id = Arr::get($_GET, 'realization', 0);
 		if(isset($_POST['removeRealizationPosition'])){
-			$adminModel->removeRealizationPosition($_POST);
+			$this->adminModel->removeRealizationPosition($_POST);
 			HTTP::redirect('/admin/realization/?realization='.$realization_id);
 		}
 
 		if(isset($_POST['carryOutRealization'])){
-			$adminModel->carryOutRealization($_POST);
+			$this->adminModel->carryOutRealization($_POST);
 			HTTP::redirect('/admin/print_realization/?realization='.$realization_id);
 		}
 
 		if(isset($_POST['carryOutRealizationPost'])){
-			$adminModel->carryOutRealizationPost($_POST);
+			$this->adminModel->carryOutRealizationPost($_POST);
 			HTTP::redirect('/admin/print_realization/?realization='.$realization_id);
 		}
 
 		if(isset($_POST['createReturn'])){
-			$newReturnId = $adminModel->createReturnFromRealization($_POST);
+			$newReturnId = $this->adminModel->createReturnFromRealization($_POST);
 			HTTP::redirect('/admin/return/?return='.$newReturnId);
 		}
-		$adminModel->checkPrice($_GET);
+		$this->adminModel->checkPrice($_GET);
 		$template=View::factory("admin_template");
 		$admin_menu=View::factory("admin_menu");
 		$admin_content = View::factory("realization_post")
-			->set('contractorList', $adminModel->getContractorList())
+			->set('contractorList', $this->adminModel->getContractorList())
 			->set('realization_id', $realization_id)
-			->set('realizationData', $adminModel->getRealizationData($realization_id))
-			->set('document_status', $adminModel->getRealizationStatus($realization_id))
-			->set('contractor_id', $adminModel->getRealizationContractor($_GET));
+			->set('realizationData', $this->adminModel->getRealizationData($realization_id))
+			->set('document_status', $this->adminModel->getRealizationStatus($realization_id))
+			->set('contractor_id', $this->adminModel->getRealizationContractor($_GET));
 		$root_page="realization";
 		$admin_menu->root_page=$root_page;
 		$template->admin_menu=$admin_menu;
@@ -438,27 +278,22 @@ class Controller_Admin extends Controller {
 
 	public function action_income()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		if(isset($_POST['newincome'])){
-			$income_id = $adminModel->addNewIncome();
+			$income_id = $this->adminModel->addNewIncome();
 			HTTP::redirect('/admin/income/?income='.$income_id);
 		}
 		$income_id = Arr::get($_GET, 'income', 0);
 		if(isset($_POST['removeIncomePosition'])){
-			$adminModel->removeIncomePosition($_POST);
+			$this->adminModel->removeIncomePosition($_POST);
 			HTTP::redirect('/admin/income/?income='.$income_id);
 		}
 		if(isset($_POST['carryOutIncome'])){
-			$adminModel->carryOutIncome($_POST);
+			$this->adminModel->carryOutIncome($_POST);
 			HTTP::redirect('/admin/?action=incomes');
 		}
 		if(isset($_POST['carryOutIncomePost'])){
-			$adminModel->carryOutIncomePost($_POST);
+			$this->adminModel->carryOutIncomePost($_POST);
 			HTTP::redirect('/admin/?action=incomes');
 		}
 		$template = View::factory("admin_template");
@@ -467,10 +302,10 @@ class Controller_Admin extends Controller {
 		$admin_menu->root_page = $root_page;
         $admin_content = View::factory('income_post')
             ->set('income_id', $income_id)
-            ->set('incomeData', $adminModel->getIncomeData($income_id))
-            ->set('document_status', $adminModel->getIncomeStatus($income_id))
-            ->set('contractorList', $adminModel->getContractorList())
-            ->set('contractor_id', $adminModel->getIncomeContractor($_GET));
+            ->set('incomeData', $this->adminModel->getIncomeData($income_id))
+            ->set('document_status', $this->adminModel->getIncomeStatus($income_id))
+            ->set('contractorList', $this->adminModel->getContractorList())
+            ->set('contractor_id', $this->adminModel->getIncomeContractor($_GET));
 		$template->admin_menu=$admin_menu;
 		$template->admin_content=$admin_content;
 		$this->response->body($template);
@@ -478,23 +313,18 @@ class Controller_Admin extends Controller {
 
 	public function action_return()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		if(isset($_POST['newreturn'])){
-			$return_id = $adminModel->addNewReturn();
+			$return_id = $this->adminModel->addNewReturn();
 			HTTP::redirect('/admin/return/?return='.$return_id);
 		}
 		$return_id = Arr::get($_GET, 'return', 0);
 		if(isset($_POST['removeReturnPosition'])){
-			$adminModel->removeReturnPosition($_POST);
+			$this->adminModel->removeReturnPosition($_POST);
 			HTTP::redirect('/admin/return/?return='.$return_id);
 		}
 		if(isset($_POST['carryOutReturn'])){
-			$adminModel->carryOutReturn($_POST);
+			$this->adminModel->carryOutReturn($_POST);
 			HTTP::redirect('/admin/?action=returns');
 		}
 		$template=View::factory("admin_template");
@@ -503,7 +333,7 @@ class Controller_Admin extends Controller {
 		$root_page="return";
 		$admin_menu->root_page=$root_page;
 		$admin_content->return_id=$return_id;
-		$admin_content->returnData=$adminModel->getReturnData($return_id);
+		$admin_content->returnData=$this->adminModel->getReturnData($return_id);
 		$template->admin_menu=$admin_menu;
 		$template->admin_content=$admin_content;
 		$this->response->body($template);
@@ -511,31 +341,26 @@ class Controller_Admin extends Controller {
 
 	public function action_writeoff()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 
 		if(isset($_POST['newwriteoff'])){
-			$writeoff_id = $adminModel->addNewWriteoff();
+			$writeoff_id = $this->adminModel->addNewWriteoff();
 			HTTP::redirect('/admin/writeoff/?writeoff='.$writeoff_id);
 		}
 
 		$writeoff_id = Arr::get($_GET, 'writeoff', 0);
 
 		if(isset($_POST['removeWriteoffPosition'])){
-			$adminModel->removeWriteoffPosition($_POST);
+			$this->adminModel->removeWriteoffPosition($_POST);
 			HTTP::redirect('/admin/writeoff/?writeoff='.$writeoff_id);
 		}
 
 		if(isset($_POST['carryOutWriteoff'])){
-			$adminModel->carryOutWriteoff($_POST);
+			$this->adminModel->carryOutWriteoff($_POST);
 			HTTP::redirect('/admin/?action=writeoffs');
 		}
 		if(isset($_POST['carryOutWriteoffPost'])){
-			$adminModel->carryOutWriteoffPost($_POST);
+			$this->adminModel->carryOutWriteoffPost($_POST);
 			HTTP::redirect('/admin/?action=writeoffs');
 		}
 
@@ -544,10 +369,10 @@ class Controller_Admin extends Controller {
             ->set('root_page', 'writeoff');
 		$admin_content = View::factory("writeoff_post")
             ->set('writeoff_id', $writeoff_id)
-            ->set('writeoffData', $adminModel->getWriteoffData($writeoff_id))
-            ->set('document_status', $adminModel->getWriteoffStatus($writeoff_id))
-            ->set('contractorList', $adminModel->getContractorList())
-            ->set('contractor_id', $adminModel->getWriteoffContractor($_GET));
+            ->set('writeoffData', $this->adminModel->getWriteoffData($writeoff_id))
+            ->set('document_status', $this->adminModel->getWriteoffStatus($writeoff_id))
+            ->set('contractorList', $this->adminModel->getContractorList())
+            ->set('contractor_id', $this->adminModel->getWriteoffContractor($_GET));
 		$template->admin_menu = $admin_menu;
 		$template->admin_content = $admin_content;
 		$this->response->body($template);
@@ -556,32 +381,27 @@ class Controller_Admin extends Controller {
 
 	public function action_cash()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		if(isset($_POST['closeCash'])){
-			$adminModel->closeCash($_POST);
+			$this->adminModel->closeCash($_POST);
 			HTTP::redirect('/admin/cash/?action=cashclose');
 		}
 		$template = View::factory("admin_template");
 		$admin_menu = View::factory("admin_menu");
 		$admin_content = View::factory("admin_cash");
-		$cashincomesList = $adminModel->getCashincomesList($_GET);
-		$cashwriteoffsList = $adminModel->getCashwriteoffsList($_GET);
-		$cashreturnsList = $adminModel->getCashreturnsList($_GET);
-		$cashCloseList = (Arr::get($_GET,'action', '') == 'cashclose' && Arr::get($_GET,'archive', '') == 'cashclose') ? $adminModel->getCashCloseList($_GET) : Array();
+		$cashincomesList = $this->adminModel->getCashincomesList($_GET);
+		$cashwriteoffsList = $this->adminModel->getCashwriteoffsList($_GET);
+		$cashreturnsList = $this->adminModel->getCashreturnsList($_GET);
+		$cashCloseList = (Arr::get($_GET,'action', '') == 'cashclose' && Arr::get($_GET,'archive', '') == 'cashclose') ? $this->adminModel->getCashCloseList($_GET) : Array();
 		$admin_content->cashincomesList = $cashincomesList;
 		$admin_content->cashincomesCount = !empty($cashincomesList) ? $cashincomesList[0]['cashincomes_count'] : 0;
 		$admin_content->cashwriteoffsList = $cashwriteoffsList;
 		$admin_content->cashwriteoffsCount = !empty($cashwriteoffsList) ? $cashwriteoffsList[0]['cashwriteoffs_count'] : 0;
 		$admin_content->cashreturnsList = $cashreturnsList;
 		$admin_content->cashreturnsCount = !empty($cashreturnsList) ? $cashreturnsList[0]['cashreturns_count'] : 0;
-		$admin_content->limit = $adminModel->getLimit();
-		$admin_content->getString = $adminModel->getGetString($_GET);
-		$admin_content->rootCash = $adminModel->getRootCash($_GET);
+		$admin_content->limit = $this->adminModel->getLimit();
+		$admin_content->getString = $this->adminModel->getGetString($_GET);
+		$admin_content->rootCash = $this->adminModel->getRootCash($_GET);
 		$admin_content->cashCloseList = $cashCloseList;
 		$admin_content->cashcloseCount = !empty($cashCloseList) ? $cashCloseList[0]['cashclose_count'] : 0;
 		$admin_content->get = $_GET;
@@ -594,27 +414,22 @@ class Controller_Admin extends Controller {
 
 	public function action_cashincome()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		if(isset($_POST['newcashincome'])){
-			$cashincome_id = $adminModel->addNewCashincome();
+			$cashincome_id = $this->adminModel->addNewCashincome();
 			HTTP::redirect('/admin/cashincome/?cashincome='.$cashincome_id);
 		}
 		$cashincome_id = Arr::get($_GET, 'cashincome', 0);
 		if(isset($_POST['removeCashincomePosition'])){
-			$adminModel->removeCashincomePosition($_POST);
+			$this->adminModel->removeCashincomePosition($_POST);
 			HTTP::redirect('/admin/cashincome/?cashincome='.$cashincome_id);
 		}
 		if(isset($_POST['carryOutCashincome'])){
-			$adminModel->carryOutCashincome($_POST);
+			$this->adminModel->carryOutCashincome($_POST);
 			HTTP::redirect('/admin/cash/?action=cashincomes');
 		}
 		if(isset($_POST['carryOutCashincomePost'])){
-			$adminModel->carryOutCashincomePost($_POST);
+			$this->adminModel->carryOutCashincomePost($_POST);
 			HTTP::redirect('/admin/cashincome/?cashincome='.$cashincome_id);
 		}
 		$template=View::factory("admin_template");
@@ -623,8 +438,8 @@ class Controller_Admin extends Controller {
 		$root_page="cashincome";
 		$admin_menu->root_page=$root_page;
 		$admin_content->cashincome_id=$cashincome_id;
-		$admin_content->cashincomeData=$adminModel->getCashincomeData($cashincome_id);
-		$admin_content->document_status = $adminModel->getCashincomeStatus($cashincome_id);
+		$admin_content->cashincomeData=$this->adminModel->getCashincomeData($cashincome_id);
+		$admin_content->document_status = $this->adminModel->getCashincomeStatus($cashincome_id);
 		$template->admin_menu=$admin_menu;
 		$template->admin_content=$admin_content;
 		$this->response->body($template);
@@ -632,27 +447,22 @@ class Controller_Admin extends Controller {
 
 	public function action_cashwriteoff()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		if(isset($_POST['newcashwriteoff'])){
-			$cashwriteoff_id = $adminModel->addNewCashwriteoff();
+			$cashwriteoff_id = $this->adminModel->addNewCashwriteoff();
 			HTTP::redirect('/admin/cashwriteoff/?cashwriteoff='.$cashwriteoff_id);
 		}
 		$cashwriteoff_id = Arr::get($_GET, 'cashwriteoff', 0);
 		if(isset($_POST['removeCashwriteoffPosition'])){
-			$adminModel->removeCashwriteoffPosition($_POST);
+			$this->adminModel->removeCashwriteoffPosition($_POST);
 			HTTP::redirect('/admin/cashwriteoff/?cashwriteoff='.$cashwriteoff_id);
 		}
 		if(isset($_POST['carryOutCashwriteoff'])){
-			$adminModel->carryOutCashwriteoff($_POST);
+			$this->adminModel->carryOutCashwriteoff($_POST);
 			HTTP::redirect('/admin/cash/?action=cashwriteoffs');
 		}
 		if(isset($_POST['carryOutCashwriteoffPost'])){
-			$adminModel->carryOutCashwriteoffPost($_POST);
+			$this->adminModel->carryOutCashwriteoffPost($_POST);
 			HTTP::redirect('/admin/cashwriteoff/?cashwriteoff='.$cashwriteoff_id);
 		}
 		$template=View::factory("admin_template");
@@ -661,8 +471,8 @@ class Controller_Admin extends Controller {
 		$root_page="cashwriteoff";
 		$admin_menu->root_page=$root_page;
 		$admin_content->cashwriteoff_id=$cashwriteoff_id;
-		$admin_content->cashwriteoffData=$adminModel->getCashwriteoffData($cashwriteoff_id);
-		$admin_content->document_status = $adminModel->getCashwriteoffStatus($cashwriteoff_id);
+		$admin_content->cashwriteoffData=$this->adminModel->getCashwriteoffData($cashwriteoff_id);
+		$admin_content->document_status = $this->adminModel->getCashwriteoffStatus($cashwriteoff_id);
 		$template->admin_menu=$admin_menu;
 		$template->admin_content=$admin_content;
 		$this->response->body($template);
@@ -670,23 +480,18 @@ class Controller_Admin extends Controller {
 
 	public function action_cashreturn()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		if(isset($_POST['newcashreturn'])){
-			$cashreturn_id = $adminModel->addNewCashreturn();
+			$cashreturn_id = $this->adminModel->addNewCashreturn();
 			HTTP::redirect('/admin/cashreturn/?cashreturn='.$cashreturn_id);
 		}
 		$cashreturn_id = Arr::get($_GET, 'cashreturn', 0);
 		if(isset($_POST['removeCashreturnPosition'])){
-			$adminModel->removeCashreturnPosition($_POST);
+			$this->adminModel->removeCashreturnPosition($_POST);
 			HTTP::redirect('/admin/cashreturn/?cashreturn='.$cashreturn_id);
 		}
 		if(isset($_POST['carryOutCashreturn'])){
-			$adminModel->carryOutCashreturn($_POST);
+			$this->adminModel->carryOutCashreturn($_POST);
 			HTTP::redirect('/admin/cash/?action=cashreturns');
 		}
 		$template=View::factory("admin_template");
@@ -695,7 +500,7 @@ class Controller_Admin extends Controller {
 		$root_page="cashreturn";
 		$admin_menu->root_page=$root_page;
 		$admin_content->cashreturn_id=$cashreturn_id;
-		$admin_content->cashreturnData=$adminModel->getCashreturnData($cashreturn_id);
+		$admin_content->cashreturnData=$this->adminModel->getCashreturnData($cashreturn_id);
 		$template->admin_menu=$admin_menu;
 		$template->admin_content=$admin_content;
 		$this->response->body($template);
@@ -703,11 +508,6 @@ class Controller_Admin extends Controller {
 
 	public function action_users()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$template=View::factory("admin_template");
 		$admin_menu=View::factory("admin_menu");
 		$admin_content=View::factory("admin_users");
@@ -722,16 +522,11 @@ class Controller_Admin extends Controller {
 
 	public function action_print_realization()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role(2);
 		$realization_id = Arr::get($_GET, 'realization', 0);
 		$template=View::factory("print_realization");
 		$template->realization_id=$realization_id;
-		$template->realizationData=$adminModel->getRealizationData($realization_id);
+		$template->realizationData=$this->adminModel->getRealizationData($realization_id);
 		$this->response->body($template);
 	}
 
@@ -748,17 +543,17 @@ class Controller_Admin extends Controller {
 		$order_id = Arr::get($_GET, 'order', 0);
 
 		if(isset($_POST['createRealization'])){
-			$realizationId = $adminModel->createRealizationfromOrder($_POST);
+			$realizationId = $this->adminModel->createRealizationfromOrder($_POST);
 			HTTP::redirect('/admin/realization/?realization='.$realizationId);
 		}
 
 		if(!empty(Arr::get($_POST,'canceledOrder'))){
-			$adminModel->canceledOrder($_POST);
+			$this->adminModel->canceledOrder($_POST);
 			HTTP::redirect(sprintf('/admin/order/?order=%s', Arr::get($_GET, 'order')));
 		}
 
 		if(!empty(Arr::get($_POST,'collectedOrder'))){
-			$adminModel->collectedOrder($_POST);
+			$this->adminModel->collectedOrder($_POST);
 			HTTP::redirect(sprintf('/admin/order/?order=%s', Arr::get($_GET, 'order')));
 		}
 
@@ -781,18 +576,13 @@ class Controller_Admin extends Controller {
 
 	public function action_addservices()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'addservice','') != ''){
-			$adminModel->addService($_POST);
+			$this->adminModel->addService($_POST);
 			HTTP::redirect('/admin/addservices/?group_1='.Arr::get($_POST,'group_1','').'&group_2='.Arr::get($_POST,'group_2','').'&group_3='.Arr::get($_POST,'group_3',''));
 		}
 		if(Arr::get($_POST,'removeservice','') != ''){
-			$adminModel->removeService($_POST);
+			$this->adminModel->removeService($_POST);
 			HTTP::redirect('/admin/addservices/?group_1='.Arr::get($_POST,'group_1','').'&group_2='.Arr::get($_POST,'group_2','').'&group_3='.Arr::get($_POST,'group_3',''));
 		}
 		$template=View::factory("admin_template");
@@ -808,18 +598,13 @@ class Controller_Admin extends Controller {
 
 	public function action_addservicesgroup()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'addgroup','') != ''){
-			$adminModel->addGroup($_POST);
+			$this->adminModel->addGroup($_POST);
 			HTTP::redirect('/admin/addservicesgroup');
 		}
 		if(Arr::get($_POST,'removegroup','') != ''){
-			$adminModel->removeGroup($_POST);
+			$this->adminModel->removeGroup($_POST);
 			HTTP::redirect('/admin/addservicesgroup');
 		}
 		$template=View::factory("admin_template");
@@ -834,14 +619,9 @@ class Controller_Admin extends Controller {
 
 	public function action_redactservicesgroup()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		if(Arr::get($_POST,'redactGroup','') != ''){
-			$adminModel->redactServicesGroup($_POST);
+			$this->adminModel->redactServicesGroup($_POST);
 		}
 		$getString = '?group=true&action=services';
 		$getString .= Arr::get($_POST, 'groupId1', 0) != 0 ? '&group_1='.Arr::get($_POST, 'groupId1', 0) : '';
@@ -852,11 +632,6 @@ class Controller_Admin extends Controller {
 
 	public function action_redactservices()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		$service_id = Arr::get($_GET,'id','');
 		$filename=Arr::get($_FILES, 'imgname', '');
@@ -864,26 +639,26 @@ class Controller_Admin extends Controller {
 		$removeimg = isset($_POST['removeimg']) ? $_POST['removeimg'] : 0;
 		$search_arr = Array();
 		if($redact_search){
-			$search_arr = $adminModel->searchRedactService($_POST);
+			$search_arr = $this->adminModel->searchRedactService($_POST);
 		}
 		if($service_id != '' && isset($_POST['redactservice'])){
-			$adminModel->setServiceInfo($_POST);
+			$this->adminModel->setServiceInfo($_POST);
 			HTTP::redirect('/admin/redactservices/?id='.$service_id);
 		}
 		if($service_id != '' && isset($_POST['newServiceParam'])){
-			$adminModel->setNewServicesParam($_POST);
+			$this->adminModel->setNewServicesParam($_POST);
 			HTTP::redirect('/admin/redactservices/?id='.$service_id);
 		}
 		if($service_id != '' && isset($_POST['removeServiceParam'])){
-			$adminModel->removeServiceParam($_POST);
+			$this->adminModel->removeServiceParam($_POST);
 			HTTP::redirect('/admin/redactservices/?id='.$service_id);
 		}
 		if ($service_id != '' && $filename!='') {
-			$result=$adminModel->loadServiceImg($_FILES, $service_id);
+			$result=$this->adminModel->loadServiceImg($_FILES, $service_id);
 			HTTP::redirect('/admin/redactservices/?id='.$service_id);
 		}
 		if ($removeimg != 0) {
-			$result=$adminModel->removeServiceImg($_POST);
+			$result=$this->adminModel->removeServiceImg($_POST);
 			HTTP::redirect('/admin/redactservices/?id='.$service_id);
 		}
 		$service_info = $service_id != '' ? Model::factory('Service')->getServiceInfo($service_id) : [];
@@ -905,11 +680,6 @@ class Controller_Admin extends Controller {
 
 	public function action_contractor()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
         /**
 		 * @var $usersModel Model_Users
 		 */
@@ -989,7 +759,7 @@ class Controller_Admin extends Controller {
 		}
 
         if (isset($_POST['removeuser'])) {
-            $adminModel->removeContractor($_POST);
+            $this->adminModel->removeContractor($_POST);
             HTTP::redirect("/admin/contractor");
         }
 
@@ -1002,11 +772,6 @@ class Controller_Admin extends Controller {
 
 	public function action_redactcontractor()
 	{
-		/**
-		 * @var $adminModel Model_Admin
-		 */
-		$adminModel = Model::factory('Admin');
-
 		$this->check_role();
 		$contractor_id = Arr::get($_GET,'id','');
 		if($contractor_id != '' && isset($_POST['redactcontractor'])){
@@ -1047,13 +812,13 @@ class Controller_Admin extends Controller {
 			$selectShop[$shopData['id']] = $shopData['name'];
 		}
 
-		$reportsList = $adminModel->getReportsList($_GET);
+		$reportsList = $this->adminModel->getReportsList($_GET);
 		$admin_content = View::factory('report_list')
 			->set('reportsList', $reportsList[1])
 			->set('reportsCount', $reportsList[0])
-			->set('limit', $adminModel->getLimit())
+			->set('limit', $this->adminModel->getLimit())
 			->set('selectShop', $selectShop)
-			->set('getString', $adminModel->getGetString($_GET))
+			->set('getString', $this->adminModel->getGetString($_GET))
 			->set('get', $_GET)
 		;
 
@@ -1064,30 +829,130 @@ class Controller_Admin extends Controller {
 
 	public function action_farpost()
 	{
-		/**@var $adminModel Model_Admin */
-		$adminModel = Model::factory('Admin');
-
 		if (isset($_POST['generatePrice'])) {
-			$adminModel->generatePrice('farpost');
-
+			$this->adminModel->generatePrice('farpost');
 			HTTP::redirect('admin/farpost');
 		}
 
+		$this->response->body($this->getTemplate('farpost'));
+	}
+
+	public function action_popular_categories()
+	{
+		$this->response->body($this->getTemplate('farpost'));
+	}
+
+    public function action_product()
+    {
+        $this->check_role();
+        if($_POST){
+            $redirectURL = null;
+            switch (true) {
+                case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'patchProductCategory'):
+                    $this->adminModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['name' => $this->request->post('productCategoryName')]);
+                    $redirectURL = '/admin/product/?action=categories';
+                    break;
+                case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'removeProductCategory'):
+                    $this->adminModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['show' => 0]);
+                    $redirectURL = '/admin/product/?action=categories';
+                    break;
+                case ($this->request->post('newProductCategory') !== null && $this->request->post('action') === 'addProductCategory'):
+                    $this->adminModel->addProductCategory($this->request->post('newProductCategory'), $this->request->post('parentCategoryId') ? (int)$this->request->post('parentCategoryId') : null);
+                    $redirectURL = '/admin/product/?action=categories';
+                    break;
+                case ($this->request->post('addproduct') !== ''):
+                    $this->adminModel->addProduct($_POST);
+                    $redirectURL = '/admin/product/?action=products';
+                    break;
+                case ($this->request->post('removeproduct') != ''):
+                    $this->adminModel->removeProduct($_POST);
+                    $redirectURL = '/admin/product/?action=products';
+                    break;
+                case ($this->request->post('addbrand') != ''):
+                    $this->adminModel->addBrand($_POST);
+                    $redirectURL = '/admin/product/?action=brands';
+                    break;
+                case ($this->request->post('removebrand') != ''):
+                    $this->adminModel->removeBrand($_POST);
+                    $redirectURL = '/admin/product/?action=brands';
+                    break;
+                case ($this->request->post('addshop') != ''):
+                    $this->adminModel->addShop($_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('removeshop') != ''):
+                    $this->adminModel->removeShop($_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('redactshop') != ''):
+                    $this->adminModel->redactShop($_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('loadshopimg') != ''):
+                    $this->adminModel->loadImgShop($_FILES, $_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('addcity') != ''):
+                    $this->adminModel->addCity($_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('redactcity') != ''):
+                    $this->adminModel->redactCity($_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('removecity') != ''):
+                    $this->adminModel->removeCity($_POST);
+                    $redirectURL = '/admin/product/?action=shops';
+                    break;
+                case ($this->request->post('redactnum') != ''):
+                    $this->adminModel->setProductNum($_POST);
+                    $redirectURL = '/admin/redactproducts/?id='.Arr::get($_POST,'redactproduct',0);
+                    break;
+                case ($this->request->post('addservice') != ''):
+                    $this->adminModel->addService($_POST);
+                    $redirectURL = '/admin/product/?action=services';
+                    break;
+                case ($this->request->post('removeservice') != ''):
+                    $this->adminModel->removeService($_POST);
+                    $redirectURL = '/admin/product/?action=services';
+                    break;
+            }
+            HTTP::redirect($redirectURL ?: $this->request->referrer());
+        }
+
+        $this->response->body(
+            $this->getTemplate('product', [
+                'productsCategories' => $this->productModel->getProductCategoriesList(),
+                'action' => $this->request->query('action'),
+                'categoryId' => (int)$this->request->query('categoryId'),
+            ])
+        );
+    }
+
+	private function getTemplate($page, $params = [])
+	{
 		$this->check_role();
 
-		$root_page="farpost";
+		switch ($page) {
+            case 'farpost':
+                $adminContent = View::factory('admin_farpost');
+                break;
+            case 'product':
+                $adminContent = View::factory('admin/product');
+                break;
+            default:
+                $adminContent = '';
+        }
 
-		$template = View::factory('admin_template');
-		$admin_content = View::factory('admin_farpost');
-		$admin_menu = View::factory('admin_menu')
-				->set('root_page', $root_page)
+        if($adminContent && $params) {
+		    foreach ($params as $key => $value) {
+		        $adminContent->set($key, $value);
+            }
+        }
+
+        return View::factory('admin_template')
+			->set('admin_menu', View::factory('admin_menu')->set('root_page', $page))
+			->set('admin_content', $adminContent)
 		;
-
-		$template
-			->set('admin_menu', $admin_menu)
-			->set('admin_content', $admin_content)
-		;
-
-		$this->response->body($template);
 	}
 }

@@ -7,7 +7,7 @@
 	<title>ТелеАНТЕННА</title>
 	<!-- Bootstrap -->
 	<link href="/public/css/bootstrap.css" rel="stylesheet">
-	<link href="/public/css/main.css" rel="stylesheet">
+	<link href="/public/css/main.css?v=2" rel="stylesheet">
 	<link href="/public/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 	<!--[if lt IE 9]>
