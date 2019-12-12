@@ -977,3 +977,6 @@ div .navbar-brand span{
     text-align: center;
     font-size: 16px;
 }
+.category-products .alert {
+    margin: 0 10px 10px 10px;
+}

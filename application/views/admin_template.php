@@ -7,7 +7,7 @@
 	<title>ТелеАНТЕННА</title>
 	<!-- Bootstrap -->
 	<link href="/public/css/bootstrap.css" rel="stylesheet">
-	<link href="/public/css/main.css?v=2" rel="stylesheet">
+	<link href="/public/css/main.css?v=<?=filemtime(__DIR__ . '/../../public/css/main.css');?>" rel="stylesheet">
 	<link href="/public/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 	<!--[if lt IE 9]>
@@ -18,7 +18,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<script src="/public/js/bootstrap.js"></script>
-	<script src="/public/js/admin.js?v=9"></script>
+	<script src="/public/js/admin.js?v=<?=filemtime(__DIR__ . '/../../public/js/admin.js');?>"></script>
 	<script src="/public/js/bootstrap3-typeahead.min.js"></script>
 	<script src="/public/js/moment-with-locales.js"></script>
 	<script src="/public/js/bootstrap-datetimepicker.js"></script>

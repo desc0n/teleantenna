@@ -129,6 +129,30 @@ class Model_Product extends Kohana_Model {
 
 		return $product;
 	}
+
+    /**
+     * @param int $categoryId
+     * @return array
+     */
+	public function getCategoryProducts($categoryId)
+	{
+        return
+            DB::select(
+                'p.*',
+                [DB::expr("REPLACE(REPLACE(p.name, '\"', ''), \"'\", '')"), 'name'],
+                [DB::expr("REPLACE(REPLACE(b.name, '\"', ''), \"'\", '')"), 'brand_name'],
+                [DB::expr("REPLACE(REPLACE(c.name, '\"', ''), \"'\", '')"), 'category_name']
+            )
+            ->from(['products', 'p'])
+            ->join(['brands', 'b'], 'LEFT')
+            ->on('b.id', '=', 'p.brand_id')
+            ->join(['products__categories', 'c'], 'LEFT')
+            ->on('c.id', '=', 'p.category_id')
+            ->where('p.category_id', '=', $categoryId)
+            ->and_where('p.status_id', '=', 1)
+			->execute()
+			->as_array();
+	}
 	
 	public function getProductList($params = Array())
 	{

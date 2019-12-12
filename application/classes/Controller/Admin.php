@@ -837,11 +837,6 @@ class Controller_Admin extends Controller
 		$this->response->body($this->getTemplate('farpost'));
 	}
 
-	public function action_popular_categories()
-	{
-		$this->response->body($this->getTemplate('farpost'));
-	}
-
     public function action_product()
     {
         $this->check_role();
@@ -864,8 +859,8 @@ class Controller_Admin extends Controller
                     $this->adminModel->addProduct($_POST);
                     $redirectURL = '/admin/product/?action=products';
                     break;
-                case ($this->request->post('removeproduct') != ''):
-                    $this->adminModel->removeProduct($_POST);
+                case ($this->request->post('productId') !== null && $this->request->post('action') === 'removeProduct'):
+                    $this->adminModel->patchProduct((int)$this->request->post('productId'), ['status_id' => 0]);
                     $redirectURL = '/admin/product/?action=products';
                     break;
                 case ($this->request->post('addbrand') != ''):

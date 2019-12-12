@@ -102,7 +102,31 @@ class Model_Admin extends Kohana_Model {
 			$query->execute();
 		}
 	}
-	
+
+    /**
+     * @param int $productId
+     * @param array $changeValues
+     */
+    public function patchProduct($productId, $changeValues = [])
+    {
+        foreach ($changeValues as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    DB::update('products')
+                        ->set(['name' => $value])
+                        ->where('id', '=', $productId)
+                        ->execute();
+                    break;
+                case 'status_id':
+                    DB::update('products')
+                        ->set(['status_id' => $value])
+                        ->where('id', '=', $productId)
+                        ->execute();
+                    break;
+            }
+        }
+    }
+
 	public function removeProduct($post)
 	{
 		$remove_product = Arr::get($post,'removeproduct',0);

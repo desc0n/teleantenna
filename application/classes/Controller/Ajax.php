@@ -2,6 +2,20 @@
 
 class Controller_Ajax extends Controller
 {
+    /**@var Model_Admin */
+    private $adminModel;
+
+    /**@var Model_Product */
+    private $productModel;
+
+    public function __construct(Request $request, Response $response)
+    {
+        parent::__construct($request, $response);
+
+        $this->adminModel = Model::factory('Admin');
+        $this->productModel = Model::factory('Product');
+    }
+
     private function render($body)
     {
         $this->auto_render = false;
@@ -135,9 +149,9 @@ class Controller_Ajax extends Controller
 		$this->response->body($data);
 	}
 
-	public function action_get_group_products()
+	public function action_category_products()
 	{
-		$this->response->body(View::factory('group_products')->set('params', $_POST));
+		$this->response->body(View::factory('admin/category_products')->set('products', $this->productModel->getCategoryProducts((int)$this->request->query('categoryId'))));
 	}
 	
 	public function action_get_typeahead()

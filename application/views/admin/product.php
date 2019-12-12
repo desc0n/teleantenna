@@ -2,21 +2,28 @@
 /** @var Model_Product $productModel */
 $productModel = Model::factory('Product');
 
-function render($productCategory, $categoryId) {
-    $html = '<div class="row-accordion">
-    <div class="panel-group" id="accordionProducts' . $productCategory['id'] . '">
+function renderCategory($productCategory, $categoryId, $withProduct = false) {
+    $html = '
+<div class="row-accordion">
+    <div class="panel-group" id="accordion' . ($withProduct ? 'Products' : null) . $productCategory['id'] . '">
         <div class="panel panel-default">
             <div class="panel-heading panel-group-1">
-                <h4 class="panel-title" id="redactGroupTitle' . $productCategory['id'] . '">
-                    <a data-toggle="collapse" data-parent="#accordionProducts' . $productCategory['id'] . '" href="#collapseProducts' . $productCategory['id'] . '" onclick="writeGroupProduct(1,' . $productCategory['id'] . ', 0, 0);">
-                        ' . $productCategory['name'] . '
-                    </a>
+                <h4 class="panel-title" id="redactGroupTitle' . $productCategory['id'] . '">';
+                if($withProduct) {
+                    $html .= '
+                    <a data-toggle="collapse" data-parent="#accordionProducts' . $productCategory['id'] . '" href="#collapseProducts' . $productCategory['id'] . '" onclick="writeProducts(' . $productCategory['id'] . ');">' . $productCategory['name'] . '</a>
                     <span class="glyphicon glyphicon-pencil redactBtn" onclick="$(\'#redactGroupTitle' . $productCategory['id'] . '\').css(\'display\', \'none\');$(\'#redactGroupForm' . $productCategory['id'] . '\').css(\'display\', \'block\');"></span>
+                ';
+                } else {
+                    $html .= '
+                    <a data-toggle="collapse" data-parent="#accordion' . $productCategory['id'] . '" href="#collapse' . $productCategory['id'] . '">' . $productCategory['name'] . '</a>
                     <form method="post" class="pull-right" style="width: auto!important;">
                         <span class="glyphicon glyphicon-remove" style="cursor: pointer;" onclick="if(confirm(\'Подтвердить удаление группы?\')) {$(this).parents(\'form:first\').submit();}"></span>
                         <input type="hidden" name="productCategoryId" value="' . $productCategory['id'] . '">
                         <input type="hidden" name="action" value="removeProductCategory">
-                    </form>
+                    </form>';
+                }
+                $html .= '
                 </h4>
                 <form method="post" id="redactGroupForm' . $productCategory['id'] . '" style="display: none;">
                     <div class="input-group">
@@ -29,18 +36,19 @@ function render($productCategory, $categoryId) {
                         </span>
                     </div>
                 </form>
-            </div>'
+            </div>
+            <div class="category-products" id="categoryProducts' . $productCategory['id'] . '"></div>'
     ;
 
-    if($productCategory['subCategories']) {
         $html .=
-        '<div id="collapseProducts' . $productCategory['id'] . '" class="panel-collapse collapse '. ($categoryId === $productCategory['id'] ? 'in' : '') . '">
+        '<div id="collapse' . ($withProduct ? 'Products' : null) . $productCategory['id'] . '" class="panel-collapse collapse '. ($categoryId === $productCategory['id'] ? 'in' : '') . '">
             <div class="panel-body product-group-panel-body">';
 
-        foreach ($productCategory['subCategories'] as $subCategory) {
-            $html .= render($subCategory, $categoryId);
-        }
+    foreach ($productCategory['subCategories'] as $subCategory) {
+        $html .= renderCategory($subCategory, $categoryId, $withProduct);
+    }
 
+    if(!$withProduct) {
         $html .= '<form method="post">
                     <div class="input-group">
                         <input type="text" class="form-control" name="newProductCategory">
@@ -52,13 +60,26 @@ function render($productCategory, $categoryId) {
                         </span>
                     </div>
                 </form>';
-
-        $html .=
-            '</div>
-        </div>';
+    } else {
+        $html .= '
+            <form method="post">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="newProduct" placeholder="Добавить товар в группу ' . $productCategory['name'] . '">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" name="action" value="addProduct">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                        <input type="hidden" name="parentCategoryId" value="' . $productCategory['parentId'] . '">
+                    </span>
+                </div>
+            </form>
+            ';
     }
 
-    $html .= '</div>
+        $html .=
+                    '</div>
+                </div>
+            </div>
         </div>
     </div>';
 
@@ -78,175 +99,35 @@ function render($productCategory, $categoryId) {
 		<div class="tab-pane <?=((!$action || $action === 'products') ? 'active' : '');?>" id="products">
 			<h2 class="sub-header col-sm-12">Добавление товаров:</h2>
 			<div class="col-sm-11">
-				<div class="panel-group" id="accordionProducts">
+				<div class="panel-group" id="accordion">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4 class="panel-title">
-							<a data-toggle="collapse" data-parent="#accordionProducts" href="#collapse">
+							<a data-toggle="collapse" data-parent="#accordion" href="#collapse">
 							Основные группы
 							</a>
 							</h4>
 						</div>
-						<div id="collapseProducts" class="panel-collapse collapse in">
+						<div id="collapse" class="panel-collapse collapse in">
 							<div class="panel-body product-group-panel-body">
-								<?foreach($productModel->getProductGroup(1) as $group_1_data){?>
-								<div class="row-accordion">
-									<div class="panel-group" id="accordionProducts1<?=$group_1_data['id'];?>">
-										<div class="panel panel-default">
-											<div class="panel-heading panel-group-1">
-												<h4 class="panel-title" id="redactGroupTitle1_<?=$group_1_data['id'];?>">
-													<a data-toggle="collapse" data-parent="#accordionProducts1<?=$group_1_data['id'];?>" href="#collapseProducts1<?=$group_1_data['id'];?>" onclick="writeGroupProduct(1,<?=$group_1_data['id'];?>, 0, 0);">
-													<?=$group_1_data['name'];?>
-													</a>
-													<span class="glyphicon glyphicon-pencil redactBtn" onclick="javascript: $('#redactGroupTitle1_<?=$group_1_data['id'];?>').css('display', 'none');$('#redactGroupForm1_<?=$group_1_data['id'];?>').css('display', 'block');"></span>
-												</h4>
-												<form action="/admin/redactproductsgroup" method="post" id="redactGroupForm1_<?=$group_1_data['id'];?>" style="display: none;">
-													<div class="input-group">
-														<input type="text" class="form-control" name="groupName" value="<?=$group_1_data['name'];?>">
-														<span class="input-group-btn">
-															<button class="btn btn-default" type="submit" name="redactGroup" value="1"><span class="glyphicon glyphicon-ok"></span></button>
-														</span>
-													</div>
-													<input type="hidden" name="redactGroupId" value="<?=$group_1_data['id'];?>">
-													<input type="hidden" name="groupId1" value="<?=$group_1_data['id'];?>">
-												</form>
-											</div>
-											<div id="collapseProducts1<?=$group_1_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_1', 0) == $group_1_data['id'] ? 'in' : '');*/?>">
-												<div class="panel-body product-group-panel-body">
-													<?foreach($productModel->getProductGroup(2, $group_1_data['id']) as $group_2_data){?>
-													<div class="row-accordion">
-														<div class="panel-group" id="accordionProducts2<?=$group_2_data['id'];?>">
-															<div class="panel panel-default">
-																<div class="panel-heading panel-group-2">
-																	<h4 class="panel-title">
-																		<a data-toggle="collapse" data-parent="#accordionProducts2<?=$group_2_data['id'];?>" href="#collapseProducts2<?=$group_2_data['id'];?>" onclick="javascript: writeGroupProduct(2,<?=$group_1_data['id'];?>, <?=$group_2_data['id'];?>, 0);">
-																		<?=$group_2_data['name'];?>
-																		</a>
-																		<span class="glyphicon glyphicon-pencil redactBtn" onclick="javascript: $('#redactGroupTitle2_<?=$group_2_data['id'];?>').css('display', 'none');$('#redactGroupForm2_<?=$group_2_data['id'];?>').css('display', 'block');"></span>
-																	</h4>
-																	<form action="/admin/redactproductsgroup" method="post" id="redactGroupForm2_<?=$group_2_data['id'];?>" style="display: none;">
-																		<div class="input-group">
-																			<input type="text" class="form-control" name="groupName" value="<?=$group_2_data['name'];?>">
-																			<span class="input-group-btn">
-																				<button class="btn btn-default" type="submit" name="redactGroup" value="2"><span class="glyphicon glyphicon-ok"></span></button>
-																			</span>
-																		</div>
-																		<input type="hidden" name="redactGroupId" value="<?=$group_2_data['id'];?>">
-																		<input type="hidden" name="groupId1" value="<?=$group_1_data['id'];?>">
-																		<input type="hidden" name="groupId2" value="<?=$group_2_data['id'];?>">
-																	</form>
-																</div>
-																<div id="collapseProducts2<?=$group_2_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_2', 0) == $group_2_data['id'] ? 'in' : '');*/?>">
-																	<div class="panel-body product-group-panel-body">
-																		<?foreach($productModel->getProductGroup(3, $group_2_data['id']) as $group_3_data){?>
-																		<div class="row-accordion">
-																			<div class="panel-group" id="accordionProducts3<?=$group_3_data['id'];?>">
-																				<div class="panel panel-default">
-																					<div class="panel-heading panel-group-3">
-																						<h4 class="panel-title">
-																							<a data-toggle="collapse" data-parent="#accordionProducts3<?=$group_3_data['id'];?>" href="#collapseProducts3<?=$group_3_data['id'];?>" onclick="javascript: writeGroupProduct(3,<?=$group_1_data['id'];?>, <?=$group_2_data['id'];?>, <?=$group_3_data['id'];?>);">
-																							<?=$group_3_data['name'];?>
-																							</a>
-																							<span class="glyphicon glyphicon-pencil redactBtn" onclick="javascript: $('#redactGroupTitle3_<?=$group_3_data['id'];?>').css('display', 'none');$('#redactGroupForm3_<?=$group_3_data['id'];?>').css('display', 'block');"></span>
-																						</h4>
-																						<form action="/admin/redactproductsgroup" method="post" id="redactGroupForm3_<?=$group_3_data['id'];?>" style="display: none;">
-																							<div class="input-group">
-																								<input type="text" class="form-control" name="groupName" value="<?=$group_3_data['name'];?>">
-																								<span class="input-group-btn">
-																									<button class="btn btn-default" type="submit" name="redactGroup" value="3"><span class="glyphicon glyphicon-ok"></span></button>
-																								</span>
-																							</div>
-																							<input type="hidden" name="redactGroupId" value="<?=$group_3_data['id'];?>">
-																							<input type="hidden" name="groupId1" value="<?=$group_1_data['id'];?>">
-																							<input type="hidden" name="groupId2" value="<?=$group_2_data['id'];?>">
-																							<input type="hidden" name="groupId3" value="<?=$group_3_data['id'];?>">
-																						</form>
-																					</div>
-																					<div id="collapseProducts3<?=$group_3_data['id'];?>" class="panel-collapse collapse <?/*=(Arr::get($get, 'group_3', 0) == $group_3_data['id'] ? 'in' : '');*/?>">
-																						<div class="panel-body product-group-panel-body">
-																							<div class="groupProducts" id="groupProducts3<?=$group_3_data['id'];?>"></div>
-																							<form action="/admin/product" method="post">
-																								<div class="input-group">
-																									<input type="text" class="form-control" name="product_name" placeholder="Добавить товар в группу '<?=$group_3_data['name'];?>'">
-																									<span class="input-group-btn">
-																										<button class="btn btn-default" type="submit" name="addproduct" value="3"><span class="glyphicon glyphicon-plus"></span></button>
-																									</span>
-																								</div>
-																								<input type="hidden" name="group_1" value="<?=$group_1_data['id'];?>">
-																								<input type="hidden" name="group_2" value="<?=$group_2_data['id'];?>">
-																								<input type="hidden" name="group_3" value="<?=$group_3_data['id'];?>">
-																							</form>
-																						</div>
-																					</div>
-																				</div>
-																			</div>
-																		</div>
-																		<?}?>
-																		<div class="groupProducts" id="groupProducts2<?=$group_2_data['id'];?>"></div>
-																		<form action="/admin/product" method="post">
-																			<div class="input-group">
-																				<input type="text" class="form-control" name="product_name" placeholder="Добавить товар в группу '<?=$group_2_data['name'];?>'">
-																				<span class="input-group-btn">
-																					<button class="btn btn-default" type="submit" name="addproduct" value="3"><span class="glyphicon glyphicon-plus"></span></button>
-																				</span>
-																			</div>
-																			<input type="hidden" name="group_1" value="<?=$group_1_data['id'];?>">
-																			<input type="hidden" name="group_2" value="<?=$group_2_data['id'];?>">
-																			<input type="hidden" name="group_3" value="0">
-																		</form>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-													<?}?>
-													<div class="groupProducts" id="groupProducts1<?=$group_1_data['id'];?>"></div>
-													<form action="/admin/product" method="post">
-														<div class="input-group">
-															<input type="text" class="form-control" name="product_name" placeholder="Добавить товар в группу '<?=$group_1_data['name'];?>'">
-															<span class="input-group-btn">
-																<button class="btn btn-default" type="submit" name="addproduct" value="2"><span class="glyphicon glyphicon-plus"></span></button>
-															</span>
-														</div>
-														<input type="hidden" name="group_1" value="<?=$group_1_data['id'];?>">
-														<input type="hidden" name="group_2" value="0">
-														<input type="hidden" name="group_3" value="0">
-													</form>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<?}?>
-								<div class="groupProducts" id="groupProducts"></div>
-								<?foreach($productModel->getProduct(1) as $product_data){?>
-									<div class="alert alert-info">
-										<strong><?=$product_data['id'];?></strong> <?=$product_data['name'];?>
-										<span class="pull-right glyphicon glyphicon-remove" title="удалить" onclick="javascript: $('#removeproduct').val(<?=$product_data['id'];?>);$('#remove_product > #group_1').val(0);$('#remove_product > #group_2').val(0);$('#remove_product > #group_3').val(0);$('#remove_product').submit();"></span>
-									</div>
-								<?}?>
-								<form action="/admin/product" method="post">
-									<div class="input-group">
-										<input type="text" class="form-control" name="product_name">
-										<span class="input-group-btn">
-											<button class="btn btn-default" type="submit" name="addproduct" value="1"><span class="glyphicon glyphicon-plus"></span></button>
-										</span>
-									</div>
-									<input type="hidden" name="group_1" value="0">
-									<input type="hidden" name="group_2" value="0">
-									<input type="hidden" name="group_3" value="0">
-								</form>
+                                <?foreach ($productsCategories as $productCategory) {?>
+                                    <?=renderCategory($productCategory, $categoryId, true);?>
+                                <?}?>
+                                <form method="post">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="newProductCategory">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<form id="remove_product" action="/admin/product" method="post">
-				<input type="hidden" id="removeproduct" name="removeproduct">
-				<input type="hidden" id="group_1" name="group_1" value="0">
-				<input type="hidden" id="group_2" name="group_2" value="0">
-				<input type="hidden" id="group_3" name="group_3" value="0">
-			</form>
 		</div>
 		<div class="tab-pane <?=($action === 'categories' ? 'active' : '');?>" id="categories">
 			<h2 class="sub-header col-sm-12">Группа товаров:</h2>
@@ -263,7 +144,7 @@ function render($productCategory, $categoryId) {
                         <div id="collapseGroups" class="panel-collapse collapse in">
                             <div class="panel-body product-group-panel-body">
                                 <?foreach ($productsCategories as $productCategory) {?>
-                                    <?=render($productCategory, $categoryId);?>
+                                    <?=renderCategory($productCategory, $categoryId);?>
                                 <?}?>
                                 <form method="post">
                                     <div class="input-group">

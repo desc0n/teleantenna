@@ -248,16 +248,11 @@ function setSearchModalItem(id){
 		});
 }
 
-function writeGroupProduct(id, groupId1, groupId2, groupId3){
-	var fieldId = id == 1 ? groupId1 : (id == 2 ? groupId2 : groupId3);
-	$('.groupProducts').html('');
-	$.ajax({type: 'POST', url: '/ajax/get_group_products', async: true, data:{
-		1: groupId1,
-		2: groupId2,
-		3: groupId3
-		},
+function writeProducts(categoryId){
+	$('.category-products').html('');
+	$.ajax({type: 'GET', url: '/ajax/category_products?categoryId=' + categoryId, async: true,
 		success: function(data){
-			$('#groupProducts' + id + fieldId).html(data);
+			$('#categoryProducts' + categoryId).html(data);
 		}
 	});
 }
