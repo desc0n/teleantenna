@@ -49,6 +49,92 @@ class Model_Product extends Kohana_Model {
         return $list;
 	}
 
+    /**
+     * @param int $productCategoryId
+     * @param array $changeValues
+     */
+    public function patchProductCategory($productCategoryId, $changeValues = [])
+    {
+        foreach ($changeValues as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    DB::update('products__categories')
+                        ->set(['name' => $value])
+                        ->where('id', '=', $productCategoryId)
+                        ->execute();
+                    break;
+                case 'show':
+                    DB::update('products__categories')
+                        ->set(['show' => $value])
+                        ->where('id', '=', $productCategoryId)
+                        ->execute();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * @param int $productCategoryId
+     */
+    public function removeProductCategory($productCategoryId)
+    {
+        DB::delete('products__categories')
+            ->where('id', '=', $productCategoryId)
+            ->execute();
+    }
+
+    /**
+     * @param int $parentProductCategoryId
+     * @param string $newProductCategoryName
+     * @return int
+     */
+    public function addProductCategory($newProductCategoryName, $parentProductCategoryId)
+    {
+        $res = DB::insert('products__categories', ['name', 'parent_id', 'show'])
+            ->values([$newProductCategoryName, $parentProductCategoryId, 1])
+            ->execute();
+
+        return $res[0];
+    }
+
+    /**
+     * @param string $name
+     * @param int $categoryId
+     * @return int
+     */
+    public function addProduct($name, $categoryId)
+    {
+        $res = DB::insert('products', ['name', 'category_id'])
+            ->values([str_replace(['"', "'"],'', $name), $categoryId])
+            ->execute();
+
+        return $res[0];
+    }
+
+    /**
+     * @param int $productId
+     * @param array $changeValues
+     */
+    public function patchProduct($productId, $changeValues = [])
+    {
+        foreach ($changeValues as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    DB::update('products')
+                        ->set(['name' => $value])
+                        ->where('id', '=', $productId)
+                        ->execute();
+                    break;
+                case 'status_id':
+                    DB::update('products')
+                        ->set(['status_id' => $value])
+                        ->where('id', '=', $productId)
+                        ->execute();
+                    break;
+            }
+        }
+    }
+
 	public function getProductGroup($type_id, $parent_id = '', $id = 0, $params = [])
 	{
 		$sortSql = Arr::get($params, 'sortSql');

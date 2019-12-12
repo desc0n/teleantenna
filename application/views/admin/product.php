@@ -62,17 +62,14 @@ function renderCategory($productCategory, $categoryId, $withProduct = false) {
                 </form>';
     } else {
         $html .= '
-            <form method="post">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="newProduct" placeholder="Добавить товар в группу ' . $productCategory['name'] . '">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit" name="action" value="addProduct">
-                            <span class="glyphicon glyphicon-plus"></span>
-                        </button>
-                        <input type="hidden" name="parentCategoryId" value="' . $productCategory['parentId'] . '">
-                    </span>
-                </div>
-            </form>
+            <div class="input-group">
+                <input type="text" class="form-control" id="newProduct' . $productCategory['id'] . '" placeholder="Добавить товар в группу ' . $productCategory['name'] . '">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="addProduct(' . $productCategory['id'] . ');">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </span>
+            </div>
             ';
     }
 

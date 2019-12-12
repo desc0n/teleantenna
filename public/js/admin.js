@@ -249,10 +249,37 @@ function setSearchModalItem(id){
 }
 
 function writeProducts(categoryId){
-	$('.category-products').html('');
 	$.ajax({type: 'GET', url: '/ajax/category_products?categoryId=' + categoryId, async: true,
 		success: function(data){
 			$('#categoryProducts' + categoryId).html(data);
+		}
+	});
+}
+function addProduct(categoryId){
+	const name = $('#newProduct' + categoryId).val();
+	if(!name) {
+		alert('Введите название товара!');
+		return;
+    }
+    $('#categoryProducts' + categoryId).append('' +
+		'<div class="alert alert-info">' +
+        '<div class="progress">'+
+        '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">'+
+        '<span class="sr-only">100% Complete</span>'+
+        '</div>'+
+        '</div>'+
+		'</div>'
+	);
+	$.ajax({type: 'POST', url: '/admin/product', async: true, data: {name: name, categoryId: categoryId, action: 'addProduct'},
+		success: function(){
+            writeProducts(categoryId);
+		}
+	});
+}
+function removeProduct(productId){
+	$.ajax({type: 'POST', url: '/admin/product', async: true, data: {productId: productId, action: 'removeProduct'},
+		success: function(){
+			$('#productInfo' + productId).remove();
 		}
 	});
 }

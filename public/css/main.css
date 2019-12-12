@@ -980,3 +980,6 @@ div .navbar-brand span{
 .category-products .alert {
     margin: 0 10px 10px 10px;
 }
+.category-products .alert .progress{
+    margin-bottom: 0;
+}

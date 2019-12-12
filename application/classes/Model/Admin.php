@@ -31,54 +31,6 @@ class Model_Admin extends Kohana_Model {
 
 	}
 
-    /**
-     * @param int $productCategoryId
-     * @param array $changeValues
-     */
-	public function patchProductCategory($productCategoryId, $changeValues = [])
-    {
-        foreach ($changeValues as $key => $value) {
-            switch ($key) {
-                case 'name':
-                    DB::update('products__categories')
-                        ->set(['name' => $value])
-                        ->where('id', '=', $productCategoryId)
-                        ->execute();
-                    break;
-                case 'show':
-                    DB::update('products__categories')
-                        ->set(['show' => $value])
-                        ->where('id', '=', $productCategoryId)
-                        ->execute();
-                    break;
-            }
-        }
-    }
-
-    /**
-     * @param int $productCategoryId
-     */
-	public function removeProductCategory($productCategoryId)
-    {
-        DB::delete('products__categories')
-            ->where('id', '=', $productCategoryId)
-            ->execute();
-    }
-
-    /**
-     * @param int $parentProductCategoryId
-     * @param string $newProductCategoryName
-     * @return int
-     */
-	public function addProductCategory($newProductCategoryName, $parentProductCategoryId)
-    {
-        $res = DB::insert('products__categories', ['name', 'parent_id', 'show'])
-            ->values([$newProductCategoryName, $parentProductCategoryId, 1])
-            ->execute();
-
-        return $res[0];
-    }
-
 	public function removeGroup($post)
 	{
 		$remove_group = Arr::get($post,'removegroup',0);
@@ -88,44 +40,6 @@ class Model_Admin extends Kohana_Model {
 		->param(':id', $remove_group)
 		->execute();
 	}
-	
-	public function addProduct($post)
-	{
-		$add_product = Arr::get($post,'addproduct',0);
-		if($add_product != 0) {
-			$sql="insert into `products` (`name`, `group_1`, `group_2`, `group_3`) values (:name, :group_1, :group_2, :group_3)";
-			$query=DB::query(Database::INSERT,$sql);
-			$query->param(':name', preg_replace('/[\"\']+/i','',Arr::get($post,'product_name','')));
-			$query->param(':group_1', Arr::get($post,'group_1',''));
-			$query->param(':group_2', Arr::get($post,'group_2',''));
-			$query->param(':group_3', Arr::get($post,'group_3',''));
-			$query->execute();
-		}
-	}
-
-    /**
-     * @param int $productId
-     * @param array $changeValues
-     */
-    public function patchProduct($productId, $changeValues = [])
-    {
-        foreach ($changeValues as $key => $value) {
-            switch ($key) {
-                case 'name':
-                    DB::update('products')
-                        ->set(['name' => $value])
-                        ->where('id', '=', $productId)
-                        ->execute();
-                    break;
-                case 'status_id':
-                    DB::update('products')
-                        ->set(['status_id' => $value])
-                        ->where('id', '=', $productId)
-                        ->execute();
-                    break;
-            }
-        }
-    }
 
 	public function removeProduct($post)
 	{

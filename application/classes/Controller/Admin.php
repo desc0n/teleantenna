@@ -844,70 +844,70 @@ class Controller_Admin extends Controller
             $redirectURL = null;
             switch (true) {
                 case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'patchProductCategory'):
-                    $this->adminModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['name' => $this->request->post('productCategoryName')]);
+                    $this->productModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['name' => $this->request->post('productCategoryName')]);
                     $redirectURL = '/admin/product/?action=categories';
                     break;
                 case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'removeProductCategory'):
-                    $this->adminModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['show' => 0]);
+                    $this->productModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['show' => 0]);
                     $redirectURL = '/admin/product/?action=categories';
                     break;
                 case ($this->request->post('newProductCategory') !== null && $this->request->post('action') === 'addProductCategory'):
-                    $this->adminModel->addProductCategory($this->request->post('newProductCategory'), $this->request->post('parentCategoryId') ? (int)$this->request->post('parentCategoryId') : null);
+                    $this->productModel->addProductCategory($this->request->post('newProductCategory'), $this->request->post('parentCategoryId') ? (int)$this->request->post('parentCategoryId') : null);
                     $redirectURL = '/admin/product/?action=categories';
                     break;
-                case ($this->request->post('addproduct') !== ''):
-                    $this->adminModel->addProduct($_POST);
+                case ($this->request->post('categoryId') !== null && $this->request->post('action') === 'addProduct'):
+                    $this->productModel->addProduct($this->request->post('name'), (int)$this->request->post('categoryId'));
                     $redirectURL = '/admin/product/?action=products';
                     break;
                 case ($this->request->post('productId') !== null && $this->request->post('action') === 'removeProduct'):
-                    $this->adminModel->patchProduct((int)$this->request->post('productId'), ['status_id' => 0]);
+                    $this->productModel->patchProduct((int)$this->request->post('productId'), ['status_id' => 0]);
                     $redirectURL = '/admin/product/?action=products';
                     break;
-                case ($this->request->post('addbrand') != ''):
+                case ($this->request->post('addbrand') !== null):
                     $this->adminModel->addBrand($_POST);
                     $redirectURL = '/admin/product/?action=brands';
                     break;
-                case ($this->request->post('removebrand') != ''):
+                case ($this->request->post('removebrand') !== null):
                     $this->adminModel->removeBrand($_POST);
                     $redirectURL = '/admin/product/?action=brands';
                     break;
-                case ($this->request->post('addshop') != ''):
+                case ($this->request->post('addshop') !== null):
                     $this->adminModel->addShop($_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('removeshop') != ''):
+                case ($this->request->post('removeshop') !== null):
                     $this->adminModel->removeShop($_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('redactshop') != ''):
+                case ($this->request->post('redactshop') !== null):
                     $this->adminModel->redactShop($_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('loadshopimg') != ''):
+                case ($this->request->post('loadshopimg') !== null):
                     $this->adminModel->loadImgShop($_FILES, $_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('addcity') != ''):
+                case ($this->request->post('addcity') !== null):
                     $this->adminModel->addCity($_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('redactcity') != ''):
+                case ($this->request->post('redactcity') !== null):
                     $this->adminModel->redactCity($_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('removecity') != ''):
+                case ($this->request->post('removecity') !== null):
                     $this->adminModel->removeCity($_POST);
                     $redirectURL = '/admin/product/?action=shops';
                     break;
-                case ($this->request->post('redactnum') != ''):
+                case ($this->request->post('redactnum') !== null):
                     $this->adminModel->setProductNum($_POST);
                     $redirectURL = '/admin/redactproducts/?id='.Arr::get($_POST,'redactproduct',0);
                     break;
-                case ($this->request->post('addservice') != ''):
+                case ($this->request->post('addservice') !== null):
                     $this->adminModel->addService($_POST);
                     $redirectURL = '/admin/product/?action=services';
                     break;
-                case ($this->request->post('removeservice') != ''):
+                case ($this->request->post('removeservice') !== null):
                     $this->adminModel->removeService($_POST);
                     $redirectURL = '/admin/product/?action=services';
                     break;
