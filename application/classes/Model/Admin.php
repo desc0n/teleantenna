@@ -65,37 +65,36 @@ class Model_Admin extends Kohana_Model {
 	
 	public function setProductInfo($post)
 	{
-		$id = Arr::get($post,'redactproduct',0);
+		$id = Arr::get($post,'redactproduct');
 		$name = Arr::get($post,'name','');
 		$code = Arr::get($post,'code','');
 		$short_description = Arr::get($post,'short_description','');
 		$description = Arr::get($post,'description','');
-		$brand = Arr::get($post,'brand',0);
+		$brand = Arr::get($post,'brand');
 		$price = Arr::get($post,'price',0);
 		$purchase_price = Arr::get($post,'purchase_price',0);
-		$sql = "update `products` set `name` = :name, `code` = :code, `short_description` = :short_description, `description` = :description, `price` = :price, `purchase_price` = :purchase_price, `brand_id` = :brand, `status_id` = 1 where `id` = :id";
-		DB::query(Database::UPDATE,$sql)
-			->param(':id', $id)
-			->param(':name', $name)
-			->param(':code', $code)
-			->param(':short_description', $short_description)
-			->param(':description', $description)
-			->param(':price', $price)
-			->param(':purchase_price', $purchase_price)
-			->param(':brand', $brand)
+		DB::update('products')
+            ->set([
+                'name' => $name,
+                'code' => $code,
+                'short_description' => $short_description,
+                'description' => $description,
+                'price' => $price,
+                'purchase_price' => $purchase_price,
+                'brand_id' => $brand,
+                'status_id' => 1
+            ])
+            ->where('id', '=', $id)
 			->execute();
 	}
 	
 	public function loadProductImg($files, $product_id)
 	{
-		$sql = "insert into `products_imgs` (`product_id`) values (:id)";
-		$query = DB::query(Database::INSERT,$sql);
-		$query->param(':id', $product_id);
-		$query->execute();
-		$sql = "select last_insert_id() as `new_id` from `products_imgs`";
-		$query = DB::query(Database::SELECT,$sql);
-		$res = $query->execute()->as_array();
-		$new_id = $res[0]['new_id'];
+		$result = DB::insert('products_imgs', ['product_id'])
+            ->values ([$product_id])
+            ->execute();
+
+		$new_id = $result[0];
 		$file_name = $new_id.'_'.Arr::get($files['imgname'],'name','');
 		$tmp_image = $files['imgname']['tmp_name'];
 		$connect = ftp_connect('teleantenna25.ru');
@@ -106,11 +105,10 @@ class Model_Admin extends Kohana_Model {
 			return false;
 		if (ftp_put($connect, 'original/'.$file_name, $tmp_image, FTP_BINARY)) {
 			if (ftp_put($connect, 'thumb/'.$file_name, $tmp_image, FTP_BINARY)) {
-				$sql = "update `products_imgs` set `src` = :src,`status_id` = 1 where `id` = :id";
-				$query=DB::query(Database::UPDATE,$sql);
-				$query->param(':id', $new_id);
-				$query->param(':src', $file_name);
-				$query->execute();
+				DB::update('products_imgs')
+                    ->set(['src' => $file_name, 'status_id' => 1])
+                    ->where('id', '=', $new_id)
+                    ->execute();
 			}
 		}
 		unlink($tmp_image);
@@ -155,39 +153,6 @@ class Model_Admin extends Kohana_Model {
 					case 'jpeg': $this->image = imagecreatefromjpeg($this->image_file); break;
 					case 'png': $this->image = imagecreatefrompng($this->image_file); break;
 			}
-	}
-	
-	public function autoimageresize($new_w, $new_h)
-	{
-			$difference_w = 0;
-			$difference_h = 0;
-			if($this->image_width < $new_w && $this->image_height < $new_h) {
-					$this->imageresize($this->image_width, $this->image_height);
-			}
-			else {
-					if($this->image_width > $new_w) {
-							$difference_w = $this->image_width - $new_w;
-					}
-					if($this->image_height > $new_h) {
-							$difference_h = $this->image_height - $new_h;
-					}
-							if($difference_w > $difference_h) {
-									$this->imageresizewidth($new_w);
-							}
-							elseif($difference_w < $difference_h) {
-									$this->imageresizeheight($new_h);
-							}
-							else {
-									$this->imageresize($new_w, $new_h);
-							}
-			}
-	}
-	
-	public function percentimagereduce($percent)
-	{
-			$new_w = $this->image_width * $percent / 100;
-			$new_h = $this->image_height * $percent / 100;
-			$this->imageresize($new_w, $new_h);
 	}
 	
 	public function imageresizewidth($new_w)
@@ -2429,20 +2394,22 @@ class Model_Admin extends Kohana_Model {
 		$code = Arr::get($post,'code','');
 		$short_description = Arr::get($post,'short_description','');
 		$description = Arr::get($post,'description','');
-		$brand = Arr::get($post,'brand',0);
+		$brand = Arr::get($post,'brand');
 		$price = Arr::get($post,'price',0);
 		$purchase_price = Arr::get($post,'purchase_price',0);
-		$sql = "update `services` set `name` = :name, `code` = :code, `short_description` = :short_description, `description` = :description, `price` = :price, `purchase_price` = :purchase_price, `brand_id` = :brand, `status_id` = 1 where `id` = :id";
-		DB::query(Database::UPDATE,$sql)
-			->param(':id', $id)
-			->param(':name', $name)
-			->param(':code', $code)
-			->param(':short_description', $short_description)
-			->param(':description', $description)
-			->param(':price', $price)
-			->param(':purchase_price', $purchase_price)
-			->param(':brand', $brand)
-			->execute();
+        DB::update('services')
+            ->set([
+                'name' => $name,
+                'code' => $code,
+                'short_description' => $short_description,
+                'description' => $description,
+                'price' => $price,
+                'purchase_price' => $purchase_price,
+                'brand_id' => $brand,
+                'status_id' => 1
+            ])
+            ->where('id', '=', $id)
+            ->execute();
 	}
 
 	public function loadServiceImg($files, $service_id)
