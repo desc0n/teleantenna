@@ -98,6 +98,64 @@ class Model_Product extends Kohana_Model {
     }
 
     /**
+     * @param $categoryId
+     * @param array $parentsCategories
+     * @return array
+     */
+    public function getParentsCategories($categoryId, $parentsCategories = [])
+    {
+        $categoryProducts = DB::select()
+            ->from('products__categories')
+            ->where('show', '=', 1)
+            ->and_where('id', '=', $categoryId)
+            ->execute()
+            ->as_array()
+        ;
+
+        foreach ($categoryProducts as $categoryProduct) {
+            $parentId = (int)$categoryProduct['parent_id'];
+            if(!$parentId || in_array($parentId, $parentsCategories)) continue;
+            $parentsCategories[] = $parentId;
+
+            foreach ($this->getParentsCategories($parentId, $parentsCategories) as $parentsCategory) {
+                if(in_array($parentsCategory, $parentsCategories)) continue;
+                $parentsCategories[] = $parentsCategory;
+            }
+        }
+
+        return $parentsCategories;
+    }
+
+    /**
+     * @param $categoryId
+     * @param array $childCategories
+     * @return array
+     */
+    public function getChildCategories($categoryId, $childCategories = [])
+    {
+        $categoryProducts = DB::select()
+            ->from('products__categories')
+            ->where('show', '=', 1)
+            ->and_where('parent_id', '=', $categoryId)
+            ->execute()
+            ->as_array()
+        ;
+
+        foreach ($categoryProducts as $categoryProduct) {
+            $childCategoryId = (int)$categoryProduct['id'];
+            if(in_array($childCategoryId, $childCategories)) continue;
+            $childCategories[] = $childCategoryId;
+
+            foreach ($this->getChildCategories($childCategoryId, $childCategories) as $childCategory) {
+                if(in_array($childCategory, $childCategories)) continue;
+                $childCategories[] = $childCategory;
+            }
+        }
+
+        return $childCategories;
+    }
+
+    /**
      * @param string $name
      * @param int $categoryId
      * @return int
@@ -222,6 +280,8 @@ class Model_Product extends Kohana_Model {
      */
 	public function getCategoryProducts($categoryId)
 	{
+	    $categories = [$categoryId];
+	    $categories += $this->getChildCategories($categoryId);
         $products =
             DB::select(
                 'p.*',
@@ -242,7 +302,7 @@ class Model_Product extends Kohana_Model {
             ->on('b.id', '=', 'p.brand_id')
             ->join(['products__categories', 'c'], 'LEFT')
             ->on('c.id', '=', 'p.category_id')
-            ->where('p.category_id', '=', $categoryId)
+            ->where('p.category_id', 'IN', $categories)
             ->and_where('p.status_id', '=', 1)
 			->execute()
 			->as_array();

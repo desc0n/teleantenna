@@ -55,15 +55,15 @@ $productModel = Model::factory('Product');
                         <a href="/shop_list">Адреса магазинов</a>
                     </li>
                     <li class="dropdown visible-xs">
-                        <?foreach($productModel->getProductGroup(1) as $group_1_data){?>
-                            <a href="/catalog/?group_1=<?=$group_1_data['id'];?>"><?=$group_1_data['name'];?></a>
+                        <?foreach($productModel->getProductCategoriesList() as $category){?>
+                            <a href="/catalog/?categoryId=<?=$category['id'];?>"><?=$category['name'];?></a>
                         <?}?>
                     </li>
                     <li class="dropdown hidden-xs">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Каталог <span class="glyphicon glyphicon-chevron-down"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <?foreach($productModel->getProductGroup(1) as $group_1_data){?>
-                                <li><a href="/catalog/?group_1=<?=$group_1_data['id'];?>"><?=$group_1_data['name'];?></a></li>
+                            <?foreach($productModel->getProductCategoriesList() as $category){?>
+                                <li><a href="/catalog/?categoryId=<?=$category['id'];?>"><?=$category['name'];?></a></li>
                             <?}?>
                         </ul>
                     </li>
@@ -203,16 +203,6 @@ $productModel = Model::factory('Product');
 <div class="footer">
     <div class="container">
         <div class="text-muted col-xs-6 col-md-2 col-lg-2 col-sm-2">© "ТелеАНТЕННА" <?=date('Y', time());?></div>
-        <ul class="text-muted col-xs-6  col-md-4 col-lg-4 col-sm-4 list-unstyled">
-            <li class="dropup">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Адреса магазинов</span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <?foreach(Model::factory('Shop')->getShop() as $shop){?>
-                        <li><a href="/item/shop/<?=$shop['id'];?>"><?=$shop['name'];?></a></li>
-                    <?}?>
-                </ul>
-            </li>
-        </ul>
     </div>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
