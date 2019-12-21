@@ -222,12 +222,20 @@ class Model_Product extends Kohana_Model {
      */
 	public function getCategoryProducts($categoryId)
 	{
-        return
+        $products =
             DB::select(
                 'p.*',
                 [DB::expr("REPLACE(REPLACE(p.name, '\"', ''), \"'\", '')"), 'name'],
                 [DB::expr("REPLACE(REPLACE(b.name, '\"', ''), \"'\", '')"), 'brand_name'],
-                [DB::expr("REPLACE(REPLACE(c.name, '\"', ''), \"'\", '')"), 'category_name']
+                [DB::expr("REPLACE(REPLACE(c.name, '\"', ''), \"'\", '')"), 'category_name'],
+                [
+                    DB::select('pi.src')
+                        ->from(['products_imgs', 'pi'])
+                        ->where('pi.product_id', '=', DB::expr('p.id'))
+                        ->and_where('pi.status_id', '=', 1)
+                        ->limit(1),
+                    'product_img'
+                ]
             )
             ->from(['products', 'p'])
             ->join(['brands', 'b'], 'LEFT')
@@ -238,6 +246,25 @@ class Model_Product extends Kohana_Model {
             ->and_where('p.status_id', '=', 1)
 			->execute()
 			->as_array();
+
+        foreach ($products as $i => $product) {
+            $products[$i]['shop_info'] = [];
+            $res = DB::select('s.name', ['pn.num', 'num'])
+				->from(['products_num', 'pn'])
+                ->join(['shopes', 's'])
+                ->on('s.id', '=', 'pn.shop_id')
+                ->where('pn.product_id', '=', $product['id'])
+				->and_where('s.status_id', '=', 1)
+				->and_where('pn.num', '>', 0)
+                ->execute()
+                ->as_array();
+
+                foreach($res as $row){
+                    $products[$i]['shop_info'][] = $row;
+                }
+        }
+        
+        return $products;
 	}
 	
 	public function getProductList($params = Array())

@@ -52,8 +52,8 @@
 			</div>
 			<div><?=$service_data['short_description'];?></div>
 		</td>
-		<td class="t-price"><?=round(($service_data['price'] * (1 - $userDiscount / 100)), 0);?>р.</td>
-		<td class="t-cart">
+		<td class="product-cell-price"><?=round(($service_data['price'] * (1 - $userDiscount / 100)), 0);?>р.</td>
+		<td class="product-cell-cart">
 			<button type="button" id="addCartButton_<?=$service_data['id'];?>" class="btn btn-default cart-add" value="<?=$service_data['id'];?>">Заказать <span class="glyphicon glyphicon-shopping-cart"></span></button>
 			<a href="/profile/orders/cart" target="_self" id="addInCartButton_<?=$service_data['id'];?>" class="btn btn-success cart-in" value="<?=$service_data['id'];?>">Корзина <span class="glyphicon glyphicon-log-out"></span></a>
 		</td>

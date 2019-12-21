@@ -2,6 +2,16 @@
 
 class Controller_Index extends Controller
 {
+    /**@var Model_Product */
+    private $productModel;
+
+    public function __construct(Request $request, Response $response)
+    {
+        parent::__construct($request, $response);
+
+        $this->productModel = Model::factory('Product');
+    }
+
 	public function action_index()
 	{
 		if (!Auth::instance()->logged_in() && isset($_POST['login'])) {
@@ -25,7 +35,7 @@ class Controller_Index extends Controller
 				->set('templateData', $templateData)
 		;
 
-		$content = View::factory('index');
+		$content = View::factory('index')->set('categories', $this->productModel->getProductCategoriesList());
 		$template->root_page = 'index';
 		$template->content = $content;
 		$this->response->body($template);
