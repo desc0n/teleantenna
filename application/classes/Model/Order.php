@@ -231,8 +231,9 @@ class Model_Order extends Kohana_Model {
 		$from = 'TeleAntenna';
 		if (empty(Arr::get($params, 'text', ''))) {
 			if(Arr::get($params, 'delivery_type', 0) == 0){
-				$shopData = Model::factory('Shop')->getShop(0, Arr::get($params, 'shop_id', 0));
-				$deliveryText = "Забрать его Вы сможете по адресу " . $shopData[0]['address'] . ".";
+//				$shopData = Model::factory('Shop')->getShop(0, Arr::get($params, 'shop_id', 0));
+//				$deliveryText = "Забрать его Вы сможете по адресу " . $shopData[0]['address'] . ".";
+				$deliveryText = "";
 			} else {
 				$deliveryText = "Заказ будет доставлен курьером.";
 			}

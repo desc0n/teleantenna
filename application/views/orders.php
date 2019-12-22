@@ -27,22 +27,6 @@
 									</label>
 								</div>
 							</div>
-							<div class="well well-white well-noshadow">
-								<legend>Самовывоз <span class="color-red">*</span></legend>
-								<?
-								$i = 0;
-								foreach(Model::factory('Shop')->getShop() as $shopData){
-									$checked = count($cartInfo) > 0 ? ($shopData['id'] == $cartInfo[0]['shop_id'] ? 'checked="checked"' : ($i == 0 ? 'checked="checked"' : '')) : ($i == 0 ? 'checked="checked"' : '');
-									$i++;
-									?>
-								<div>
-									<label>
-										<input <?//=$checked;?> type="radio" name="cart-shop" class="cart-shop" value="<?=$shopData['id'];?>">
-										<span><?=$shopData['name'];?> (<?=$shopData['address'];?>)</span>
-									</label>
-								</div>
-								<?}?>
-							</div>
 							<div class="well well-white well-noshadow" id="deliveryTypeForm1" <?=(Arr::get($customerCartInfo, 'delivery_type', 0) == 1 ? 'style="display: none;"' : '');?>>
 								<legend>Контактная информация</legend>
 								<div>

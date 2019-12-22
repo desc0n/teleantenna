@@ -64,7 +64,6 @@ function showCartInButton(id){
 function createOrder(){
 	var checkPhone = $('#customerPhone').val();
 	var replacePhone = checkPhone.replace(/[^\d,]/g, '');
-	var $selectedShop = $('.cart-shop:checked');
 
 	if(replacePhone.length != 10){
 		$('#error-message').html('Некорректно указан номер телефона!');
@@ -80,48 +79,7 @@ function createOrder(){
 		return false;
 	}
 
-	if (!$selectedShop.length) {
-		$('#error-message').html('Не выбран магазин!');
-		$('#errorModal').modal();
-
-		return false;
-	}
-
-	$.ajax({
-		type: 'POST',
-		url: '/ajax/check_availability',
-		async: true,
-		data:{
-			selectedShop: $selectedShop.val()
-		}
-	})
-		.done(function(data){
-			var result = JSON.parse(data);
-
-			if (result.length > 0) {
-				var text = '<strong>В выбранном магазине отсутствует товар</strong><br /><br />';
-
-				i = 1;
-
-				for (var key in result) {
-					text += '<div>' + i + '. ' + result[key] + '</div>';
-
-					i++;
-				}
-
-				text += '<br /><div><strong>Время сборки заказа увеличится. </strong></div><br />'
-				text += '<div><button class="btn btn-success" onclick=newOrderForm.submit();"">Продолжить?</button></div>'
-
-				$('#error-message').html(text);
-				$('#errorModal').modal();
-
-				return false;
-			}
-
-			newOrderForm.submit();
-		})
-	;
-
+	newOrderForm.submit();
 }
 function getCustomerCartPost(){
 	var postData = {
