@@ -26,7 +26,6 @@
                 <span><b>Код товара: <?=Arr::get($product_info,'code','');?></b></span>
                 <a href="#description">Описание</a>
                 <a href="#options">Характеристики</a>
-                <a href="#comments">Отзывы</a>
             </div>
         </div>
     </div>
@@ -130,13 +129,13 @@
                             <?}?>
                         </b>
                     </div>
-                    <div class="t-rating item-rating">
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star-empty"></span>
-                        <span class="glyphicon glyphicon-star-empty"></span>
-                    </div>
+<!--                    <div class="t-rating item-rating">-->
+<!--                        <span class="glyphicon glyphicon-star"></span>-->
+<!--                        <span class="glyphicon glyphicon-star"></span>-->
+<!--                        <span class="glyphicon glyphicon-star"></span>-->
+<!--                        <span class="glyphicon glyphicon-star-empty"></span>-->
+<!--                        <span class="glyphicon glyphicon-star-empty"></span>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -158,34 +157,6 @@
                     <dd><?=$paramsData['value'];?></dd>
                 <?}?>
             </dl>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12" id="comments">
-            <h3>Комментарии</h3>
-            <div class="row">
-                <div class="col-sm-12">
-                    <!--<div class="message">
-                      <div class="box">
-                        <p>
-                          Текст комментария
-                        </p>
-                      </div>
-                    <div class="stamp">
-                      <p class="stamp">
-                        <span class="tp_user">
-                          Михаил
-                        </span>
-                        <span class="city">
-                          Уссурийск
-                        </span>
-                        <span class="date" title="27.12.2013 12:55">
-                          27 декабря 2013 г. 12:55
-                        </span>
-                      </p>
-                    </div>-->
-                </div>
-            </div>
         </div>
     </div>
 </div>
