@@ -276,12 +276,13 @@ class Model_Product extends Kohana_Model {
 
     /**
      * @param int $categoryId
+     * @param int $productId
      * @return array
      */
-	public function getCategoryProducts($categoryId)
+	public function getCategoryProducts($categoryId = null, $productId = null)
 	{
-	    $categories = [$categoryId];
-        $categories = array_merge($categories, $this->getChildCategories($categoryId));
+	    if(!$categoryId && !$productId) return [];
+
         $products =
             DB::select(
                 'p.*',
@@ -302,14 +303,26 @@ class Model_Product extends Kohana_Model {
             ->on('b.id', '=', 'p.brand_id')
             ->join(['products__categories', 'c'], 'LEFT')
             ->on('c.id', '=', 'p.category_id')
-            ->where('p.category_id', 'IN', $categories)
-            ->and_where('p.status_id', '=', 1)
+            ->where('p.status_id', '=', 1)
+        ;
+
+        if($categoryId) {
+            $categories = [$categoryId];
+            $categories = array_merge($categories, $this->getChildCategories($categoryId));
+            $products = $products->and_where('p.category_id', 'IN', $categories);
+        }
+
+        if($productId) $products = $products->and_where('p.id', '=', $productId);
+
+        $products = $products
 			->execute()
 			->as_array();
 
         foreach ($products as $i => $product) {
             $products[$i]['shop_info'] = [];
-            $res = DB::select('s.name', ['pn.num', 'num'])
+            $products[$i]['params'] = [];
+            $products[$i]['imgs'] = [];
+            $res = DB::select('s.name', 's.address', ['pn.num', 'num'])
 				->from(['products_num', 'pn'])
                 ->join(['shopes', 's'])
                 ->on('s.id', '=', 'pn.shop_id')
@@ -319,14 +332,65 @@ class Model_Product extends Kohana_Model {
                 ->execute()
                 ->as_array();
 
-                foreach($res as $row){
-                    $products[$i]['shop_info'][] = $row;
-                }
+            foreach($res as $row){
+                $products[$i]['shop_info'][] = $row;
+            }
+
+            $res = DB::select()
+                ->from('products_params')
+                ->where('product_id', '=', $product['id'])
+                ->and_where('status_id', '=', 1)
+                ->execute()
+                ->as_array();
+
+            foreach($res as $row){
+                $products[$i]['params'][] = $row;
+            }
+
+            $res = DB::select()
+                ->from('products_imgs')
+                ->where('product_id', '=', $product['id'])
+                ->and_where('status_id', '=', 1)
+                ->execute()
+                ->as_array()
+            ;
+
+            foreach($res as $row){
+                $products[$i]['imgs'][] = $row;
+            }
         }
         
-        return $products;
+        return $categoryId ? $products : $products[0];
 	}
-	
+
+    /**
+     * @param int $productId
+     * @return string
+     */
+	public function getProductBreadcrumbs($productId)
+    {
+        $product = $this->getCategoryProducts(null, $productId);
+        $breadcrumbs = '<ol class="breadcrumb"><li><a href="/">Главная</a></li>';
+        $categoryId = (int)$product['category_id'];
+        $categories = [$categoryId];
+        $categories = array_merge($categories, $this->getParentsCategories($categoryId));
+
+        $res = DB::select()
+            ->from('products__categories')
+            ->where('id', 'IN', $categories)
+            ->and_where('show', '=', 1)
+            ->execute()
+            ->as_array();
+
+        foreach ($res as $category) {
+            $breadcrumbs .= '<li><a href="/catalog/?categoryId='. $category['id'] .'">' . $category['name'] . '</a></li>';
+        }
+
+        $breadcrumbs .= '</ol>';
+
+        return $breadcrumbs;
+    }
+
 	public function getProductList($params = Array())
 	{
 		if(Arr::get($params, 'group_1', 0) != 0)

@@ -7,29 +7,18 @@ class Controller_Item extends Controller {
 		/** @var Model_Product $productModel */
 		$productModel = Model::factory('Product');
 
-		$product_id = $this->request->param('id');
+		$productId = (int)$this->request->param('id');
 
-		$product_info = ($product_id != '' ? $productModel->getProductInfo($product_id) : []);
-		$productParams = ($product_id != '' ? $productModel->getProductParams($product_id) : []);
+		$product = $productModel->getCategoryProducts(null, $productId);
 
-		$templateData['title'] = !empty(Arr::get($product_info, 'name')) ? sprintf('%s. ', Arr::get($product_info, 'name')) : '';
-		$templateData['description'] = !empty(Arr::get($product_info, 'description')) ? sprintf('%s. ', Arr::get($product_info, 'description')) : '';
-
-		$template =
-			View::factory('template')
-				->set('templateData', $templateData)
-		;
-
-		$content = View::factory('item')
-			->set('product_id', $product_id)
-			->set('product_info', $product_info)
-			->set('productParams', $productParams)
-		;
-
-		$root_page = 'item';
-		$template->root_page=$root_page;
-		$template->content=$content;
-		$this->response->body($template);
+        $this->response->body(
+            View::factory('template')
+            ->set('templateData', [
+                'title' => sprintf('%s. ', $product['name']),
+                'description' => sprintf('%s. ', $product['description']),
+            ])
+            ->set('content', View::factory('product')->set('product', $product)->set('breadcrumb', $productModel->getProductBreadcrumbs($productId)))
+        );
 	}
 
 	public function action_service()

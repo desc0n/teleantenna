@@ -1008,6 +1008,14 @@ div .navbar-brand span{
     text-align: center;
     vertical-align: middle!important;
 }
+.product-shop-info{
+    font-size: 13px;
+    font-weight: normal;
+}
 .popover-product-number{
     text-decoration: underline;
+}
+.img-link-item{
+    cursor: pointer;
+    padding: 15px;
 }
