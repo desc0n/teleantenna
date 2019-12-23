@@ -44,7 +44,7 @@
                             }
                             ?>
                             <div role="tabpanel" class="tab-pane fade <?=$active;?> <?=$in;?>" id="thumb-<?=$i;?>" aria-labelledby="thumb-<?=$i;?>-tab">
-                                <div class="img-link" data-toggle="tooltip" data-placement="right" data-html="true" data-trigger="click" title="<img class='tooltip-img' src='/public/img/original/<?=$img['src'];?>' style='width:450px;'>">
+                                <div class="img-link-item" data-toggle="tooltip" data-placement="right" data-html="true" data-trigger="click" title="<img class='tooltip-img' src='/public/img/original/<?=$img['src'];?>' style='width:450px;'>">
                                     <img src="/public/img/original/<?=$img['src'];?>" alt="">
                                 </div>
                             </div>
