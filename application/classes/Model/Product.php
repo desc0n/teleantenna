@@ -281,7 +281,7 @@ class Model_Product extends Kohana_Model {
 	public function getCategoryProducts($categoryId)
 	{
 	    $categories = [$categoryId];
-	    $categories += $this->getChildCategories($categoryId);
+        $categories = array_merge($categories, $this->getChildCategories($categoryId));
         $products =
             DB::select(
                 'p.*',
@@ -427,7 +427,7 @@ class Model_Product extends Kohana_Model {
 	
 	public function getProductInfo($id, $shop_id = 0)
 	{
-		$main_data = $this->getProduct($type_id = 0, $group_arr = Array(), $id);
+		$main_data = $this->getProduct($type_id = 0, $group_arr = [], $id);
 		$product_info = count($main_data) > 0 ? $main_data[0] : [];
 		$product_info['imgs'] = $this->getProductImgs($id);
 		$product_info['num'] = $this->getProductNum($id, $shop_id);
