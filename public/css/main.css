@@ -943,8 +943,8 @@ div .navbar-brand span{
 .cursor-pointer{
     cursor: pointer;
 }
-.main-page-shop p{
-    font-size: 12pt;
+.main-page-shop {
+    font-size: 14px;
 }
 .footer .dropdown-toggle{
     color: #777;
@@ -1018,4 +1018,7 @@ div .navbar-brand span{
 .img-link-item{
     cursor: pointer;
     padding: 15px;
+}
+.shops-map {
+    padding: 20px;
 }

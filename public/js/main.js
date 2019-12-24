@@ -15,9 +15,6 @@ function changEmptyGroupVisibility(groupId) {
 	}
 }
 $(document).ready(function(){
-	$('.main-page-shop').click(function(){
-        document.location = '/item/shop/' + $(this).data('id');
-    });
 	$('.popover-product-number').popover();
     $('input[type=text][name=mainSearchName]').typeahead({
         source: function (query, process) {
