@@ -12,12 +12,13 @@ function renderCategory($productCategory, $categoryId, $withProduct = false) {
                 if($withProduct) {
                     $html .= '
                     <a data-toggle="collapse" data-parent="#accordionProducts' . $productCategory['id'] . '" href="#collapseProducts' . $productCategory['id'] . '" onclick="writeProducts(' . $productCategory['id'] . ');">' . $productCategory['name'] . '</a>
-                    <span class="glyphicon glyphicon-pencil redactBtn" onclick="$(\'#redactGroupTitle' . $productCategory['id'] . '\').css(\'display\', \'none\');$(\'#redactGroupForm' . $productCategory['id'] . '\').css(\'display\', \'block\');"></span>
+                    <span class="glyphicon glyphicon-pencil redactBtn" onclick="$(\'#redactGroupTitle' . $productCategory['id'] . '\').css(\'display\', \'none\');$(\'#redactGroupForm' . ($withProduct ? '_' : '') . $productCategory['id'] . '\').css(\'display\', \'block\');"></span>
                 ';
                 } else {
                     $html .= '
-                    <a data-toggle="collapse" data-parent="#accordion' . $productCategory['id'] . '" href="#collapse' . $productCategory['id'] . '">' . $productCategory['name'] . '</a>
-                    <form method="post" class="pull-right" style="width: auto!important;">
+                    <a data-toggle="collapse" data-parent="#accordion' . $productCategory['id'] . '" href="#collapse' . $productCategory['id'] . '">' . $productCategory['name'] . '</a>' .
+                    ($productCategory['isPopular'] ? '<span class="glyphicon glyphicon-star change-popular-category" title="Удалить из популярных" style="color: #E25734;" onclick="removeFromPopularCategories(' . $productCategory['id'] . ');"></span>' : '<span class="glyphicon glyphicon-star-empty change-popular-category" title="Добавить в популярные" onclick="addToPopularCategories(' . $productCategory['id'] . ');"></span>') .
+                    '<form method="post" class="pull-right" style="width: auto!important;">
                         <span class="glyphicon glyphicon-remove" style="cursor: pointer;" onclick="if(confirm(\'Подтвердить удаление группы?\')) {$(this).parents(\'form:first\').submit();}"></span>
                         <input type="hidden" name="productCategoryId" value="' . $productCategory['id'] . '">
                         <input type="hidden" name="action" value="removeProductCategory">
@@ -25,7 +26,7 @@ function renderCategory($productCategory, $categoryId, $withProduct = false) {
                 }
                 $html .= '
                 </h4>
-                <form method="post" id="redactGroupForm' . $productCategory['id'] . '" style="display: none;">
+                <form method="post" id="redactGroupForm' . ($withProduct ? '_' : '') . $productCategory['id'] . '" style="display: none;">
                     <div class="input-group">
                         <input type="text" class="form-control" name="productCategoryName" value="' . $productCategory['name'] . '">
                         <span class="input-group-btn">

@@ -319,34 +319,33 @@ class Model_Cart extends Kohana_Model {
 
         $result = [];
 
-        for ($i = 1; $i <= 3; $i++) {
-            $searchRes = DB::select('id', 'name')
-                ->from('products_group_' . $i)
-                ->where('name', 'LIKE', "%$query%")
-                ->and_where('status_id', '=', 1)
+        $searchRes = DB::select('pc.*')
+            ->from(['products__categories', 'pc'])
+            ->where('pc.name', 'LIKE', "%$query%")
+            ->and_where('pc.show', '=', 1)
                 ->execute()
-                ->as_array();
+            ->as_array()
+        ;
 
-            foreach ($searchRes as $res) {
-                $result[] = [
-                    'target' => 'group' . $i,
-                    'id' => $res['id'],
-                    'name' => str_replace('"', '', $res['name'])
-                ];
-            }
+        foreach ($searchRes as $res) {
+            $result[] = [
+                'target' => 'category',
+                'id' => $res['id'],
+                'name' => str_replace('"', '', $res['name'])
+            ];
         }
 
-        $searchRes = DB::select('id', 'name')
-            ->from('products')
-            ->where('name', 'LIKE', "%$query%")
-            ->and_where('status_id', '=', 1)
+        $searchRes = DB::select('p.*')
+            ->from(['products', 'p'])
+            ->where('p.name', 'LIKE', "%$query%")
+            ->and_where('p.status_id', '=', 1)
             ->execute()
             ->as_array()
         ;
 
         foreach ($searchRes as $res) {
             $result[] = [
-                'target' => 'name',
+                'target' => 'product',
                 'id' => $res['id'],
                 'name' => str_replace('"', '', $res['name'])
             ];
@@ -356,4 +355,3 @@ class Model_Cart extends Kohana_Model {
     }
 
 }
-?>

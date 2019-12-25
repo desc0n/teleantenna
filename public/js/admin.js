@@ -647,3 +647,21 @@ $(document).ready(function() {
         checkNumSubmit('writeoff');
 	});
 });
+function removeFromPopularCategories(categoryId) {
+    patchCategory(categoryId, {is_popular: 0});
+    $('#redactGroupTitle' + categoryId + ' .change-popular-category').removeClass('glyphicon-star').addClass('glyphicon-star-empty').css('color', '#000');
+}
+function addToPopularCategories(categoryId) {
+    patchCategory(categoryId, {is_popular: 1});
+    $('#redactGroupTitle' + categoryId + ' .change-popular-category').removeClass('glyphicon-star-empty').addClass('glyphicon-star').css('color', '#E25734');
+}
+function patchCategory(categoryId, data) {
+    data.action = 'patchProductCategory';
+    data.productCategoryId = categoryId;
+    $.ajax({
+        method: 'POST',
+        async: true,
+        url: '/admin/product',
+        data: data
+    });
+}

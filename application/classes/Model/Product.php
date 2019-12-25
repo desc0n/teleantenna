@@ -42,6 +42,7 @@ class Model_Product extends Kohana_Model {
 		        'id' => (int)$categoryProduct['id'],
                 'name' => str_replace(['"', "'"], '', $categoryProduct['name']),
                 'parentId' => $categoryProduct['parent_id'] ? (int)$categoryProduct['parent_id'] : null,
+                'isPopular' => (bool)$categoryProduct['is_popular'],
                 'subCategories' => $this->getProductCategoriesList((int)$categoryProduct['id']),
             ];
         }
@@ -57,7 +58,7 @@ class Model_Product extends Kohana_Model {
     {
         foreach ($changeValues as $key => $value) {
             switch ($key) {
-                case 'name':
+                case 'productCategoryName':
                     DB::update('products__categories')
                         ->set(['name' => $value])
                         ->where('id', '=', $productCategoryId)
@@ -66,6 +67,12 @@ class Model_Product extends Kohana_Model {
                 case 'show':
                     DB::update('products__categories')
                         ->set(['show' => $value])
+                        ->where('id', '=', $productCategoryId)
+                        ->execute();
+                    break;
+                case 'is_popular':
+                    DB::update('products__categories')
+                        ->set(['is_popular' => $value])
                         ->where('id', '=', $productCategoryId)
                         ->execute();
                     break;
@@ -647,5 +654,37 @@ class Model_Product extends Kohana_Model {
 			->execute()
 			->as_array();
 	}
+
+    /**
+     * @param array $files
+     * @param int $categoryId
+     */
+    public function loadCategoryImg($files, $categoryId)
+    {
+        $imageName = preg_replace("/[^0-9a-z.]+/i", "0", $files['name']);
+        $file_name = 'public/i/categories/original/' . $categoryId . '_' . $imageName;
+
+        if (copy($files['tmp_name'], $file_name))	{
+            $image = Image::factory($file_name);
+            $image
+                ->resize(500, NULL)
+                ->save($file_name,100)
+            ;
+
+            $thumb_file_name = 'public/i/categories/thumb/' . $categoryId . '_' . $imageName;
+
+            if (copy($files['tmp_name'], $thumb_file_name))	{
+                $thumb_image = Image::factory($thumb_file_name);
+                $thumb_image
+                    ->resize(300, NULL)
+                    ->save($thumb_file_name,100)
+                ;
+
+                DB::update('products__categories')
+                    ->set(['img_src' => $imageName])
+                    ->where('id', '=', $categoryId)
+                    ->execute();
+            }
+        }
+    }
 }
-?>

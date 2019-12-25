@@ -16,7 +16,7 @@ function changEmptyGroupVisibility(groupId) {
 }
 $(document).ready(function(){
 	$('.popover-product-number').popover();
-    $('input[type=text][name=mainSearchName]').typeahead({
+    $('#mainSearchName').typeahead({
         source: function (query, process) {
             return $.get('/ajax/find_products', {query: query},
                 function (response) {
@@ -35,21 +35,15 @@ $(document).ready(function(){
             var parts = item.split('_');
             var url = '';
             switch (parts[0]) {
-                case 'group1':
-                    url = '/catalog/?group_1=' + parts[1];
+                case 'category':
+                    url = '/catalog/?categoryId=' + parts[1];
                     break;
-                case 'group2':
-                    url = '/catalog/?group_2=' + parts[1];
-                    break;
-                case 'group3':
-                    url = '/catalog/?group_3=' + parts[1];
-                    break;
-                case 'name':
+                case 'product':
                     url = '/item/product/' + parts[1];
                     break;
             }
 
-            if (url != '') {
+            if (url !== '') {
                 document.location = url;
             }
         }

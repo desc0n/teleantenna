@@ -844,7 +844,7 @@ class Controller_Admin extends Controller
             $redirectURL = null;
             switch (true) {
                 case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'patchProductCategory'):
-                    $this->productModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['name' => $this->request->post('productCategoryName')]);
+                    $this->productModel->patchProductCategory((int)$this->request->post('productCategoryId'), $this->request->post());
                     $redirectURL = '/admin/product/?action=categories';
                     break;
                 case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'removeProductCategory'):
@@ -950,4 +950,16 @@ class Controller_Admin extends Controller
 			->set('admin_content', $adminContent)
 		;
 	}
+
+	public function action_load_category_img()
+    {
+        $files = array_key_exists('imgname', $_FILES) ? $_FILES['imgname'] : [];
+        $response = ['result' => 'failed'];
+        if($files) {
+            $this->productModel->loadCategoryImg($files, (int)$this->request->param('categoryId'));
+            $response = ['result' => 'success'];
+        }
+
+        return json_encode($response);
+    }
 }
