@@ -324,6 +324,7 @@ class Model_Product extends Kohana_Model {
 
         $products = $products
             ->order_by('p.category_id')
+            ->order_by('p.brand_id')
 			->execute()
 			->as_array();
 
