@@ -284,9 +284,10 @@ class Model_Product extends Kohana_Model {
     /**
      * @param int $categoryId
      * @param int $productId
+     * @param bool $withChild
      * @return array
      */
-	public function getCategoryProducts($categoryId = null, $productId = null)
+	public function getCategoryProducts($categoryId = null, $productId = null, $withChild = true)
 	{
 	    if(!$categoryId && !$productId) return [];
 
@@ -315,13 +316,14 @@ class Model_Product extends Kohana_Model {
 
         if($categoryId) {
             $categories = [$categoryId];
-            $categories = array_merge($categories, $this->getChildCategories($categoryId));
+            if($withChild) $categories = array_merge($categories, $this->getChildCategories($categoryId));
             $products = $products->and_where('p.category_id', 'IN', $categories);
         }
 
         if($productId) $products = $products->and_where('p.id', '=', $productId);
 
         $products = $products
+            ->order_by('p.category_id')
 			->execute()
 			->as_array();
 
