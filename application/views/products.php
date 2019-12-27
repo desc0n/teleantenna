@@ -89,21 +89,20 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
                     </td>
                     <td class="product-cell-price"><?=round(($product['price'] * (1 - $userDiscount / 100)), 0);?>р.</td>
                     <td class="product-cell-num">
-                        <div
-                            class="popover-product-number"
-                            data-container="body"
-                            data-toggle="popover"
-                            data-placement="left"
-                            data-html="true"
-                            data-title="Наличие в магазинах"
-                            data-content="
-                            <?foreach($product['shop_info'] as $shop_data) {if (!(int)$shop_data['num']) continue;?>
+<!--                        <div-->
+<!--                            class="popover-product-number"-->
+<!--                            data-container="body"-->
+<!--                            data-toggle="popover"-->
+<!--                            data-placement="left"-->
+<!--                            data-html="true"-->
+<!--                            data-title="Наличие в магазинах"-->
+<!--                            data-content=""-->
+<!--                        >-->
+<!--                            В наличии-->
+<!--                        </div>-->
+                        <?foreach($product['shop_info'] as $shop_data) {if (!(int)$shop_data['num']) continue;?>
                             <div><?=$shop_data['name'];?>: <strong><?=$shop_data['num'];?> шт.</strong></div>
-                            <?}?>"
-                        >
-                            В наличии
-                        </div>
-
+                        <?}?>
                     </td>
                     <td class="product-cell-cart">
                         <button type="button" id="addCartButton_<?=$product['id'];?>" class="btn btn-default cart-add" value="<?=$product['id'];?>">Купить <span class="glyphicon glyphicon-shopping-cart"></span></button>
