@@ -81,7 +81,7 @@ class Model_Admin extends Kohana_Model {
                 'description' => $description,
                 'price' => $price,
                 'purchase_price' => $purchase_price,
-                'brand_id' => $brand,
+                'brand_id' => $brand ?: null,
                 'status_id' => 1
             ])
             ->where('id', '=', $id)

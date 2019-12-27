@@ -845,23 +845,18 @@ class Controller_Admin extends Controller
             switch (true) {
                 case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'patchProductCategory'):
                     $this->productModel->patchProductCategory((int)$this->request->post('productCategoryId'), $this->request->post());
-                    $redirectURL = '/admin/product/?action=categories';
                     break;
                 case ($this->request->post('productCategoryId') !== null && $this->request->post('action') === 'removeProductCategory'):
                     $this->productModel->patchProductCategory((int)$this->request->post('productCategoryId'), ['show' => 0]);
-                    $redirectURL = '/admin/product/?action=categories';
                     break;
                 case ($this->request->post('newProductCategory') !== null && $this->request->post('action') === 'addProductCategory'):
                     $this->productModel->addProductCategory($this->request->post('newProductCategory'), $this->request->post('parentCategoryId') ? (int)$this->request->post('parentCategoryId') : null);
-                    $redirectURL = '/admin/product/?action=categories';
                     break;
                 case ($this->request->post('categoryId') !== null && $this->request->post('action') === 'addProduct'):
                     $this->productModel->addProduct($this->request->post('name'), (int)$this->request->post('categoryId'));
-                    $redirectURL = '/admin/product/?action=products';
                     break;
                 case ($this->request->post('productId') !== null && $this->request->post('action') === 'removeProduct'):
                     $this->productModel->patchProduct((int)$this->request->post('productId'), ['status_id' => 0]);
-                    $redirectURL = '/admin/product/?action=products';
                     break;
                 case ($this->request->post('addbrand') !== null):
                     $this->adminModel->addBrand($_POST);

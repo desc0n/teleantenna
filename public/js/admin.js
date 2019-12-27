@@ -247,43 +247,6 @@ function setSearchModalItem(id){
 			}
 		});
 }
-
-function writeProducts(categoryId){
-	$.ajax({type: 'GET', url: '/ajax/category_products?categoryId=' + categoryId, async: true,
-		success: function(data){
-			$('#categoryProducts' + categoryId).html(data);
-		}
-	});
-}
-function addProduct(categoryId){
-	const name = $('#newProduct' + categoryId).val();
-	if(!name) {
-		alert('Введите название товара!');
-		return;
-    }
-    $('#categoryProducts' + categoryId).append('' +
-		'<div class="alert alert-info">' +
-        '<div class="progress">'+
-        '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">'+
-        '<span class="sr-only">100% Complete</span>'+
-        '</div>'+
-        '</div>'+
-		'</div>'
-	);
-	$.ajax({type: 'POST', url: '/admin/product', async: true, data: {name: name, categoryId: categoryId, action: 'addProduct'},
-		success: function(){
-            writeProducts(categoryId);
-		}
-	});
-}
-function removeProduct(productId){
-	$.ajax({type: 'POST', url: '/admin/product', async: true, data: {productId: productId, action: 'removeProduct'},
-		success: function(){
-			$('#productInfo' + productId).remove();
-		}
-	});
-}
-
 function setRealizationContractor(){
 	if($('#realizationId').length) {
 		var realizationId = $('#realizationId').val();
@@ -647,13 +610,22 @@ $(document).ready(function() {
         checkNumSubmit('writeoff');
 	});
 });
+function showRedactCategoryForm(categoryId) {
+    $('#redactProductCategory' + categoryId + ' .redact-category-form').css('display', 'inline-block');
+    $('#redactProductCategory' + categoryId + ' .redact-category-name').css('display', 'none');
+}
+function hideRedactCategoryForm(categoryId) {
+    $('#redactProductCategory' + categoryId + ' .redact-category-form').css('display', 'none');
+    $('#redactProductCategory' + categoryId + ' .redact-category-name').css('display', 'inline-block');
+    $('#redactProductCategory' + categoryId + ' .redact-category-form button').removeAttr('disabled');
+}
 function removeFromPopularCategories(categoryId) {
     patchCategory(categoryId, {is_popular: 0});
-    $('#redactGroupTitle' + categoryId + ' .change-popular-category').removeClass('glyphicon-star').addClass('glyphicon-star-empty').css('color', '#000');
+    $('#redactProductCategory' + categoryId + ' .change-popular-category').removeClass('glyphicon-star').addClass('glyphicon-star-empty').css('color', '#000');
 }
 function addToPopularCategories(categoryId) {
     patchCategory(categoryId, {is_popular: 1});
-    $('#redactGroupTitle' + categoryId + ' .change-popular-category').removeClass('glyphicon-star-empty').addClass('glyphicon-star').css('color', '#E25734');
+    $('#redactProductCategory' + categoryId + ' .change-popular-category').removeClass('glyphicon-star-empty').addClass('glyphicon-star').css('color', '#E25734');
 }
 function patchCategory(categoryId, data) {
     data.action = 'patchProductCategory';
@@ -663,5 +635,77 @@ function patchCategory(categoryId, data) {
         async: true,
         url: '/admin/product',
         data: data
+    }).done(function () {
+		if(data.productCategoryName !== undefined) {
+            $('#redactProductCategory' + categoryId + ' .redact-category-name .redact-category-name-value').html(data.productCategoryName);
+            hideRedactCategoryForm(categoryId);
+		}
     });
+}
+
+function removeCategory(categoryId){
+    if(confirm('Подтвердить удаление группы?')) {
+        $.ajax({
+            type: 'POST',
+            url: '/admin/product',
+            async: true,
+            data: {productCategoryId: categoryId, action: 'removeProductCategory'},
+            success: function () {
+                $('#redactProductCategory' + categoryId).remove();
+            }
+        });
+    }
+}
+function writeProducts(categoryId){
+    $.ajax({type: 'GET', url: '/ajax/category_products?categoryId=' + categoryId, async: true,
+        success: function(data){
+            $('#categoryProducts' + categoryId).html(data);
+        }
+    });
+}
+function addProduct(categoryId){
+    const name = $('#newProduct' + categoryId).val();
+    if(!name) {
+        alert('Введите название товара!');
+        return;
+    }
+    $.ajax({type: 'POST', url: '/admin/product', async: true, data: {name: name, categoryId: categoryId, action: 'addProduct'},
+        success: function(){
+            $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).data('hidden', '1');
+            showProductsList(categoryId);
+        }
+    });
+}
+function removeProduct(productId){
+    $.ajax({type: 'POST', url: '/admin/product', async: true, data: {productId: productId, action: 'removeProduct'},
+        success: function(){
+            $('#productInfo' + productId).remove();
+        }
+    });
+}
+function showSubCategories(categoryId) {
+	const hidden = $('#redactProductCategory' + categoryId).data('hidden');
+	if(hidden * 1 === 1) {
+        $('#redactProductCategory' + categoryId + ' .redact-category-sub-row-' + categoryId).show();
+        $('#redactProductCategory' + categoryId + ' .show-sub-category-btn-' + categoryId).removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        $('#redactProductCategory' + categoryId).data('hidden', '0');
+    } else {
+        $('#redactProductCategory' + categoryId + ' .redact-category-sub-row-' + categoryId).hide();
+        $('#redactProductCategory' + categoryId + ' .show-sub-category-btn-' + categoryId).removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        $('#redactProductCategory' + categoryId).data('hidden', '1');
+	}
+}
+function showProductsList(categoryId) {
+	const hidden = $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).data('hidden');
+	if(hidden * 1 === 1) {
+        $.ajax({type: 'GET', url: '/ajax/admin_category_products_list?categoryId=' + categoryId, async: true,
+            success: function(data){
+                $('#redactProductCategory' + categoryId + ' .category-products-list-' + categoryId).html(data);
+                $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).html('Скрыть список товаров').data('hidden', '0');
+            }
+        });
+    } else {
+        $('#redactProductCategory' + categoryId + ' .category-products-list-' + categoryId).html('');
+        $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).html('Показать список товаров').data('hidden', '1');
+	}
 }

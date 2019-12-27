@@ -374,6 +374,24 @@ class Model_Product extends Kohana_Model {
 	}
 
     /**
+     * @param int $categoryId
+     * @return array
+     */
+	public function getAdminCategoryProducts($categoryId)
+	{
+        return DB::select(
+                'p.*',
+                [DB::expr("REPLACE(REPLACE(p.name, '\"', ''), \"'\", '')"), 'name']
+            )
+            ->from(['products', 'p'])
+            ->where('p.status_id', '=', 1)
+            ->and_where('p.category_id', '=', $categoryId)
+            ->order_by('p.id')
+			->execute()
+			->as_array();
+	}
+
+    /**
      * @param int $productId
      * @return string
      */

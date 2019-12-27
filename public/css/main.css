@@ -1025,3 +1025,45 @@ div .navbar-brand span{
 .change-popular-category{
     margin-left: 10px;
 }
+.redact-category-table {
+    margin-bottom: 0;
+}
+.redact-category-table tr td {
+    vertical-align: middle;
+    border: none!important;
+}
+.redact-category-table .btn-warning {
+    background-color: #d2492e;
+    border-color: #e25734;
+}
+.redact-category-table .show-sub-category-btn{
+    cursor: pointer;
+}
+.redact-category-table .redact-category-sub-row{
+    display: none;
+}
+.redact-category-table .redact-category-sub-row form{
+    margin: 0;
+}
+.redact-category-table .redact-category-form{
+    display: none;
+    width: 500px;
+}
+.redact-category-table .remove-category-form{
+    width: auto!important;
+    margin-top: 0;
+}
+.redact-category-table .redact-category-name{
+    display: inline-block;
+    font-size: 16px;
+    padding-top: 5px;
+    cursor: pointer;
+}
+.redact-category-table .redact-category-name .redact-category-name-value{
+    margin-left: 20px;
+}
+.redact-category-table .show-category-products-btn{
+    text-decoration: underline;
+    cursor: pointer;
+    color: #0e90d2;
+}

@@ -2,67 +2,40 @@
 /** @var Model_Product $productModel */
 $productModel = Model::factory('Product');
 
-function renderCategory($productCategory, $categoryId, $withProduct = false) {
+function renderCategory($productCategory, $categoryId, $parentCategoryId = null) {
     $html = '
-<div class="row-accordion">
-    <div class="panel-group" id="accordion' . ($withProduct ? 'Products' : null) . $productCategory['id'] . '">
-        <div class="panel panel-default">
-            <div class="panel-heading panel-group-1">
-                <h4 class="panel-title" id="redactGroupTitle' . $productCategory['id'] . '">';
-                if($withProduct) {
-                    $html .= '
-                    <a data-toggle="collapse" data-parent="#accordionProducts' . $productCategory['id'] . '" href="#collapseProducts' . $productCategory['id'] . '" onclick="writeProducts(' . $productCategory['id'] . ');">' . $productCategory['name'] . '</a>
-                    <span class="glyphicon glyphicon-pencil redactBtn" onclick="$(\'#redactGroupTitle' . $productCategory['id'] . '\').css(\'display\', \'none\');$(\'#redactGroupForm' . ($withProduct ? '_' : '') . $productCategory['id'] . '\').css(\'display\', \'block\');"></span>
-                ';
-                } else {
-                    $html .= '
-                    <a data-toggle="collapse" data-parent="#accordion' . $productCategory['id'] . '" href="#collapse' . $productCategory['id'] . '">' . $productCategory['name'] . '</a>' .
-                    ($productCategory['isPopular'] ? '<span class="glyphicon glyphicon-star change-popular-category" title="Удалить из популярных" style="color: #E25734;" onclick="removeFromPopularCategories(' . $productCategory['id'] . ');"></span>' : '<span class="glyphicon glyphicon-star-empty change-popular-category" title="Добавить в популярные" onclick="addToPopularCategories(' . $productCategory['id'] . ');"></span>') .
-                    '<form method="post" class="pull-right" style="width: auto!important;">
-                        <span class="glyphicon glyphicon-remove" style="cursor: pointer;" onclick="if(confirm(\'Подтвердить удаление группы?\')) {$(this).parents(\'form:first\').submit();}"></span>
-                        <input type="hidden" name="productCategoryId" value="' . $productCategory['id'] . '">
-                        <input type="hidden" name="action" value="removeProductCategory">
-                    </form>';
-                }
-                $html .= '
-                </h4>
-                <form method="post" id="redactGroupForm' . ($withProduct ? '_' : '') . $productCategory['id'] . '" style="display: none;">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="productCategoryName" value="' . $productCategory['name'] . '">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit" name="action" value="patchProductCategory" >
-                                <span class="glyphicon glyphicon-ok"></span>
-                            </button>
-                            <input type="hidden" name="productCategoryId" value="' . $productCategory['id'] . '">
-                        </span>
-                    </div>
-                </form>
+<table class="table redact-category-table" id="redactProductCategory' . $productCategory['id'] . '" data-hidden="1">
+    <tr ' . ($parentCategoryId ? 'class="redact-category-sub-row redact-category-sub-row-' . $parentCategoryId . '"' : '') . '>
+        <td>
+            <div class="redact-category-form">
+                <div class="input-group">
+                    <input type="text" class="form-control product-category-name" value="' . $productCategory['name'] . '">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" name="action" onclick="$(this).attr(\'disabled\',\'disabled\');patchCategory(' . $productCategory['id'] . ', {productCategoryName: $(\'#redactProductCategory' . $productCategory['id'] . ' .redact-category-form .product-category-name\').val()});" >
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </span>
+                </div>
             </div>
-            <div class="category-products" id="categoryProducts' . $productCategory['id'] . '"></div>'
-    ;
-
-        $html .=
-        '<div id="collapse' . ($withProduct ? 'Products' : null) . $productCategory['id'] . '" class="panel-collapse collapse '. ($categoryId === $productCategory['id'] ? 'in' : '') . '">
-            <div class="panel-body product-group-panel-body">';
-
-    foreach ($productCategory['subCategories'] as $subCategory) {
-        $html .= renderCategory($subCategory, $categoryId, $withProduct);
-    }
-
-    if(!$withProduct) {
-        $html .= '<form method="post">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="newProductCategory">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
-                                <span class="glyphicon glyphicon-plus"></span>
-                            </button>
-                            <input type="hidden" name="parentCategoryId" value="' . $productCategory['parentId'] . '">
-                        </span>
-                    </div>
-                </form>';
-    } else {
-        $html .= '
+            <div class="redact-category-name">
+            <span class="show-sub-category-btn show-sub-category-btn-' . $productCategory['id'] . ' glyphicon glyphicon-chevron-up" onclick="showSubCategories(' . $productCategory['id'] . ');"></span>' .
+            '<span class="redact-category-name-value">' . $productCategory['name'] . '</span>'.
+            ($productCategory['isPopular'] ? '<span class="glyphicon glyphicon-star change-popular-category" title="Удалить из популярных" style="color: #E25734;" onclick="removeFromPopularCategories(' . $productCategory['id'] . ');"></span>' : '<span class="glyphicon glyphicon-star-empty change-popular-category" title="Добавить в популярные" onclick="addToPopularCategories(' . $productCategory['id'] . ');"></span>') .
+            '<span class="glyphicon glyphicon-pencil redactBtn" onclick="showRedactCategoryForm(' . $productCategory['id'] . ');"></span>
+            </div>
+            <div class="pull-right remove-category-form">
+                <button class="btn btn-warning" type="button"  onclick="removeCategory(' . $productCategory['id'] . ');"><span class="glyphicon glyphicon-remove"></span></button>
+            </div>
+        </td>
+    </tr>
+    <tr class="redact-category-sub-row redact-category-sub-row-' . $productCategory['id'] . '">
+        <td class="show-category-products-btn show-category-products-btn-' . $productCategory['id'] . '" data-hidden="1" onclick="showProductsList(' . $productCategory['id'] . ');">Показать список товаров</td>
+    </tr>
+    <tr class="redact-category-sub-row redact-category-sub-row-' . $productCategory['id'] . '">
+        <td class="category-products-list category-products-list-' . $productCategory['id'] . '"></td>
+    </tr>
+    <tr class="redact-category-sub-row redact-category-sub-row-' . $productCategory['id'] . '">
+        <td>
             <div class="input-group">
                 <input type="text" class="form-control" id="newProduct' . $productCategory['id'] . '" placeholder="Добавить товар в группу ' . $productCategory['name'] . '">
                 <span class="input-group-btn">
@@ -71,15 +44,31 @@ function renderCategory($productCategory, $categoryId, $withProduct = false) {
                     </button>
                 </span>
             </div>
-            ';
+        </td>
+    </tr>
+    <tr class="redact-category-sub-row redact-category-sub-row-' . $productCategory['id'] . '"><td>';
+    foreach ($productCategory['subCategories'] as $subCategory) {
+        $html .= renderCategory($subCategory, $categoryId, $productCategory['id']);
     }
-
-        $html .=
-                    '</div>
+$html .= '
+    </td></tr>
+    <tr class="redact-category-sub-row redact-category-sub-row-' . $productCategory['id'] . '">
+        <td>
+            <form method="post">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="newProductCategory" placeholder="Добавить подгруппу в группу ' . $productCategory['name'] . '">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </span>
                 </div>
-            </div>
-        </div>
-    </div>';
+                <input type="hidden" name="parentCategoryId" value="' . $productCategory['id'] . '">
+            </form>
+        </td>
+    </tr>
+</table>
+    ';
 
     return $html;
 }
@@ -88,7 +77,6 @@ function renderCategory($productCategory, $categoryId, $withProduct = false) {
 <div class="row admin-main-page">
 	<ul class="nav nav-tabs">
 		<li <?=((!$action || $action === 'products') ? 'class="active"' : '');?>><a href="#products" data-toggle="tab">Товары</a></li>
-		<li <?=($action === 'categories' ? 'class="active"' : '');?>><a href="#categories" data-toggle="tab">Группы</a></li>
 		<li <?=($action === 'brands' ? 'class="active"' : '');?>><a href="#brands" data-toggle="tab">Производители</a></li>
 		<li <?=($action === 'shops' ? 'class="active"' : '');?>><a href="#shops" data-toggle="tab">Магазины</a></li>
 		<li <?=($action === 'services' ? 'class="active"' : '');?>><a href="#services" data-toggle="tab">Услуги</a></li>
@@ -97,67 +85,9 @@ function renderCategory($productCategory, $categoryId, $withProduct = false) {
 		<div class="tab-pane <?=((!$action || $action === 'products') ? 'active' : '');?>" id="products">
 			<h2 class="sub-header col-sm-12">Добавление товаров:</h2>
 			<div class="col-sm-11">
-				<div class="panel-group" id="accordion">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">
-							<a data-toggle="collapse" data-parent="#accordion" href="#collapse">
-							Основные группы
-							</a>
-							</h4>
-						</div>
-						<div id="collapse" class="panel-collapse collapse in">
-							<div class="panel-body product-group-panel-body">
-                                <?foreach ($productsCategories as $productCategory) {?>
-                                    <?=renderCategory($productCategory, $categoryId, true);?>
-                                <?}?>
-                                <form method="post">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="newProductCategory">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                            </button>
-                                        </span>
-                                    </div>
-                                </form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="tab-pane <?=($action === 'categories' ? 'active' : '');?>" id="categories">
-			<h2 class="sub-header col-sm-12">Группа товаров:</h2>
-			<div class="col-sm-11">
-				<div class="panel-group" id="accordionGroups">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">
-								<a data-toggle="collapse" data-parent="#accordionGroups" href="#collapseGroups">
-									Основные группы
-								</a>
-							</h4>
-						</div>
-                        <div id="collapseGroups" class="panel-collapse collapse in">
-                            <div class="panel-body product-group-panel-body">
-                                <?foreach ($productsCategories as $productCategory) {?>
-                                    <?=renderCategory($productCategory, $categoryId);?>
-                                <?}?>
-                                <form method="post">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="newProductCategory">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="submit" name="action" value="addProductCategory">
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                            </button>
-                                        </span>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-					</div>
-				</div>
+                <?foreach ($productsCategories as $productCategory) {?>
+                    <?=renderCategory($productCategory, $categoryId);?>
+                <?}?>
 			</div>
 		</div>
 		<div class="tab-pane <?=($action === 'brands' ? 'active' : '');?>" id="brands">

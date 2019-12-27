@@ -153,6 +153,11 @@ class Controller_Ajax extends Controller
 	{
 		$this->response->body(View::factory('admin/category_products')->set('products', $this->productModel->getCategoryProducts((int)$this->request->query('categoryId'), null, false)));
 	}
+
+	public function action_admin_category_products_list()
+	{
+		$this->response->body(View::factory('admin/category_products')->set('products', $this->productModel->getAdminCategoryProducts((int)$this->request->query('categoryId'), null, false)));
+	}
 	
 	public function action_get_typeahead()
 	{
