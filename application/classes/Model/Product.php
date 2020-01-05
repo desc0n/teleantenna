@@ -22,6 +22,21 @@ class Model_Product extends Kohana_Model {
     }
 
     /**
+     * @param int $categoryId
+     * @return array
+     */
+	public function getProductCategory($categoryId)
+	{
+		return DB::select()
+            ->from('products__categories')
+            ->where('id', '=', $categoryId)
+            ->limit(1)
+            ->execute()
+            ->current()
+        ;
+	}
+
+    /**
      * @param null|int $parentId
      * @return array
      */
@@ -41,6 +56,7 @@ class Model_Product extends Kohana_Model {
 		    $list[] = [
 		        'id' => (int)$categoryProduct['id'],
                 'name' => str_replace(['"', "'"], '', $categoryProduct['name']),
+                'imgSrc' => $categoryProduct['img_src'],
                 'parentId' => $categoryProduct['parent_id'] ? (int)$categoryProduct['parent_id'] : null,
                 'isPopular' => (bool)$categoryProduct['is_popular'],
                 'subCategories' => $this->getProductCategoriesList((int)$categoryProduct['id']),
@@ -679,6 +695,7 @@ class Model_Product extends Kohana_Model {
     /**
      * @param array $files
      * @param int $categoryId
+     * @return string
      */
     public function loadCategoryImg($files, $categoryId)
     {
@@ -705,7 +722,11 @@ class Model_Product extends Kohana_Model {
                     ->set(['img_src' => $imageName])
                     ->where('id', '=', $categoryId)
                     ->execute();
+
+                return $imageName;
             }
         }
+
+        return null;
     }
 }

@@ -19,7 +19,8 @@ function renderCategory($productCategory, $categoryId, $parentCategoryId = null)
             </div>
             <div class="redact-category-name">
             <span class="show-sub-category-btn show-sub-category-btn-' . $productCategory['id'] . ' glyphicon glyphicon-chevron-up" onclick="showSubCategories(' . $productCategory['id'] . ');"></span>' .
-            '<span class="redact-category-name-value">' . $productCategory['name'] . '</span>'.
+            '<span class="redact-category-name-value">' . $productCategory['name'] . '</span>
+            <div class="redact-category-img redact-category-img-' . $productCategory['id'] . '" onclick="showLoadCategoryImgForm(' . $productCategory['id'] . ');"><img class="img-thumbnail" src="' . ($productCategory['imgSrc'] ? '/public/i/categories/original/' . $productCategory['id'] . '_' . $productCategory['imgSrc'] : '/public/img/thumb/nopic.jpg') .'"></div>' .
             ($productCategory['isPopular'] ? '<span class="glyphicon glyphicon-star change-popular-category" title="Удалить из популярных" style="color: #E25734;" onclick="removeFromPopularCategories(' . $productCategory['id'] . ');"></span>' : '<span class="glyphicon glyphicon-star-empty change-popular-category" title="Добавить в популярные" onclick="addToPopularCategories(' . $productCategory['id'] . ');"></span>') .
             '<span class="glyphicon glyphicon-pencil redactBtn" onclick="showRedactCategoryForm(' . $productCategory['id'] . ');"></span>
             </div>
@@ -427,4 +428,11 @@ $html .= '
 			</form>
 		</div>
 	</div>
+</div>
+<div class="modal fade" id="loadCategoryImgModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
 </div>

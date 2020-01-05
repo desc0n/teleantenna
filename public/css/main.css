@@ -1067,3 +1067,24 @@ div .navbar-brand span{
     cursor: pointer;
     color: #0e90d2;
 }
+.redact-category-table .redact-category-img{
+    width: 30px;
+    display: inline-block;
+}
+.redact-category-table .redact-category-img img{
+    width: 100%;
+}
+#loadCategoryImgModal .current-category-img{
+    width: 400px;
+    margin: auto;
+}
+#loadCategoryImgModal .current-category-img img{
+    width: 100%;
+}
+#loadCategoryImgModal h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+#loadCategoryImgModal input[type="file"] {
+    display: inline-block;
+}

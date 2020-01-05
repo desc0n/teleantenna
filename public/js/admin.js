@@ -642,6 +642,40 @@ function patchCategory(categoryId, data) {
 		}
     });
 }
+function showLoadCategoryImgForm(categoryId) {
+	$('#loadCategoryImgModal .modal-content').html('');
+    $.ajax({
+        method: 'GET',
+        async: true,
+        url: '/admin/show_load_category_img_form?categoryId=' + categoryId
+    }).done(function (html) {
+        $('#loadCategoryImgModal .modal-content').html(html);
+        $('#loadCategoryImgModal').modal('toggle');
+    });
+}
+function loadCategoryImg(categoryId) {
+	var data = new FormData();
+	data.append('categoryId', categoryId);
+    data.append('category_img_name', $('#loadCategoryImgModal input[name=category_img_name]')[0].files[0]);
+
+    $.ajax({
+        method: 'POST',
+        async: true,
+        url: '/admin/load_category_img',
+        data: data,
+        dataType: 'json',
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.result === 'success') {
+                $('.redact-category-img-' + categoryId + ' > img').attr('src', '/public/i/categories/thumb/' +  categoryId + '_' + response.imgName);
+            } else {
+                alert('Ошибка загрузки!');
+            }
+            $('#loadCategoryImgModal').modal('toggle');
+        }
+    });
+}
 
 function removeCategory(categoryId){
     if(confirm('Подтвердить удаление группы?')) {

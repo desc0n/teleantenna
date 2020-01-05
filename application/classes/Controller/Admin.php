@@ -16,6 +16,13 @@ class Controller_Admin extends Controller
         $this->productModel = Model::factory('Product');
     }
 
+    private function render($body)
+    {
+        $this->auto_render = false;
+        $this->is_ajax = true;
+        $this->response->body($body);
+    }
+
     private function check_role($role_type = 1)
 	{
 		if (Auth::instance()->logged_in('admin') || Auth::instance()->logged_in('manager')) {
@@ -793,9 +800,6 @@ class Controller_Admin extends Controller
 
 	public function action_report()
 	{
-		/** @var $adminModel Model_Admin */
-		$adminModel = Model::factory('Admin');
-
 		/** @var Model_Shop $shopModel */
 		$shopModel = Model::factory('Shop');
 
@@ -946,15 +950,19 @@ class Controller_Admin extends Controller
 		;
 	}
 
+    public function action_show_load_category_img_form()
+    {
+        $this->render(View::factory('admin/load_category_img')->set('category', $this->productModel->getProductCategory((int)$this->request->query('categoryId'))));
+    }
+
 	public function action_load_category_img()
     {
-        $files = array_key_exists('imgname', $_FILES) ? $_FILES['imgname'] : [];
+        $files = array_key_exists('category_img_name', $_FILES) ? $_FILES['category_img_name'] : [];
         $response = ['result' => 'failed'];
         if($files) {
-            $this->productModel->loadCategoryImg($files, (int)$this->request->param('categoryId'));
-            $response = ['result' => 'success'];
+            $response = ['result' => 'success', 'imgName' => $this->productModel->loadCategoryImg($files, (int)$this->request->post('categoryId'))];
         }
 
-        return json_encode($response);
+        $this->render(json_encode($response));
     }
 }

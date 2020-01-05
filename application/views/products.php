@@ -70,7 +70,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
                     <td onclick="document.location='/item/product/<?=$product['id'];?>';" class="product-cell-code"><?=$product['code'];?></td>
                     <td class="img-cell">
                         <?$product['product_img'] = $product['product_img'] != '' ? $product['product_img'] : 'nopic.jpg';?>
-                        <div class="img-link pull-left" data-toggle="tooltip" data-placement="left" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$product['product_img'];?>' style='width:200px;'>">
+                        <div class="img-link pull-left" data-toggle="tooltip" data-placement="right" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$product['product_img'];?>' style='width:200px;'>">
                             <img class="img-thumbnail" src="/public/img/thumb/<?=$product['product_img'];?>">
                         </div>
                     </td>
@@ -93,7 +93,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
 <!--                            class="popover-product-number"-->
 <!--                            data-container="body"-->
 <!--                            data-toggle="popover"-->
-<!--                            data-placement="left"-->
+<!--                            data-placement="right"-->
 <!--                            data-html="true"-->
 <!--                            data-title="Наличие в магазинах"-->
 <!--                            data-content=""-->
@@ -152,7 +152,7 @@ $userDiscount = !empty($userProfile) ? ($userProfile[0]['contractor'] == 1 ? $us
                     <td class="product-cell-code" onclick="document.location='/item/product/<?=$product['id'];?>';"><?=$product['code'];?></td>
                     <td class="img-cell">
                         <?$product['product_img'] = $product['product_img'] != '' ? $product['product_img'] : 'nopic.jpg';?>
-                        <div class="img-link pull-left" data-toggle="tooltip" data-placement="left" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$product['product_img'];?>' style='width:200px;'>">
+                        <div class="img-link pull-left" data-toggle="tooltip" data-placement="right" data-html="true" title="<img class='tooltip-img' src='/public/img/original/<?=$product['product_img'];?>' style='width:200px;'>">
                             <img class="img-thumbnail" src="/public/img/thumb/<?=$product['product_img'];?>">
                         </div>
                     </td>
