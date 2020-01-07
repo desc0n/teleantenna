@@ -1181,3 +1181,22 @@ div .navbar-brand span{
 #loadCategoryImgModal input[type="file"] {
     display: inline-block;
 }
+.popular-categories h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+.popular-categories .main-popular-category {
+    padding: 5px;
+}
+.popular-categories .main-popular-category div{
+    margin-top: 10px;
+}
+.popular-categories .main-popular-category a,
+.popular-categories .main-popular-category a:visited,
+.popular-categories .main-popular-category a:hover,
+.popular-categories .main-popular-category a:focus {
+    color: #0e0e0e;
+    text-decoration: none;
+    border: none;
+    width: 100%;
+}
