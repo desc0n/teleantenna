@@ -505,111 +505,6 @@ function checkNumSubmit(interface) {
 		$('#carryOutWriteoffForm').submit();
 	}
 }
-
-$(document).ready(function() {
-	$('.goodsName').keyup(function(){
-		initTypeahead($(this).attr('row'), $(this).val(), 'name');
-	});
-	$('.goodsCode').keyup(function(){
-		initTypeahead($(this).attr('row'), $(this).val(), 'code');
-	});
-	$('.goodsNum').blur(function(){
-		var checkError = 0;
-		if($('#goodsRootNum_'+$(this).attr('row')).val()*1 < $(this).val()*1)
-			checkError = 1;
-		if(checkError == 0)
-			addRealisationPosition($(this).attr('row'));
-		else if(checkError == 1) {
-			alert('Указанное количество больше наличия на складе!');
-			location.reload();
-		}
-	});
-	$('.goods-field-realization').blur(function(){
-		var checkError = 0;
-		if($(this).attr('class').indexOf('goodsNum') != -1)
-			if($('#goodsRootNum_'+$(this).attr('row')).val()*1 < $(this).val()*1)
-				checkError = 1;
-		if(checkError == 0)
-			addRealisationPosition($(this).attr('row'));
-		else if(checkError == 1)
-			alert('Указанное количество больше наличия на складе!');
-	});
-	/*$('.goodsCode').blur(function(){
-		//addPositionFromCode($(this).val(), $(this).attr('row'));
-		setMainAssort($(this).attr('row'), $(this).val(), 'code');
-	});*/
-	$(".goodsCode").keypress(function(e){
-		if(e.keyCode==13){
-			//addPositionFromCode($(this).val(), $(this).attr('row'));
-			setMainAssort($(this).attr('row'), $(this).val(), 'code');
-		}
-	 });
-	$('.goods-field-income').blur(function(){
-		var checkError = 0;
-		if(checkError == 0)
-			addIncomePosition($(this).attr('row'));
-	});
-	$('.goods-field-cashincome').blur(function(){
-		var checkError = 0;
-		if(checkError == 0)
-			addCashincomePosition($(this).attr('row'));
-	});
-	$('.goods-field-return').blur(function(){
-		var checkError = 0;
-		if(checkError == 0)
-			addReturnPosition($(this).attr('row'));
-	});
-	$('.goods-field-cashreturn').blur(function(){
-		var checkError = 0;
-		if(checkError == 0)
-			addCashreturnPosition($(this).attr('row'));
-	});
-	$('.goods-field-writeoff').blur(function(){
-		var checkError = 0;
-		if(checkError == 0)
-			addWriteoffPosition($(this).attr('row'));
-	});
-	$('.goods-field-cashwriteoff').blur(function(){
-		var checkError = 0;
-		if(checkError == 0)
-			addCashwriteoffPosition($(this).attr('row'));
-	});
-	$('#searchUserName').typeahead({
-		source: getUserNamesArr(getUsers()),
-		items: 5,
-		updater: function(item) {
-			getUserRoles(item);
-			return item;
-		}
-	});
-	$('#searchUserName').blur(function(){
-		getUserRoles($(this).val());
-	});
-	$('.checkUserRoles').change(function(){
-		changeUserRole($(this).val());
-	});
-	$('.changeUserShop').change(function(){
-		changeUserShop($(this).attr('user-id'), $(this).val());
-	});
-
-	$('#realizationContractor').change(function(){
-        $('#discount').val($("#realizationContractor option:selected" ).data('discount'));
-		setRealizationContractor();
-	});
-	$('body').click(function(){
-		$('.admin-typeahead .typeahead').css('display', 'none');
-	});
-
-	$('#carryOutRealizationPost').click(function(){
-		$(this).attr('disabled', 'disabled');
-        checkNumSubmit('realization');
-	});
-
-	$('#carryOutWriteoffPost').click(function(){
-		$(this).attr('disabled', 'disabled');
-        checkNumSubmit('writeoff');
-	});
-});
 function showRedactCategoryForm(categoryId) {
     $('#redactProductCategory' + categoryId + ' .redact-category-form').css('display', 'inline-block');
     $('#redactProductCategory' + categoryId + ' .redact-category-name').css('display', 'none');
@@ -743,3 +638,41 @@ function showProductsList(categoryId) {
         $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).html('Показать список товаров').data('hidden', '1');
 	}
 }
+
+$(document).ready(function() {
+    $('.goodsName').keyup(function(){initTypeahead($(this).attr('row'), $(this).val(), 'name');});
+    $('.goodsCode').keyup(function(){initTypeahead($(this).attr('row'), $(this).val(), 'code');});
+    $('.goodsNum').blur(function(){var checkError = 0;if($('#goodsRootNum_'+$(this).attr('row')).val()*1 < $(this).val()*1){checkError = 1;}if(checkError == 0){addRealisationPosition($(this).attr('row'));}else if(checkError == 1) {alert('Указанное количество больше наличия на складе!');location.reload();}});
+    $('.goods-field-realization').blur(function(){
+        var checkError = 0;
+        if($(this).attr('class').indexOf('goodsNum') != -1)
+            if($('#goodsRootNum_'+$(this).attr('row')).val()*1 < $(this).val()*1)
+                checkError = 1;
+        if(checkError == 0)
+            addRealisationPosition($(this).attr('row'));
+        else if(checkError == 1)
+            alert('Указанное количество больше наличия на складе!');
+    });
+    $(".goodsCode").keypress(function(e){if(e.keyCode==13){setMainAssort($(this).attr('row'), $(this).val(), 'code');}});
+    $('.goods-field-income').blur(function(){addIncomePosition($(this).attr('row'));});
+    $('.goods-field-cashincome').blur(function(){addCashincomePosition($(this).attr('row'));});
+    $('.goods-field-return').blur(function(){addReturnPosition($(this).attr('row'));});
+    $('.goods-field-cashreturn').blur(function(){addCashreturnPosition($(this).attr('row'));});
+    $('.goods-field-writeoff').blur(function(){addWriteoffPosition($(this).attr('row'));});
+    $('.goods-field-cashwriteoff').blur(function(){addCashwriteoffPosition($(this).attr('row'));});
+    $('#searchUserName').typeahead({
+        source: getUserNamesArr(getUsers()),
+        items: 5,
+        updater: function(item) {
+            getUserRoles(item);
+            return item;
+        }
+    });
+    $('#searchUserName').blur(function(){getUserRoles($(this).val());});
+    $('.checkUserRoles').change(function(){changeUserRole($(this).val());});
+    $('.changeUserShop').change(function(){changeUserShop($(this).attr('user-id'), $(this).val());});
+    $('#realizationContractor').change(function(){$('#discount').val($("#realizationContractor option:selected" ).data('discount'));setRealizationContractor();});
+    $('body').click(function(){$('.admin-typeahead .typeahead').css('display', 'none');});
+    $('#carryOutRealizationPost').click(function(){$(this).attr('disabled', 'disabled');checkNumSubmit('realization');});
+    $('#carryOutWriteoffPost').click(function(){$(this).attr('disabled', 'disabled');checkNumSubmit('writeoff');});
+});

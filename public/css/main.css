@@ -282,6 +282,99 @@ button.search{
     border-bottom:none;
 }
 
+.search-slide-menu{
+    position: absolute;
+    margin-top: -35px;
+    width: calc(100% + 5px);
+}
+.search-slide-trigger:hover > .search-slide-menu {
+    visibility: visible;
+    display: block;
+    z-index: 100;
+}
+.search-sub-category > .list-group-item > div{
+    padding: 0!important;
+}
+.search-sub-category > .list-group-item:hover > .search-slide-menu {
+    visibility: visible;
+    display: block;
+    z-index: 101;
+}
+.search-slide-trigger:last-child{
+    border-bottom:none;
+}
+.search-slide-trigger:hover{
+    border: 1px solid #fff;
+    border-top:none;
+    border-right: none;
+    border-left: none;
+    border-right:1px solid #eee;
+    background-color: #e1f1dd;
+    background: -webkit-linear-gradient(#7dcb6a 0%, #3bb21e 100%);
+    background: -o-linear-gradient(#7dcb6a 0%, #3bb21e 100%);
+    background: linear-gradient(#7dcb6a 0%, #3bb21e 100%);
+}
+.search-slide-trigger:last-child:hover{
+    border-bottom:none;
+}
+.search-slide-trigger{
+    position: relative;
+    font-weight: normal;
+    border: 1px solid #aaa;
+    border-right: none;
+    border-left: none;
+    border-top:none;
+    border-radius: 0;
+}
+.search-slide-trigger,
+.search-slide-trigger:hover{
+    color: #000;
+}
+.search-panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.search-panel-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    color: inherit;
+    position: relative;
+}
+.search-panel-heading > h4{
+    border-bottom: 0;
+}
+.search-panel-collapse {
+    display: none;
+    visibility: hidden;
+    margin-left: 100%;
+}
+.search-category{
+    cursor: pointer;
+}
+.search-sub-category .list-group-item{
+    cursor: pointer;
+    padding: 5px 1px!important;
+}
+.list-category-product-item{
+    color: #fff !important;
+    border: 1px solid #aaa;
+    border-top:none;
+    border-right: none;
+    border-left: none;
+    border-right:1px solid #eee;
+    background-color: #428bca;
+    width: 400px;
+    padding: 5px 1px;
+    list-style-type: none;
+}
+.search-sub-category .search-slide-menu{
+    position: absolute;
+    margin-top: -22px;
+    width: 400px;
+}
 .main-content{
     /*padding-top: 15px;*/
     padding: 0 !important;
