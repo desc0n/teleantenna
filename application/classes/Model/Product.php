@@ -198,21 +198,26 @@ class Model_Product extends Kohana_Model {
      */
     public function patchProduct($productId, $changeValues = [])
     {
+        $params = [];
         foreach ($changeValues as $key => $value) {
             switch ($key) {
                 case 'name':
-                    DB::update('products')
-                        ->set(['name' => $value])
-                        ->where('id', '=', $productId)
-                        ->execute();
+                    $params['name'] = $value;
                     break;
                 case 'status_id':
-                    DB::update('products')
-                        ->set(['status_id' => $value])
-                        ->where('id', '=', $productId)
-                        ->execute();
+                    $params['status_id'] = (int)$value;
+                    break;
+                case 'is_popular':
+                    $params['is_popular'] = (int)$value;
                     break;
             }
+        }
+
+        if($params) {
+            DB::update('products')
+                ->set($params)
+                ->where('id', '=', $productId)
+                ->execute();
         }
     }
 

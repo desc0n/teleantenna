@@ -612,6 +612,32 @@ function removeProduct(productId){
         }
     });
 }
+
+function removeFromPopularProducts(productId, categoryId) {
+    $('#productInfo' + categoryId + ' .change-popular-product').removeClass('glyphicon-star').addClass('glyphicon-star-empty').css('color', '#000');
+    $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).data('hidden', 1);
+    patchProduct(productId, {is_popular: 0});
+    showProductsList(categoryId);
+}
+function addToPopularProducts(productId, categoryId) {
+    $('#productInfo' + categoryId + ' .change-popular-product').removeClass('glyphicon-star-empty').addClass('glyphicon-star').css('color', '#E25734');
+    $('#redactProductCategory' + categoryId + ' .show-category-products-btn-' + categoryId).data('hidden', 1);
+    patchProduct(productId, {is_popular: 1});
+    showProductsList(categoryId);
+}
+
+function patchProduct(productId, data) {
+    data.action = 'patchProduct';
+    data.productId = productId;
+    $.ajax({
+        method: 'POST',
+        async: true,
+        url: '/admin/product',
+        data: data
+    }).done(function () {
+
+    });
+}
 function showSubCategories(categoryId) {
 	const hidden = $('#redactProductCategory' + categoryId).data('hidden');
 	if(hidden * 1 === 1) {

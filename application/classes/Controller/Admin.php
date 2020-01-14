@@ -862,6 +862,9 @@ class Controller_Admin extends Controller
                 case ($this->request->post('productId') !== null && $this->request->post('action') === 'removeProduct'):
                     $this->productModel->patchProduct((int)$this->request->post('productId'), ['status_id' => 0]);
                     break;
+                case ($this->request->post('productId') !== null && $this->request->post('action') === 'patchProduct'):
+                    $this->productModel->patchProduct((int)$this->request->post('productId'), $this->request->post());
+                    break;
                 case ($this->request->post('addbrand') !== null):
                     $this->adminModel->addBrand($_POST);
                     $redirectURL = '/admin/product/?action=brands';
