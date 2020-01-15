@@ -413,6 +413,31 @@ class Model_Product extends Kohana_Model {
 	}
 
     /**
+     * @return array
+     */
+	public function getPopularProducts()
+	{
+        return DB::select(
+                'p.*',
+                [DB::expr("REPLACE(REPLACE(p.name, '\"', ''), \"'\", '')"), 'name'],
+                [
+                    DB::select('pi.src')
+                        ->from(['products_imgs', 'pi'])
+                        ->where('pi.product_id', '=', DB::expr('p.id'))
+                        ->and_where('pi.status_id', '=', 1)
+                        ->limit(1),
+                    'product_img'
+                ]
+            )
+            ->from(['products', 'p'])
+            ->where('p.status_id', '=', 1)
+            ->and_where('p.is_popular', '=', 1)
+            ->order_by('p.id')
+			->execute()
+			->as_array();
+	}
+
+    /**
      * @param int $productId
      * @return string
      */

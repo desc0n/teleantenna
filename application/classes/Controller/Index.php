@@ -35,7 +35,10 @@ class Controller_Index extends Controller
 				->set('templateData', $templateData)
 		;
 
-		$content = View::factory('index')->set('categories', $this->productModel->getProductCategoriesList());
+		$content = View::factory('index')
+            ->set('categories', $this->productModel->getProductCategoriesList())
+            ->set('popularProducts', $this->productModel->getPopularProducts())
+        ;
 		$template->root_page = 'index';
 		$template->content = $content;
 		$this->response->body($template);

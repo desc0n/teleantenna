@@ -108,6 +108,7 @@ function setDeliveryType(id){
 }
 $(document).ready(function() {
 	$('.cart-add').click(function(){
+		$(this).attr('disabled','disabled').html('Добавлено');
 		setInCart($(this).val());
 	});
 	$('.position-num-plus').click(function(){

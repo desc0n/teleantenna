@@ -1200,3 +1200,40 @@ div .navbar-brand span{
     border: none;
     width: 100%;
 }
+.popular-products .main-popular-product {
+    min-height: 450px;
+    max-height: 450px;
+    padding: 15px;
+}
+.popular-products .main-popular-product-img {
+    margin: auto;
+    text-align: center;
+    width: 100%;
+    min-height: 285px;
+}
+.popular-products .main-popular-product-img img{
+    max-height: 285px;
+}
+.popular-products .main-popular-product-name{
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 15px;
+    min-height: 40px;
+}
+.popular-products .main-popular-product-name a,
+.popular-products .main-popular-product-name a:hover,
+.popular-products .main-popular-product-name a:focus,
+.popular-products .main-popular-product-name a:visited{
+    color: #0f0f0f;
+}
+.popular-products .main-popular-product-price{
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #FF6600;
+}
+.popular-products .main-popular-product-button{
+    text-align: center;
+    margin-top: 20px;
+}
