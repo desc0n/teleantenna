@@ -179,6 +179,44 @@ class Model_Product extends Kohana_Model {
     }
 
     /**
+     * @return array
+     */
+    public function getFooterCategories()
+    {
+        $categoryProducts = DB::select()
+            ->from('products__categories')
+            ->where('show', '=', 1)
+            ->and_where('parent_id', 'IS NOT', null)
+            ->execute()
+            ->as_array()
+        ;
+
+        $countCategories = [];
+
+        foreach ($categoryProducts as $category) {
+            $countProducts = DB::select([DB::expr('COUNT(id)'), 'count'])
+                ->from('products')
+                ->where('status_id', '=', 1)
+                ->and_where('category_id', '=', $category['id'])
+                ->execute()
+                ->current()
+            ;
+            $countCategories[] = [
+                'id' => (int)$category['id'],
+                'name' => preg_replace('/([0-9]+\.)/i', '', $category['name']),
+                'count' => (int)$countProducts['count']
+            ];
+        }
+
+        usort($countCategories, function ($item1, $item2) {
+            if ($item1['count'] == $item2['count']) return 0;
+            return $item1['count'] > $item2['count'] ? -1 : 1;
+        });
+
+        return array_values($countCategories);
+    }
+
+    /**
      * @param string $name
      * @param int $categoryId
      * @return int

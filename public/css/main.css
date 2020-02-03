@@ -1238,3 +1238,12 @@ div .navbar-brand span{
     text-align: center;
     margin-top: 20px;
 }
+.footer-link {
+    padding: 5px 0;
+}
+.footer-link a,
+.footer-link a:hover,
+.footer-link a:focus,
+.footer-link a:visited {
+    color: #777;
+}

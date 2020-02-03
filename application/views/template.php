@@ -23,6 +23,7 @@
 <?
 /** @var Model_Product $productModel */
 $productModel = Model::factory('Product');
+$footerCategories = $productModel->getFooterCategories();
 ?>
 <body>
 <nav class="navbar navbar-default" role="navigation">
@@ -202,7 +203,21 @@ $productModel = Model::factory('Product');
 </div>
 <div class="footer">
     <div class="container">
-        <div class="text-muted col-xs-6 col-md-2 col-lg-2 col-sm-2">© "ТелеАНТЕННА" <?=date('Y', time());?></div>
+        <div class="text-muted col-xs-6 col-md-offset-1 col-lg-offset-1 col-sm-offset-1 col-md-4 col-lg-4 col-sm-4">
+            <?for($i=0;$i<7;$i++) {?>
+                <div class="footer-link">
+                    <a href="/catalog/?categoryId=<?=$footerCategories[$i]['id'];?>"><?=$footerCategories[$i]['name'];?></a>
+                </div>
+            <?}?>
+        </div>
+        <div class="text-muted col-xs-6 col-md-offset-1 col-lg-offset-1 col-sm-offset-1 col-md-4 col-lg-4 col-sm-4">
+            <?for($i=7;$i<14;$i++) {?>
+                <div class="footer-link">
+                    <a href="/catalog/?categoryId=<?=$footerCategories[$i]['id'];?>"><?=$footerCategories[$i]['name'];?></a>
+                </div>
+            <?}?>
+        </div>
+        <div class="text-muted col-xs-6 col-md-2 col-lg-2 col-sm-2 footer-link">© "ТелеАНТЕННА" <?=date('Y', time());?></div>
     </div>
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
