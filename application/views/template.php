@@ -70,7 +70,7 @@ $footerCategories = $productModel->getFooterCategories();
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Услуги <span class="glyphicon glyphicon-chevron-down"></span></a>
-                        <ul class="dropdown-menu" role="menu">
+                        <ul class="dropdown-menu header-service-list" role="menu">
                             <?foreach(Model::factory('Service')->getServiceList(Array('group_1' => 1, 'group_2' => 0, 'group_3' => 0))  as $service_data){?>
                                 <li><a href="/item/service/<?=$service_data['id'];?>"><?=$service_data['name'];?></a></li>
                             <?}?>

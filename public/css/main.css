@@ -25,6 +25,9 @@ html {
     .tel-visible {
         display: inline-block !important;
     }
+    .header-service-list a {
+        color: #333333!important;
+    }
 }
 .locat-block{
     padding: 27px 20px 20px 20px;
